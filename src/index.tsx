@@ -4,6 +4,43 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// FontAwesome setup
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { 
+  faBars, 
+  faSearch, 
+  faUser, 
+  faClock, 
+  faPlus, 
+  faChevronLeft, 
+  faChevronRight, 
+  faPhone, 
+  faMapMarkerAlt, 
+  faEnvelope 
+} from '@fortawesome/free-solid-svg-icons';
+import { 
+  faFacebook, 
+  faYoutube, 
+  faTiktok 
+} from '@fortawesome/free-brands-svg-icons';
+
+// Add icons to library
+library.add(
+  faBars, 
+  faSearch, 
+  faUser, 
+  faClock, 
+  faPlus, 
+  faChevronLeft, 
+  faChevronRight, 
+  faPhone, 
+  faMapMarkerAlt, 
+  faEnvelope,
+  faFacebook, 
+  faYoutube, 
+  faTiktok
+);
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

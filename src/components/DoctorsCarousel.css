@@ -1,0 +1,364 @@
+.doctors-carousel {
+  padding: var(--spacing-6) 0;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.3), transparent);
+}
+
+/* Section Header */
+.section-header {
+  margin-bottom: var(--spacing-5);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  justify-content: center;
+}
+
+.title-icon {
+  font-size: 32px;
+  color: var(--primary-teal);
+  padding: 8px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: var(--shadow-button);
+}
+
+.section-title h2 {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 600;
+  color: var(--accent-navy);
+  margin: 0;
+}
+
+/* Carousel Container */
+.carousel-container {
+  position: relative;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-container);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-soft);
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+/* Arrow Buttons */
+.arrow-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  color: var(--primary-teal);
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.arrow-btn:hover {
+  background: var(--primary-teal);
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.prev-btn {
+  left: -30px;
+}
+
+.next-btn {
+  right: -30px;
+}
+
+/* Doctors Grid */
+.doctors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-4);
+  padding: 0 var(--spacing-3);
+}
+
+/* Doctor Card */
+.doctor-card {
+  background: white;
+  border-radius: var(--radius-card);
+  padding: var(--spacing-4);
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  transition: all 0.25s ease;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.doctor-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Avatar Container */
+.avatar-container {
+  margin-bottom: var(--spacing-3);
+  display: flex;
+  justify-content: center;
+}
+
+.doctor-avatar {
+  width: 220px;
+  height: 220px;
+  border-radius: var(--radius-avatar);
+  object-fit: cover;
+  background: var(--secondary-blue);
+  box-shadow: var(--shadow-card);
+  transition: all 0.25s ease;
+}
+
+.doctor-card:hover .doctor-avatar {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Doctor Info */
+.doctor-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.doctor-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--accent-navy);
+  margin: 0;
+}
+
+.doctor-department {
+  font-size: 16px;
+  color: var(--body-text);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.more-btn {
+  padding: 8px 24px;
+  font-size: 14px;
+  min-width: 100px;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-2);
+}
+
+.modal-content {
+  background: white;
+  border-radius: var(--radius-card);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--accent-navy);
+  font-size: 24px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: var(--body-text);
+  cursor: pointer;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.15s ease;
+}
+
+.close-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.modal-body {
+  padding: var(--spacing-4);
+  display: flex;
+  gap: var(--spacing-4);
+}
+
+.modal-avatar {
+  flex-shrink: 0;
+}
+
+.modal-avatar img {
+  width: 150px;
+  height: 150px;
+  border-radius: var(--radius-avatar);
+  object-fit: cover;
+  background: var(--secondary-blue);
+}
+
+.modal-info h4 {
+  color: var(--accent-navy);
+  margin: var(--spacing-2) 0 var(--spacing-1) 0;
+  font-size: 16px;
+}
+
+.modal-info h4:first-child {
+  margin-top: 0;
+}
+
+.modal-info p {
+  margin: 0 0 var(--spacing-1) 0;
+  color: var(--body-text);
+}
+
+.modal-info ul {
+  margin: 0 0 var(--spacing-1) 0;
+  padding-left: var(--spacing-2);
+  color: var(--body-text);
+}
+
+.modal-footer {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Responsive Design */
+@media (max-width: 1199px) {
+  .doctors-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .prev-btn {
+    left: -20px;
+  }
+  
+  .next-btn {
+    right: -20px;
+  }
+}
+
+@media (max-width: 991px) {
+  .carousel-container {
+    padding: var(--spacing-4);
+  }
+  
+  .doctor-avatar {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .arrow-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .prev-btn {
+    left: -15px;
+  }
+  
+  .next-btn {
+    right: -15px;
+  }
+}
+
+@media (max-width: 767px) {
+  .doctors-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .carousel-container {
+    padding: var(--spacing-3);
+    margin: 0 var(--spacing-2);
+  }
+  
+  .arrow-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+  
+  .prev-btn {
+    left: -10px;
+  }
+  
+  .next-btn {
+    right: -10px;
+  }
+  
+  .doctor-avatar {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .modal-body {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .modal-avatar {
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .arrow-btn {
+    display: none;
+  }
+  
+  .carousel-container {
+    padding: var(--spacing-2);
+  }
+  
+  .doctor-card {
+    padding: var(--spacing-3);
+  }
+  
+  .doctor-avatar {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .section-title h2 {
+    font-size: 28px;
+  }
+  
+  .title-icon {
+    font-size: 24px;
+  }
+}

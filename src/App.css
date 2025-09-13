@@ -1,38 +1,182 @@
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Great+Vibes&display=swap');
+
+/* Global Reset and Variables */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Color tokens */
+  --primary-teal: #13B6C6;
+  --secondary-blue: #477DFF;
+  --accent-navy: #113B57;
+  --body-text: rgba(14, 43, 58, 0.85);
+  --surface-aqua: rgba(23, 163, 183, 0.85);
+  
+  /* Gradients */
+  --primary-gradient: linear-gradient(90deg, #C8F3E1 0%, #A8E1EA 35%, #90B8F7 100%);
+  --hero-gradient: linear-gradient(90deg, #C8F3E1 0%, #A8E1EA 35%, #90B8F7 100%);
+  --cta-gradient: linear-gradient(90deg, #C8F3E1 0%, #D8B4FE 100%);
+  
+  /* Typography */
+  --font-ui: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-script: 'Great Vibes', cursive;
+  
+  /* Spacing scale (8px base) */
+  --spacing-1: 8px;
+  --spacing-2: 16px;
+  --spacing-3: 24px;
+  --spacing-4: 32px;
+  --spacing-5: 40px;
+  --spacing-6: 48px;
+  
+  /* Border radius */
+  --radius-container: 32px;
+  --radius-card: 24px;
+  --radius-pill: 9999px;
+  --radius-avatar: 20px;
+  
+  /* Shadows */
+  --shadow-soft: 0 8px 16px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-button: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  /* Layout */
+  --max-width: 1200px;
+  --header-height: 72px;
+}
+
+body {
+  font-family: var(--font-ui);
+  color: var(--body-text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  background: var(--primary-gradient);
+}
+
+/* Global layout container */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-2);
+}
+
+/* Button styles */
+.btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  min-height: 44px;
+  min-width: 140px;
+}
+
+.btn:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-button);
+}
+
+.btn-primary {
+  background: var(--cta-gradient);
+  color: var(--accent-navy);
+}
+
+.btn-secondary {
+  background: var(--primary-teal);
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.btn-ghost {
+  background: transparent;
+  color: var(--accent-navy);
+  border: 2px solid var(--primary-teal);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+/* Input styles */
+.input {
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  background: white;
+  transition: all 0.15s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary-teal);
+  box-shadow: 0 0 0 3px rgba(19, 182, 198, 0.1);
+}
+
+.input.error {
+  border-color: #EF4444;
+}
+
+.input.success {
+  border-color: #10B981;
+}
+
+/* Card styles */
+.card {
+  background: white;
+  border-radius: var(--radius-card);
+  padding: var(--spacing-4);
+  box-shadow: var(--shadow-card);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1199px) {
+  .container {
+    max-width: 992px;
   }
 }
+
+@media (max-width: 991px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 0 var(--spacing-2);
+  }
+  
+  .btn {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+/* Utility classes */
+.text-center { text-align: center; }
+.text-bold { font-weight: 600; }
+.text-script { font-family: var(--font-script); }
+.text-uppercase { text-transform: uppercase; }
+
+.mb-1 { margin-bottom: var(--spacing-1); }
+.mb-2 { margin-bottom: var(--spacing-2); }
+.mb-3 { margin-bottom: var(--spacing-3); }
+.mb-4 { margin-bottom: var(--spacing-4); }
+
+.mt-1 { margin-top: var(--spacing-1); }
+.mt-2 { margin-top: var(--spacing-2); }
+.mt-3 { margin-top: var(--spacing-3); }
+.mt-4 { margin-top: var(--spacing-4); }
