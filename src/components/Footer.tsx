@@ -1,27 +1,27 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faMapMarkerAlt, 
-  faPhone, 
+import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faMapMarkerAlt,
+  faPhone,
   faEnvelope,
-  faPlus
-} from '@fortawesome/free-solid-svg-icons';
-import { 
-  faFacebook, 
-  faYoutube, 
-  faTiktok 
-} from '@fortawesome/free-brands-svg-icons';
-import './Footer.css';
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  faFacebook,
+  faYoutube,
+  faTiktok,
+} from "@fortawesome/free-brands-svg-icons";
+import "./Footer.css";
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
-    'Chính sách bảo mật',
-    'Điều khoản sử dụng', 
-    'Câu hỏi thường gặp',
-    'Cẩm nang',
-    'Tư vấn miễn phí'
+    "Chính sách bảo mật",
+    "Điều khoản sử dụng",
+    "Câu hỏi thường gặp",
+    "Cẩm nang",
+    "Tư vấn miễn phí",
   ];
 
   return (
@@ -39,7 +39,10 @@ const Footer: React.FC = () => {
           <div className="footer-column">
             <div className="footer-section">
               <div className="section-header">
-                <FontAwesomeIcon icon={faMapMarkerAlt} className="section-icon" />
+                <FontAwesomeIcon
+                  icon={faMapMarkerAlt}
+                  className="section-icon"
+                />
                 <h4>Address</h4>
               </div>
               <p>FPT University Quy Nhon AI Campus</p>
@@ -66,12 +69,7 @@ const Footer: React.FC = () => {
           {/* Center Column - Logo */}
           <div className="footer-column center-column">
             <div className="footer-logo">
-              <div className="logo-circle">
-                <FontAwesomeIcon icon={faPlus} className="logo-icon" />
-              </div>
-              <div className="logo-text-wrapper">
-                <span className="logo-text">BOOK MY DOCTOR</span>
-              </div>
+              <img src="/images/logo-non.png" alt="" />
             </div>
           </div>
 
@@ -79,9 +77,9 @@ const Footer: React.FC = () => {
           <div className="footer-column">
             <nav className="footer-links">
               {footerLinks.map((link, index) => (
-                <a 
-                  key={index} 
-                  href={`#${link.toLowerCase().replace(/\s+/g, '-')}`}
+                <a
+                  key={index}
+                  href={`#${link.toLowerCase().replace(/\s+/g, "-")}`}
                   className="footer-link"
                 >
                   {link}
@@ -96,10 +94,10 @@ const Footer: React.FC = () => {
           <div className="copyright">
             <span>© Book My Doctor {currentYear}</span>
           </div>
-          
+
           <div className="social-icons">
-            <a 
-              href="https://tiktok.com" 
+            <a
+              href="https://tiktok.com"
               className="social-link"
               target="_blank"
               rel="noopener noreferrer"
@@ -107,8 +105,8 @@ const Footer: React.FC = () => {
             >
               <FontAwesomeIcon icon={faTiktok} />
             </a>
-            <a 
-              href="https://facebook.com" 
+            <a
+              href="https://facebook.com"
               className="social-link"
               target="_blank"
               rel="noopener noreferrer"
@@ -116,8 +114,8 @@ const Footer: React.FC = () => {
             >
               <FontAwesomeIcon icon={faFacebook} />
             </a>
-            <a 
-              href="https://youtube.com" 
+            <a
+              href="https://youtube.com"
               className="social-link"
               target="_blank"
               rel="noopener noreferrer"

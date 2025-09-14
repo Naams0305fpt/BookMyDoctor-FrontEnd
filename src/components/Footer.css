@@ -123,50 +123,23 @@
 /* Footer Logo */
 .footer-logo {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: 12px;
 }
 
-.logo-circle {
-  width: 80px;
-  height: 80px;
-  background: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary-teal);
-  font-size: 32px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  transition: all 0.25s ease;
+.footer-logo img {
+  height: 150px;
 }
 
-.logo-circle:hover {
-  transform: scale(1.05);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
-}
 
-.logo-text-wrapper {
-  text-align: center;
-}
 
-.logo-text {
-  font-weight: 700;
-  font-size: 20px;
-  color: white;
-  letter-spacing: 1px;
-  line-height: 1.2;
-  display: block;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
 
 /* Footer Links */
 .footer-links {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
-  align-items: flex-start;
+  gap: var(--spacing-1);
+  align-items: flex-end;
 }
 
 .footer-link {
