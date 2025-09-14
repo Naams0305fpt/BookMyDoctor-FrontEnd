@@ -1,19 +1,26 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header';
-import Hero from './components/Hero';
-import DoctorsCarousel from './components/DoctorsCarousel';
-import BookingForm from './components/BookingForm';
 import Footer from './components/Footer';
+import Home from './components/Home';
+import About from './components/About';
+import Information from './components/Information';
+import GetPro from './components/GetPro';
 
 function App() {
   return (
     <div className="App">
-      <Header />
-      <Hero />
-      <DoctorsCarousel />
-      <BookingForm />
-      <Footer />
+      <Router>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/information" element={<Information />} />
+          <Route path="/get-pro" element={<GetPro />} />
+        </Routes>
+        <Footer />
+      </Router>
     </div>
   );
 }

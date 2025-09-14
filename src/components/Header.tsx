@@ -1,19 +1,18 @@
 import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
   faSearch,
   faUser,
   faClock,
-  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import "./Header.css";
-// import logo from "../images/logo.png";
-import { log } from "console";
 
 const Header: React.FC = () => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const location = useLocation();
 
   const handleSearchFocus = () => {
     setIsSearchExpanded(true);
@@ -23,6 +22,12 @@ const Header: React.FC = () => {
     if (!searchValue) {
       setIsSearchExpanded(false);
     }
+  };
+
+  const isActiveLink = (path: string) => {
+    if (path === "/" && location.pathname === "/") return true;
+    if (path !== "/" && location.pathname.includes(path)) return true;
+    return false;
   };
 
   return (
@@ -36,18 +41,30 @@ const Header: React.FC = () => {
 
           {/* Left - Navigation */}
           <nav className="nav-links">
-            <a href="#home" className="nav-link">
+            <Link 
+              to="/" 
+              className={`nav-link ${isActiveLink("/") ? "active" : ""}`}
+            >
               Home
-            </a>
-            <a href="#about" className="nav-link">
+            </Link>
+            <Link 
+              to="/about" 
+              className={`nav-link ${isActiveLink("/about") ? "active" : ""}`}
+            >
               About
-            </a>
-            <a href="#information" className="nav-link">
+            </Link>
+            <Link 
+              to="/information" 
+              className={`nav-link ${isActiveLink("/information") ? "active" : ""}`}
+            >
               Information
-            </a>
-            <a href="#get-pro" className="nav-link">
+            </Link>
+            <Link 
+              to="/get-pro" 
+              className={`nav-link ${isActiveLink("/get-pro") ? "active" : ""}`}
+            >
               Get Pro
-            </a>
+            </Link>
           </nav>
           {/* Center - Logo */}
           <div className="logo-section">
