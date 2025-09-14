@@ -8,7 +8,8 @@ import {
   faUserShield,
   faUserMd,
   faUserInjured,
-  faCog
+  faCog,
+  faCalendarAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth, UserType } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
@@ -122,6 +123,10 @@ const UserMenu: React.FC = () => {
             <button className="menu-item">
               <FontAwesomeIcon icon={faUser} />
               <span>Profile</span>
+            </button>
+            <button className="menu-item">
+              <FontAwesomeIcon icon={faCalendarAlt} />
+              <span>Booking History</span>
             </button>
             <button className="menu-item">
               <FontAwesomeIcon icon={faCog} />

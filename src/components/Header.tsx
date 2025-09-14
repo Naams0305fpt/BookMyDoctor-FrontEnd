@@ -5,7 +5,6 @@ import {
   faBars,
   faSearch,
   faUser,
-  faClock,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../contexts/AuthContext";
 import { useLoginModal } from "../contexts/LoginModalContext";
@@ -116,10 +115,6 @@ const Header: React.FC = () => {
                 <FontAwesomeIcon icon={faUser} />
               </button>
             )}
-
-            <button className="icon-btn" aria-label="History">
-              <FontAwesomeIcon icon={faClock} />
-            </button>
           </div>
         </div>
       </div>

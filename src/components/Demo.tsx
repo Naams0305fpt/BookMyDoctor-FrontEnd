@@ -31,7 +31,7 @@ const Demo: React.FC = () => {
       icon: faUserMd,
       color: 'doctor',
       description: 'Access to Get Pro features and patient management',
-      features: ['Get Pro Access', 'Patient Management', 'Appointment Scheduling', 'Medical Records'],
+      features: ['Get Pro Access', 'Patient Management', 'Appointment Scheduling', 'Booking History'],
       specialization: 'Cardiology',
       isVerified: true
     },
@@ -42,7 +42,7 @@ const Demo: React.FC = () => {
       icon: faUserInjured,
       color: 'patient',
       description: 'Book appointments and manage health records',
-      features: ['Book Appointments', 'View Medical History', 'Doctor Search', 'Health Tracking']
+      features: ['Book Appointments', 'View Booking History', 'Doctor Search', 'Health Tracking']
     }
   ];
 
@@ -134,7 +134,7 @@ const Demo: React.FC = () => {
             <li>Click the user icon (👤) in the header to open the sign-in modal</li>
             <li>Enter any demo email and use password: <strong>demo123</strong></li>
             <li>Notice how the user icon transforms into a user menu when logged in</li>
-            <li>Explore the different features available to each user type</li>
+            <li>Explore the user menu options like Profile, Booking History, and Settings</li>
             <li>See that "Get Pro" only appears in navigation for doctors</li>
             <li>Try accessing /get-pro directly with different user types</li>
           </ol>
