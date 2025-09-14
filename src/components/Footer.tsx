@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMapMarkerAlt,
@@ -16,11 +17,11 @@ const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
-    "Chính sách bảo mật",
-    "Điều khoản sử dụng",
-    "Câu hỏi thường gặp",
-    "Cẩm nang",
-    "Tư vấn miễn phí",
+    { name: "Privacy Policy", path: "/privacy-policy" },
+    { name: "Terms of Service", path: "/terms-of-service" },
+    { name: "FAQ", path: "/information" }, // Links to Information page which has FAQ
+    { name: "Health Guide", path: "/about" }, // Links to About page 
+    { name: "Free Consultation", path: "/" }, // Links to home page booking
   ];
 
   return (
@@ -76,13 +77,13 @@ const Footer: React.FC = () => {
           <div className="footer-column">
             <nav className="footer-links">
               {footerLinks.map((link, index) => (
-                <a
+                <Link
                   key={index}
-                  href={`#${link.toLowerCase().replace(/\s+/g, "-")}`}
+                  to={link.path}
                   className="footer-link"
                 >
-                  {link}
-                </a>
+                  {link.name}
+                </Link>
               ))}
             </nav>
           </div>
