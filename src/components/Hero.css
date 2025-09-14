@@ -44,31 +44,21 @@
 
 .hero-image {
   position: relative;
-  width: 280px;
-  height: 350px;
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  box-shadow: var(--shadow-soft);
+  width: 360px;
+  height: 430px;
+  /* Removed border-radius and overflow to prevent cropping of sketch-style images */
+  /* Removed box-shadow to make container transparent */
 }
 
 .hero-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: var(--radius-card);
+  object-fit: contain; /* Changed from cover to contain to preserve full image */
+  /* Removed border-radius to prevent cropping */
 }
 
-/* Apply brush stroke mask effect */
-.hero-image::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
-  pointer-events: none;
-}
+/* Removed brush stroke mask effect to allow full image visibility */
+/* .hero-image::after removed to prevent any overlay that might interfere with sketch-style images */
 
 .left-image {
   transform: rotate(-2deg);
@@ -99,6 +89,8 @@
   font-weight: 400;
   line-height: 0.8;
   margin-bottom: -10px;
+  padding-top: 25px;
+  padding-right: 25px;
   background: linear-gradient(135deg, var(--primary-teal), var(--secondary-blue));
   background-clip: text;
   -webkit-background-clip: text;

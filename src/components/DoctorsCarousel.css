@@ -1,6 +1,7 @@
 .doctors-carousel {
   padding: var(--spacing-6) 0;
-  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.3), transparent);
+  /* background: linear-gradient(180deg, transparent, rgba(255,255,255,0.3), transparent); */
+  background-color: white;
 }
 
 /* Section Header */
@@ -37,7 +38,11 @@
   background: var(--primary-gradient);
   border-radius: var(--radius-container);
   padding: var(--spacing-5);
-  box-shadow: var(--shadow-soft);
+  /* box-shadow: var(--shadow-soft); */
+   box-shadow: 
+    0 8px 20px rgba(0, 200, 255, 0.3),  /* xanh dương */
+    0 6px 18px rgba(200, 100, 255, 0.25), /* tím */
+    0 4px 15px rgba(100, 255, 200, 0.2); /* xanh lá */
   max-width: 1140px;
   margin: 0 auto;
 }
