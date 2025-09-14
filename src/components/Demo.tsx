@@ -130,10 +130,12 @@ const Demo: React.FC = () => {
         <div className="demo-instructions">
           <h2>How to Test</h2>
           <ol>
-            <li>Click the "Sign In" button in the header</li>
-            <li>Use any of the demo credentials above</li>
+            <li>Note the demo credentials for each user type above</li>
+            <li>Click the user icon (👤) in the header to open the sign-in modal</li>
+            <li>Enter any demo email and use password: <strong>demo123</strong></li>
+            <li>Notice how the user icon transforms into a user menu when logged in</li>
             <li>Explore the different features available to each user type</li>
-            <li>Notice that "Get Pro" only appears for doctors</li>
+            <li>See that "Get Pro" only appears in navigation for doctors</li>
             <li>Try accessing /get-pro directly with different user types</li>
           </ol>
         </div>

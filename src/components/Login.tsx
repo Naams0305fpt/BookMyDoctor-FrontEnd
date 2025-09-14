@@ -6,10 +6,7 @@ import {
   faEye, 
   faEyeSlash,
   faSignInAlt,
-  faSpinner,
-  faUserMd,
-  faUserShield,
-  faUserInjured
+  faSpinner
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
@@ -26,27 +23,6 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
   const [error, setError] = useState('');
   const { login, isLoading } = useAuth();
   const { showNotification } = useNotification();
-
-  const demoAccounts = [
-    {
-      email: 'admin@bookmydoctor.com',
-      type: 'Admin',
-      icon: faUserShield,
-      description: 'Full system access'
-    },
-    {
-      email: 'doctor@bookmydoctor.com',
-      type: 'Doctor',
-      icon: faUserMd,
-      description: 'Access to Get Pro features'
-    },
-    {
-      email: 'patient@bookmydoctor.com',
-      type: 'Patient',
-      icon: faUserInjured,
-      description: 'Book appointments'
-    }
-  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,11 +45,6 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
     } else {
       setError('Invalid email or password');
     }
-  };
-
-  const handleDemoLogin = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword('demo123');
   };
 
   return (
@@ -139,31 +110,6 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
             )}
           </button>
         </form>
-
-        <div className="demo-section">
-          <div className="divider">
-            <span>Try Demo Accounts</span>
-          </div>
-          
-          <div className="demo-accounts">
-            {demoAccounts.map((account, index) => (
-              <button
-                key={index}
-                className="demo-account-btn"
-                onClick={() => handleDemoLogin(account.email)}
-                type="button"
-              >
-                <div className="demo-icon">
-                  <FontAwesomeIcon icon={account.icon} />
-                </div>
-                <div className="demo-info">
-                  <span className="demo-type">{account.type}</span>
-                  <span className="demo-description">{account.description}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
 
         <div className="login-footer">
           <p>Don't have an account? <a href="#signup">Sign up here</a></p>

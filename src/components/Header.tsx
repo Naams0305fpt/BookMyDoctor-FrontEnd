@@ -6,19 +6,18 @@ import {
   faSearch,
   faUser,
   faClock,
-  faSignInAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../contexts/AuthContext";
-import Login from "./Login";
+import { useLoginModal } from "../contexts/LoginModalContext";
 import UserMenu from "./UserMenu";
 import "./Header.css";
 
 const Header: React.FC = () => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
   const { isAuthenticated, user } = useAuth();
+  const { openLogin } = useLoginModal();
 
   const handleSearchFocus = () => {
     setIsSearchExpanded(true);
@@ -105,35 +104,25 @@ const Header: React.FC = () => {
               />
             </div>
 
-            <button className="icon-btn" aria-label="Profile">
-              <FontAwesomeIcon icon={faUser} />
-            </button>
-
-            <button className="icon-btn" aria-label="History">
-              <FontAwesomeIcon icon={faClock} />
-            </button>
-
-            {/* Authentication Section */}
+            {/* User Authentication Icon - Shows login modal when not logged in, user menu when logged in */}
             {isAuthenticated ? (
               <UserMenu />
             ) : (
               <button 
-                className="login-btn"
-                onClick={() => setShowLogin(true)}
+                className="icon-btn" 
+                onClick={openLogin}
                 aria-label="Sign In"
               >
-                <FontAwesomeIcon icon={faSignInAlt} />
-                <span>Sign In</span>
+                <FontAwesomeIcon icon={faUser} />
               </button>
             )}
+
+            <button className="icon-btn" aria-label="History">
+              <FontAwesomeIcon icon={faClock} />
+            </button>
           </div>
         </div>
       </div>
-
-      {/* Login Modal */}
-      {showLogin && (
-        <Login onClose={() => setShowLogin(false)} />
-      )}
     </header>
   );
 };

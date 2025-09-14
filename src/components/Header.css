@@ -165,6 +165,34 @@
   color: white;
 }
 
+/* Enhanced styling for sign-in user icon */
+.icon-btn[aria-label="Sign In"] {
+  position: relative;
+  overflow: visible;
+  animation: subtlePulse 3s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+  0%, 100% {
+    box-shadow: var(--shadow-button);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(19, 182, 198, 0.3);
+  }
+}
+
+.icon-btn[aria-label="Sign In"]:hover {
+  background: linear-gradient(135deg, var(--primary-teal), var(--secondary-blue));
+  color: white;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(19, 182, 198, 0.4);
+  animation: none;
+}
+
+.icon-btn[aria-label="Sign In"]:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
 /* Responsive design */
 @media (max-width: 991px) {
   .nav-links {
@@ -222,10 +250,13 @@
     font-size: 18px;
   }
   
-  .login-btn {
-    padding: 8px 12px;
-    font-size: 14px;
-    gap: 6px;
+  /* Ensure sign-in animation is subtle on mobile */
+  .icon-btn[aria-label="Sign In"] {
+    animation: none;
+  }
+  
+  .icon-btn[aria-label="Sign In"]:hover {
+    transform: translateY(-1px) scale(1.02);
   }
 }
 
@@ -246,33 +277,6 @@
 
 .nav-link.demo-link.active {
   background: linear-gradient(90deg, #f59e0b, #d97706);
-}
-
-/* Login Button Styles */
-.login-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-1);
-  background: linear-gradient(135deg, var(--primary-teal), var(--secondary-blue));
-  color: white;
-  border: none;
-  border-radius: var(--radius-pill);
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: var(--font-ui);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: var(--shadow-button);
-}
-
-.login-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(19, 182, 198, 0.3);
-}
-
-.login-btn svg {
-  font-size: 16px;
 }
 
 @media (max-width: 480px) {
@@ -297,9 +301,5 @@
     z-index: 1001;
     margin-top: 8px;
     height: 48px;
-  }
-  
-  .login-btn span {
-    display: none;
   }
 }
