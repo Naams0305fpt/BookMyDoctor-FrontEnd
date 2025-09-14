@@ -1,19 +1,17 @@
-import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faSearch,
-  faUser,
+import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faBars, 
+  faSearch, 
+  faUser, 
   faClock,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
-import "./Header.css";
-// import logo from "../images/logo.png";
-import { log } from "console";
+  faPlus
+} from '@fortawesome/free-solid-svg-icons';
+import './Header.css';
 
 const Header: React.FC = () => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
 
   const handleSearchFocus = () => {
     setIsSearchExpanded(true);
@@ -34,33 +32,25 @@ const Header: React.FC = () => {
             <FontAwesomeIcon icon={faBars} />
           </button>
 
-          {/* Left - Navigation */}
-          <nav className="nav-links">
-            <a href="#home" className="nav-link">
-              Home
-            </a>
-            <a href="#about" className="nav-link">
-              About
-            </a>
-            <a href="#information" className="nav-link">
-              Information
-            </a>
-            <a href="#get-pro" className="nav-link">
-              Get Pro
-            </a>
-          </nav>
-          {/* Center - Logo */}
+          {/* Center-left - Logo */}
           <div className="logo-section">
-            <img src="/images/logo.png" alt="logo" />
+            <div className="logo-circle">
+              <FontAwesomeIcon icon={faPlus} className="logo-icon" />
+            </div>
+            <span className="logo-text">BOOK MY DOCTOR</span>
           </div>
+
+          {/* Center - Navigation */}
+          <nav className="nav-links">
+            <a href="#home" className="nav-link">Home</a>
+            <a href="#about" className="nav-link">About</a>
+            <a href="#information" className="nav-link">Information</a>
+            <a href="#get-pro" className="nav-link">Get Pro</a>
+          </nav>
 
           {/* Right - Search and Icons */}
           <div className="right-section">
-            <div
-              className={`search-container ${
-                isSearchExpanded ? "expanded" : ""
-              }`}
-            >
+            <div className={`search-container ${isSearchExpanded ? 'expanded' : ''}`}>
               <FontAwesomeIcon icon={faSearch} className="search-icon" />
               <input
                 type="text"
@@ -72,11 +62,11 @@ const Header: React.FC = () => {
                 onBlur={handleSearchBlur}
               />
             </div>
-
+            
             <button className="icon-btn" aria-label="Profile">
               <FontAwesomeIcon icon={faUser} />
             </button>
-
+            
             <button className="icon-btn" aria-label="History">
               <FontAwesomeIcon icon={faClock} />
             </button>

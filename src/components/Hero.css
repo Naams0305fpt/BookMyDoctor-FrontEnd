@@ -89,8 +89,6 @@
   font-weight: 400;
   line-height: 0.8;
   margin-bottom: -10px;
-  padding-top: 25px;
-  padding-right: 25px;
   background: linear-gradient(135deg, var(--primary-teal), var(--secondary-blue));
   background-clip: text;
   -webkit-background-clip: text;
