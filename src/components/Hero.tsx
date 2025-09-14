@@ -16,20 +16,20 @@ const Hero: React.FC = () => {
 
   const heroImages = [
     {
-      leftImage: "/api/placeholder/400/500", // Doctor examining child
-      rightImage: "/api/placeholder/400/500", // Doctor talking to patient
-      alt: "Medical care slide 1",
+      leftImage: '/images/doctor-examining-child-1.png', // Doctor examining child
+      rightImage: '/images/doctor-consultation-1.png', // Doctor talking to patient
+      alt: 'Medical care slide 1'
     },
     {
-      leftImage: "/api/placeholder/400/500", // Another medical scene
-      rightImage: "/api/placeholder/400/500", // Another consultation
-      alt: "Medical care slide 2",
+      leftImage: '/images/doctor-examining-child-2.png', // Another medical scene
+      rightImage: '/images/doctor-consultation-2.png', // Another consultation
+      alt: 'Medical care slide 2'
     },
     {
-      leftImage: "/api/placeholder/400/500", // Third medical scene
-      rightImage: "/api/placeholder/400/500", // Third consultation
-      alt: "Medical care slide 3",
-    },
+      leftImage: '/images/doctor-examining-child-3.png', // Third medical scene
+      rightImage: '/images/doctor-consultation-3.png', // Third consultation
+      alt: 'Medical care slide 3'
+    }
   ];
 
   useEffect(() => {
