@@ -221,6 +221,58 @@
     height: 40px;
     font-size: 18px;
   }
+  
+  .login-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    gap: 6px;
+  }
+}
+
+.nav-link.demo-link {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  color: white !important;
+  border-radius: var(--radius-pill);
+  padding: 8px 16px;
+  font-weight: 600;
+  box-shadow: var(--shadow-button);
+  transition: all 0.2s ease;
+}
+
+.nav-link.demo-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+}
+
+.nav-link.demo-link.active {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+/* Login Button Styles */
+.login-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  background: linear-gradient(135deg, var(--primary-teal), var(--secondary-blue));
+  color: white;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-button);
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(19, 182, 198, 0.3);
+}
+
+.login-btn svg {
+  font-size: 16px;
 }
 
 @media (max-width: 480px) {
@@ -245,5 +297,9 @@
     z-index: 1001;
     margin-top: 8px;
     height: 48px;
+  }
+  
+  .login-btn span {
+    display: none;
   }
 }

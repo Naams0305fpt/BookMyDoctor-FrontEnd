@@ -6,13 +6,19 @@ import {
   faSearch,
   faUser,
   faClock,
+  faSignInAlt,
 } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../contexts/AuthContext";
+import Login from "./Login";
+import UserMenu from "./UserMenu";
 import "./Header.css";
 
 const Header: React.FC = () => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
+  const { isAuthenticated, user } = useAuth();
 
   const handleSearchFocus = () => {
     setIsSearchExpanded(true);
@@ -59,11 +65,20 @@ const Header: React.FC = () => {
             >
               Information
             </Link>
+            {/* Only show Get Pro for doctors */}
+            {user?.userType === 'doctor' && (
+              <Link 
+                to="/get-pro" 
+                className={`nav-link ${isActiveLink("/get-pro") ? "active" : ""}`}
+              >
+                Get Pro
+              </Link>
+            )}
             <Link 
-              to="/get-pro" 
-              className={`nav-link ${isActiveLink("/get-pro") ? "active" : ""}`}
+              to="/demo" 
+              className={`nav-link demo-link ${isActiveLink("/demo") ? "active" : ""}`}
             >
-              Get Pro
+              Demo
             </Link>
           </nav>
           {/* Center - Logo */}
@@ -97,9 +112,28 @@ const Header: React.FC = () => {
             <button className="icon-btn" aria-label="History">
               <FontAwesomeIcon icon={faClock} />
             </button>
+
+            {/* Authentication Section */}
+            {isAuthenticated ? (
+              <UserMenu />
+            ) : (
+              <button 
+                className="login-btn"
+                onClick={() => setShowLogin(true)}
+                aria-label="Sign In"
+              >
+                <FontAwesomeIcon icon={faSignInAlt} />
+                <span>Sign In</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Login Modal */}
+      {showLogin && (
+        <Login onClose={() => setShowLogin(false)} />
+      )}
     </header>
   );
 };
