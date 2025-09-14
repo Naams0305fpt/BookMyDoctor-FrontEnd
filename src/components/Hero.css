@@ -44,8 +44,8 @@
 
 .hero-image {
   position: relative;
-  width: 280px;
-  height: 350px;
+  width: 360px;
+  height: 430px;
   /* Removed border-radius and overflow to prevent cropping of sketch-style images */
   /* Removed box-shadow to make container transparent */
 }
