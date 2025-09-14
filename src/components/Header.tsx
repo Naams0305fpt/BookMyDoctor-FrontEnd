@@ -72,12 +72,15 @@ const Header: React.FC = () => {
                 Get Pro
               </Link>
             )}
-            <Link 
-              to="/demo" 
-              className={`nav-link demo-link ${isActiveLink("/demo") ? "active" : ""}`}
-            >
-              Demo
-            </Link>
+            {/* Only show Demo link when not logged in */}
+            {!isAuthenticated && (
+              <Link 
+                to="/demo" 
+                className={`nav-link demo-link ${isActiveLink("/demo") ? "active" : ""}`}
+              >
+                Demo
+              </Link>
+            )}
           </nav>
           {/* Center - Logo */}
           <div className="logo-section">
