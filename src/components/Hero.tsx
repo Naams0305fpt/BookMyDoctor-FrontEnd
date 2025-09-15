@@ -47,7 +47,7 @@ const Hero: React.FC = () => {
   return (
     <section className="hero">
       <div className="container">
-        <div className="hero-content">
+        <div className="hero-contents">
           {/* Background Images */}
           <div className="hero-images">
             {heroImages.map((slide, index) => (
@@ -102,9 +102,9 @@ const Hero: React.FC = () => {
           </div>
 
           {/* Hero Text Overlay */}
-          <div className="hero-text">
+          <div className="hero-texts">
             <h1>
-              <span className="care-script">Care</span>
+              <span className="care-scripts">Care</span>
               <span className="like-mother">LIKE A MOTHER</span>
             </h1>
 

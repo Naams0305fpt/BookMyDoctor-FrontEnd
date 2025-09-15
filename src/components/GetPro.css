@@ -94,6 +94,8 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  padding-top: 25px;
+  padding-right: 25px;
 }
 
 .like-mother {
@@ -141,12 +143,12 @@
   justify-content: center;
 }
 
-.hero-image img {
+/* .hero-image img {
   max-width: 100%;
   height: auto;
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-}
+} */
 
 /* Features Section */
 .features-section {
