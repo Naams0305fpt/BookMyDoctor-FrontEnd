@@ -16,26 +16,26 @@ const Hero: React.FC = () => {
 
   const heroImages = [
     {
-      leftImage: '/images/doctor-examining-child-1.png', // Doctor examining child
-      rightImage: '/images/doctor-consultation-1.png', // Doctor talking to patient
-      alt: 'Medical care slide 1'
+      leftImage: "/images/doctor-examining-child-1.png", // Doctor examining child
+      rightImage: "/images/doctor-consultation-1.png", // Doctor talking to patient
+      alt: "Medical care slide 1",
     },
     {
-      leftImage: '/images/doctor-examining-child-2.png', // Another medical scene
-      rightImage: '/images/doctor-consultation-2.png', // Another consultation
-      alt: 'Medical care slide 2'
+      leftImage: "/images/doctor-examining-child-2.png", // Another medical scene
+      rightImage: "/images/doctor-consultation-2.png", // Another consultation
+      alt: "Medical care slide 2",
     },
     {
-      leftImage: '/images/doctor-examining-child-3.png', // Third medical scene
-      rightImage: '/images/doctor-consultation-3.png', // Third consultation
-      alt: 'Medical care slide 3'
-    }
+      leftImage: "/images/doctor-examining-child-3.png", // Third medical scene
+      rightImage: "/images/doctor-consultation-3.png", // Third consultation
+      alt: "Medical care slide 3",
+    },
   ];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % totalSlides);
-    }, 5000);
+    }, 7500);
 
     return () => clearInterval(interval);
   }, []);
@@ -47,7 +47,7 @@ const Hero: React.FC = () => {
   return (
     <section className="hero">
       <div className="container">
-        <div className="hero-content">
+        <div className="hero-contents">
           {/* Background Images */}
           <div className="hero-images">
             {heroImages.map((slide, index) => (
@@ -58,19 +58,53 @@ const Hero: React.FC = () => {
                 }`}
               >
                 <div className="hero-image left-image">
-                  <img src="/images/doctor1.png" />
+                  <img
+                    src={slide.leftImage}
+                    alt={`${slide.alt} - left`}
+                    onError={(e) => {
+                      // Fallback for demo - create a colored placeholder
+                      const target = e.target as HTMLImageElement;
+                      target.style.background =
+                        "linear-gradient(135deg, #C8F3E1, #A8E1EA)";
+                      target.style.display = "flex";
+                      target.style.alignItems = "center";
+                      target.style.justifyContent = "center";
+                      target.style.color = "#113B57";
+                      target.style.fontSize = "18px";
+                      target.style.fontWeight = "600";
+                      target.alt = "Doctor examining child";
+                      target.title = "Doctor examining child";
+                    }}
+                  />
                 </div>
                 <div className="hero-image right-image">
-                  <img src="/images/doctor2.png" />
+                  <img
+                    src={slide.rightImage}
+                    alt={`${slide.alt} - right`}
+                    onError={(e) => {
+                      // Fallback for demo - create a colored placeholder
+                      const target = e.target as HTMLImageElement;
+                      target.style.background =
+                        "linear-gradient(135deg, #90B8F7, #A8E1EA)";
+                      target.style.display = "flex";
+                      target.style.alignItems = "center";
+                      target.style.justifyContent = "center";
+                      target.style.color = "#113B57";
+                      target.style.fontSize = "18px";
+                      target.style.fontWeight = "600";
+                      target.alt = "Doctor consultation";
+                      target.title = "Doctor consultation";
+                    }}
+                  />
                 </div>
               </div>
             ))}
           </div>
 
           {/* Hero Text Overlay */}
-          <div className="hero-text">
+          <div className="hero-texts">
             <h1>
-              <span className="care-script">Care</span>
+              <span className="care-scripts">Care</span>
               <span className="like-mother">LIKE A MOTHER</span>
             </h1>
 
@@ -86,6 +120,18 @@ const Hero: React.FC = () => {
           <div className="hotline-badge">
             <FontAwesomeIcon icon={faPhone} className="hotline-icon" />
             <span>Hotline: 1900 9000</span>
+          </div>
+
+          {/* Carousel Dots */}
+          <div className="carousel-dots">
+            {Array.from({ length: totalSlides }).map((_, index) => (
+              <button
+                key={index}
+                className={`dot ${index === currentSlide ? "active" : ""}`}
+                onClick={() => handleDotClick(index)}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
           </div>
         </div>
       </div>

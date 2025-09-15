@@ -68,12 +68,31 @@
   padding: 8px 16px;
   border-radius: var(--radius-pill);
   transition: all 0.15s ease;
+  position: relative;
 }
 
 .nav-link:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: translateY(-1px);
   box-shadow: var(--shadow-button);
+}
+
+.nav-link.active {
+  background: rgba(255, 255, 255, 0.3);
+  color: var(--primary-teal);
+  font-weight: 700;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  background: var(--primary-teal);
+  border-radius: 2px;
 }
 
 /* Right section */
@@ -146,6 +165,34 @@
   color: white;
 }
 
+/* Enhanced styling for sign-in user icon */
+.icon-btn[aria-label="Sign In"] {
+  position: relative;
+  overflow: visible;
+  animation: subtlePulse 3s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+  0%, 100% {
+    box-shadow: var(--shadow-button);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(19, 182, 198, 0.3);
+  }
+}
+
+.icon-btn[aria-label="Sign In"]:hover {
+  background: linear-gradient(135deg, var(--primary-teal), var(--secondary-blue));
+  color: white;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(19, 182, 198, 0.4);
+  animation: none;
+}
+
+.icon-btn[aria-label="Sign In"]:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
 /* Responsive design */
 @media (max-width: 991px) {
   .nav-links {
@@ -202,6 +249,34 @@
     height: 40px;
     font-size: 18px;
   }
+  
+  /* Ensure sign-in animation is subtle on mobile */
+  .icon-btn[aria-label="Sign In"] {
+    animation: none;
+  }
+  
+  .icon-btn[aria-label="Sign In"]:hover {
+    transform: translateY(-1px) scale(1.02);
+  }
+}
+
+.nav-link.demo-link {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  color: white !important;
+  border-radius: var(--radius-pill);
+  padding: 8px 16px;
+  font-weight: 600;
+  box-shadow: var(--shadow-button);
+  transition: all 0.2s ease;
+}
+
+.nav-link.demo-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+}
+
+.nav-link.demo-link.active {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
 }
 
 @media (max-width: 480px) {

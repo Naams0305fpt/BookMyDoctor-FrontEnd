@@ -16,7 +16,26 @@ import {
   faChevronRight, 
   faPhone, 
   faMapMarkerAlt, 
-  faEnvelope 
+  faEnvelope,
+  faUserMd,
+  faHeart,
+  faShieldAlt,
+  faAward,
+  faInfoCircle,
+  faCalendarAlt,
+  faStethoscope,
+  faBrain,
+  faEye,
+  faChild,
+  faBone,
+  faChevronDown,
+  faChevronUp,
+  faCrown,
+  faCheck,
+  faHeadset,
+  faStar,
+  faGift,
+  faCalendarCheck
 } from '@fortawesome/free-solid-svg-icons';
 import { 
   faFacebook, 
@@ -38,7 +57,26 @@ library.add(
   faEnvelope,
   faFacebook, 
   faYoutube, 
-  faTiktok
+  faTiktok,
+  faUserMd,
+  faHeart,
+  faShieldAlt,
+  faAward,
+  faInfoCircle,
+  faCalendarAlt,
+  faStethoscope,
+  faBrain,
+  faEye,
+  faChild,
+  faBone,
+  faChevronDown,
+  faChevronUp,
+  faCrown,
+  faCheck,
+  faHeadset,
+  faStar,
+  faGift,
+  faCalendarCheck
 );
 
 const root = ReactDOM.createRoot(
