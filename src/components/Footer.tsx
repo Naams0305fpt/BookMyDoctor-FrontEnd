@@ -92,27 +92,27 @@ const Footer: React.FC = () => {
         <div className="footer-bottom">
           <div className="social-icons">
             <a
-              href="https://tiktok.com"
+              href="#"
               className="social-link"
-              target="_blank"
+              // target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok"
             >
               <FontAwesomeIcon icon={faTiktok} />
             </a>
             <a
-              href="https://facebook.com"
+              href="#"
               className="social-link"
-              target="_blank"
+              // target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
             >
               <FontAwesomeIcon icon={faFacebook} />
             </a>
             <a
-              href="https://youtube.com"
+              href="#"
               className="social-link"
-              target="_blank"
+              // target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube"
             >
