@@ -1,49 +1,49 @@
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faUser, 
-  faLock, 
-  faEye, 
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUser,
+  faLock,
+  faEye,
   faEyeSlash,
   faSignInAlt,
-  faSpinner
-} from '@fortawesome/free-solid-svg-icons';
-import { useAuth } from '../contexts/AuthContext';
-import { useNotification } from '../contexts/NotificationContext';
-import './Login.css';
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../contexts/AuthContext";
+import { useNotification } from "../contexts/NotificationContext";
+import "./Login.css";
 
 interface LoginProps {
   onClose: () => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onClose }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { login, isLoading } = useAuth();
   const { showNotification } = useNotification();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!email || !password) {
-      setError('Please fill in all fields');
+      setError("Please fill in all fields");
       return;
     }
 
     const success = await login(email, password);
     if (success) {
       showNotification(
-        'success',
-        'Welcome Back!',
-        'You have successfully signed in to your account.',
+        "success",
+        "Welcome Back!",
+        "You have successfully signed in to your account.",
         3000
       );
       onClose();
     } else {
-      setError('Invalid email or password');
+      setError("Invalid email or password");
     }
   };
 
@@ -51,14 +51,17 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
     <div className="login-overlay" onClick={onClose}>
       <div className="login-modal" onClick={(e) => e.stopPropagation()}>
         <div className="login-header">
+          <img src="/images/logo.png" alt="logo" />
           <h2>Welcome Back</h2>
           <p>Sign in to your BookMyDoctor account</p>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <button className="close-btn" onClick={onClose}>
+            ×
+          </button>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email Address</label>
+            <label htmlFor="email">Email Address / Username</label>
             <div className="input-wrapper">
               <FontAwesomeIcon icon={faUser} className="input-icon" />
               <input
@@ -66,7 +69,7 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="Enter your email or Username"
                 required
               />
             </div>
@@ -77,7 +80,7 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
             <div className="input-wrapper">
               <FontAwesomeIcon icon={faLock} className="input-icon" />
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -112,7 +115,15 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
         </form>
 
         <div className="login-footer">
-          <p>Don't have an account? <a href="#signup">Sign up here</a></p>
+          <p>
+            Don't have an account? <a href="#signup">Sign up here</a>
+          </p>
+          <p>
+            Or{" "}
+            <a href="#guest" onClick={onClose}>
+              Continue as guest
+            </a>
+          </p>
         </div>
       </div>
     </div>
