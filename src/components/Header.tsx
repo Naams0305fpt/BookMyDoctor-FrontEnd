@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faSearch,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBars, faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../contexts/AuthContext";
 import { useLoginModal } from "../contexts/LoginModalContext";
 import UserMenu from "./UserMenu";
@@ -45,38 +41,55 @@ const Header: React.FC = () => {
 
           {/* Left - Navigation */}
           <nav className="nav-links">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className={`nav-link ${isActiveLink("/") ? "active" : ""}`}
             >
               Home
             </Link>
-            <Link 
-              to="/about" 
+            <Link
+              to="/about"
               className={`nav-link ${isActiveLink("/about") ? "active" : ""}`}
             >
               About
             </Link>
-            <Link 
-              to="/information" 
-              className={`nav-link ${isActiveLink("/information") ? "active" : ""}`}
+            <Link
+              to="/information"
+              className={`nav-link ${
+                isActiveLink("/information") ? "active" : ""
+              }`}
             >
               Information
             </Link>
             {/* Only show Get Pro for doctors */}
-            {user?.userType === 'doctor' && (
-              <Link 
-                to="/get-pro" 
-                className={`nav-link ${isActiveLink("/get-pro") ? "active" : ""}`}
+            {/* {user?.userType === "doctor" && (
+              <Link
+                to="/get-pro"
+                className={`nav-link ${
+                  isActiveLink("/get-pro") ? "active" : ""
+                }`}
               >
                 Get Pro
+              </Link>
+            )} */}
+            {/*Only show Schedules for doctors */}
+            {user?.userType === "doctor" && (
+              <Link
+                to="#Schedules"
+                className={`nav-link ${
+                  isActiveLink("#Schedules") ? "active" : ""
+                }`}
+              >
+                Schedules
               </Link>
             )}
             {/* Only show Demo link when not logged in */}
             {!isAuthenticated && (
-              <Link 
-                to="/demo" 
-                className={`nav-link demo-link ${isActiveLink("/demo") ? "active" : ""}`}
+              <Link
+                to="/demo"
+                className={`nav-link demo-link ${
+                  isActiveLink("/demo") ? "active" : ""
+                }`}
               >
                 Demo
               </Link>
@@ -110,8 +123,8 @@ const Header: React.FC = () => {
             {isAuthenticated ? (
               <UserMenu />
             ) : (
-              <button 
-                className="icon-btn" 
+              <button
+                className="icon-btn"
                 onClick={openLogin}
                 aria-label="Sign In"
               >
