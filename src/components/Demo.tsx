@@ -1,49 +1,63 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faUserShield, 
-  faUserMd, 
+import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUserShield,
+  faUserMd,
   faUserInjured,
   faSignInAlt,
   faCheckCircle,
-  faCrown
-} from '@fortawesome/free-solid-svg-icons';
-import { useAuth } from '../contexts/AuthContext';
-import './Demo.css';
+  faCrown,
+} from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../contexts/AuthContext";
+import "./Demo.css";
 
 const Demo: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
 
   const demoUsers = [
     {
-      email: 'admin@bookmydoctor.com',
-      name: 'Dr. Admin Smith',
-      type: 'Admin',
+      email: "admin@bookmydoctor.com",
+      name: "Dr. Admin Smith",
+      type: "Admin",
       icon: faUserShield,
-      color: 'admin',
-      description: 'Full system access and management capabilities',
-      features: ['User Management', 'System Configuration', 'Reports & Analytics', 'Doctor Verification']
+      color: "admin",
+      description: "Full system access and management capabilities",
+      features: [
+        "User Management",
+        "System Configuration",
+        "Reports & Analytics",
+        "Doctor Verification",
+      ],
     },
     {
-      email: 'doctor@bookmydoctor.com',
-      name: 'Dr. Sarah Johnson',
-      type: 'Doctor',
+      email: "doctor@bookmydoctor.com",
+      name: "Dr. Sarah Johnson",
+      type: "Doctor",
       icon: faUserMd,
-      color: 'doctor',
-      description: 'Access to Get Pro features and patient management',
-      features: ['Get Pro Access', 'Patient Management', 'Appointment Scheduling', 'Booking History'],
-      specialization: 'Cardiology',
-      isVerified: true
+      color: "doctor",
+      description: "Access to Get Pro features and patient management",
+      features: [
+        "Patient Management",
+        "Appointment Scheduling",
+        "Booking History",
+      ],
+      specialization: "Cardiology",
+      isVerified: true,
     },
     {
-      email: 'patient@bookmydoctor.com',
-      name: 'John Doe',
-      type: 'Patient',
+      email: "patient@bookmydoctor.com",
+      name: "John Doe",
+      type: "Patient",
       icon: faUserInjured,
-      color: 'patient',
-      description: 'Book appointments and manage health records',
-      features: ['Book Appointments', 'View Booking History', 'Doctor Search', 'Health Tracking']
-    }
+      color: "patient",
+      description: "Book appointments and manage health records",
+      features: [
+        "Book Appointments",
+        "View Booking History",
+        "Doctor Search",
+        "Health Tracking",
+      ],
+    },
   ];
 
   return (
@@ -57,21 +71,26 @@ const Demo: React.FC = () => {
         {isAuthenticated && user && (
           <div className="current-user-card">
             <div className="user-avatar-demo">
-              <FontAwesomeIcon icon={
-                user.userType === 'admin' ? faUserShield :
-                user.userType === 'doctor' ? faUserMd : faUserInjured
-              } />
+              <FontAwesomeIcon
+                icon={
+                  user.userType === "admin"
+                    ? faUserShield
+                    : user.userType === "doctor"
+                    ? faUserMd
+                    : faUserInjured
+                }
+              />
             </div>
             <div className="user-info-demo">
               <h3>Currently logged in as:</h3>
               <h2>{user.name}</h2>
               <span className={`user-badge-demo ${user.userType}`}>
-                {user.userType === 'doctor' && user.isVerified && (
+                {user.userType === "doctor" && user.isVerified && (
                   <FontAwesomeIcon icon={faCrown} className="verified-icon" />
                 )}
                 {user.userType.charAt(0).toUpperCase() + user.userType.slice(1)}
               </span>
-              {user.userType === 'doctor' && user.specialization && (
+              {user.userType === "doctor" && user.specialization && (
                 <p className="specialization-demo">{user.specialization}</p>
               )}
             </div>
@@ -92,13 +111,18 @@ const Demo: React.FC = () => {
                 <div className="demo-user-info">
                   <h3>{demoUser.name}</h3>
                   <div className="demo-user-type">
-                    {demoUser.type === 'Doctor' && demoUser.isVerified && (
-                      <FontAwesomeIcon icon={faCrown} className="verified-icon" />
+                    {demoUser.type === "Doctor" && demoUser.isVerified && (
+                      <FontAwesomeIcon
+                        icon={faCrown}
+                        className="verified-icon"
+                      />
                     )}
                     {demoUser.type}
                   </div>
                   {demoUser.specialization && (
-                    <p className="demo-specialization">{demoUser.specialization}</p>
+                    <p className="demo-specialization">
+                      {demoUser.specialization}
+                    </p>
                   )}
                 </div>
               </div>
@@ -115,8 +139,12 @@ const Demo: React.FC = () => {
               </div>
 
               <div className="demo-credentials">
-                <p><strong>Email:</strong> {demoUser.email}</p>
-                <p><strong>Password:</strong> demo123</p>
+                <p>
+                  <strong>Email:</strong> {demoUser.email}
+                </p>
+                <p>
+                  <strong>Password:</strong> demo123
+                </p>
               </div>
 
               <button className="demo-login-btn">
@@ -131,10 +159,20 @@ const Demo: React.FC = () => {
           <h2>How to Test</h2>
           <ol>
             <li>Note the demo credentials for each user type above</li>
-            <li>Click the user icon (👤) in the header to open the sign-in modal</li>
-            <li>Enter any demo email and use password: <strong>demo123</strong></li>
-            <li>Notice how the user icon transforms into a user menu when logged in</li>
-            <li>Explore the user menu options like Profile, Booking History, and Settings</li>
+            <li>
+              Click the user icon (👤) in the header to open the sign-in modal
+            </li>
+            <li>
+              Enter any demo email and use password: <strong>demo123</strong>
+            </li>
+            <li>
+              Notice how the user icon transforms into a user menu when logged
+              in
+            </li>
+            <li>
+              Explore the user menu options like Profile, Booking History, and
+              Settings
+            </li>
             <li>See that "Get Pro" only appears in navigation for doctors</li>
             <li>Try accessing /get-pro directly with different user types</li>
           </ol>
