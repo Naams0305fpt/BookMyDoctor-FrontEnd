@@ -48,6 +48,12 @@
   opacity: 0.8;
 }
 
+.login-header img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
 .close-btn {
   position: absolute;
   top: var(--spacing-3);
@@ -176,7 +182,7 @@
 }
 
 .login-footer {
-  padding: var(--spacing-3) var(--spacing-5) var(--spacing-5);
+  padding: 0 var(--spacing-3) var(--spacing-5) var(--spacing-5);
   text-align: center;
 }
 

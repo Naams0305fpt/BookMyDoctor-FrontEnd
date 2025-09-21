@@ -1,6 +1,7 @@
 .doctors-carousel {
   padding: var(--spacing-6) 0;
-  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.3), transparent);
+  /* background: linear-gradient(180deg, transparent, rgba(255,255,255,0.3), transparent); */
+  background-color: white;
 }
 
 /* Section Header */
