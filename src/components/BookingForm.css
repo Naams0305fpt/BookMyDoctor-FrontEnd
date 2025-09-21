@@ -113,6 +113,7 @@
   transition: all 0.2s ease;
   border: 2px solid transparent;
   font-weight: 500;
+  min-height: 80px;
 }
 
 .time-slot.free {
@@ -122,7 +123,7 @@
 }
 
 .time-slot.free:hover {
-  background-color: #bbf7d0;
+  /* background-color: #bbf7d0; */
   transform: translateY(-2px);
 }
 
@@ -139,6 +140,10 @@
   border-color: #059669;
   transform: translateY(-2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.time-slot.selected:hover {
+  transform: translateY(-2px);
 }
 
 .status-message.warning {
