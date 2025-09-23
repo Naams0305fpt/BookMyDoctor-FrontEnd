@@ -79,6 +79,7 @@
 
 .login-form {
   padding: var(--spacing-5);
+  padding-bottom: var(--spacing-2);
 }
 
 .form-group {

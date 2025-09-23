@@ -17,7 +17,7 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ onClose }) => {
-  const [email, setEmail] = useState("");
+  const [email, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -61,15 +61,15 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email Address / Username</label>
+            <label htmlFor="email">Phone number</label>
             <div className="input-wrapper">
               <FontAwesomeIcon icon={faUser} className="input-icon" />
               <input
                 type="email"
                 id="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email or Username"
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Enter your phone number"
                 required
               />
             </div>
