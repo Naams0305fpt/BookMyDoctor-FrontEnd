@@ -8,21 +8,21 @@ import UserMenu from "./UserMenu";
 import "./Header.css";
 
 const Header: React.FC = () => {
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  // const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const location = useLocation();
   const { isAuthenticated, user } = useAuth();
   const { openLogin } = useLoginModal();
 
-  const handleSearchFocus = () => {
-    setIsSearchExpanded(true);
-  };
+  // const handleSearchFocus = () => {
+  //   setIsSearchExpanded(true);
+  // };
 
-  const handleSearchBlur = () => {
-    if (!searchValue) {
-      setIsSearchExpanded(false);
-    }
-  };
+  // const handleSearchBlur = () => {
+  //   if (!searchValue) {
+  //     setIsSearchExpanded(false);
+  //   }
+  // };
 
   const isActiveLink = (path: string) => {
     if (path === "/" && location.pathname === "/") return true;
@@ -102,11 +102,7 @@ const Header: React.FC = () => {
 
           {/* Right - Search and Icons */}
           <div className="right-section">
-            <div
-              className={`search-container ${
-                isSearchExpanded ? "expanded" : ""
-              }`}
-            >
+            <div className={`search-container`}>
               <FontAwesomeIcon icon={faSearch} className="search-icon" />
               <input
                 type="text"
@@ -114,8 +110,8 @@ const Header: React.FC = () => {
                 placeholder="Search doctors, specialties..."
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                onFocus={handleSearchFocus}
-                onBlur={handleSearchBlur}
+                // onFocus={handleSearchFocus}
+                // onBlur={handleSearchBlur}
               />
             </div>
 
