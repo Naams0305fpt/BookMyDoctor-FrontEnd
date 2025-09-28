@@ -30,7 +30,7 @@ const Demo: React.FC = () => {
       ],
     },
     {
-      phone: "0987654321",
+      phoneNumber: "0987654321",
       name: "Dr. Sarah Johnson",
       type: "Doctor",
       icon: faUserMd,
@@ -45,7 +45,7 @@ const Demo: React.FC = () => {
       isVerified: true,
     },
     {
-      phone: "0983214567",
+      phoneNumber: "0983214567",
       name: "John Doe",
       type: "Patient",
       icon: faUserInjured,
