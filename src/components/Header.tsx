@@ -84,7 +84,7 @@ const Header: React.FC = () => {
               </Link>
             )}
             {/* Only show Demo link when not logged in */}
-            {!isAuthenticated && (
+            {
               <Link
                 to="/demo"
                 className={`nav-link demo-link ${
@@ -93,7 +93,7 @@ const Header: React.FC = () => {
               >
                 Demo
               </Link>
-            )}
+            }
           </nav>
           {/* Center - Logo */}
           <div className="logo-section">
@@ -101,7 +101,9 @@ const Header: React.FC = () => {
           </div>
 
           {/* Right - Search and Icons */}
-          <div className="right-section">
+          <div
+            className={`right-section ${isAuthenticated ? "logged-in" : ""}`}
+          >
             <div className={`search-container`}>
               <FontAwesomeIcon icon={faSearch} className="search-icon" />
               <input

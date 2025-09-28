@@ -103,6 +103,12 @@
   align-items: center;
   gap: var(--spacing-2);
   width: 33.3%;
+  justify-content: flex-end;
+}
+
+/* Right section when logged in */
+.header-content .right-section.logged-in {
+  flex-direction: column-reverse;
 }
 
 /* Search container */
@@ -218,8 +224,7 @@
     font-size: 14px;
     padding: 6px 12px;
   }
-  .right-section {
-    display: flex;
+  .right-section.logged-in {
     flex-direction: column-reverse;
     flex-wrap: wrap;
   }
