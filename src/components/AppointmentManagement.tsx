@@ -197,9 +197,11 @@ const AppointmentManagement: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [appointments, setAppointments] =
     useState<Appointment[]>(mockAppointments);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Available time slots
   const timeSlots = [
+    // Morning slots (9 slots)
     "08:00",
     "08:30",
     "09:00",
@@ -208,6 +210,8 @@ const AppointmentManagement: React.FC = () => {
     "10:30",
     "11:00",
     "11:30",
+    "12:00",
+    // Afternoon slots (9 slots)
     "14:00",
     "14:30",
     "15:00",
@@ -279,13 +283,28 @@ const AppointmentManagement: React.FC = () => {
         </div>
 
         {/* Appointments Table */}
-        <div className="date-picker">
-          <DatePicker
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            dateFormat="dd/MM/yyyy"
-            className="date-picker"
-          />
+        <div className="appointment-controls">
+          {view === "appointment" && (
+            <div className="search-container">
+              <div className="search-bar">
+                <input
+                  type="text"
+                  placeholder="Search by patient name or phone..."
+                  className="search-input"
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={searchQuery}
+                />
+              </div>
+            </div>
+          )}
+          <div className="date-picker">
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              dateFormat="dd/MM/yyyy"
+              className="date-picker"
+            />
+          </div>
         </div>
         {view === "appointment" && (
           <table className="appointments-table">
@@ -302,15 +321,23 @@ const AppointmentManagement: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {appointments.map((appointment) => (
-                <TableRow
-                  key={appointment.id}
-                  appointment={appointment}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onStatusChange={handleStatusChange}
-                />
-              ))}
+              {appointments
+                .filter(
+                  (appointment) =>
+                    appointment.fullName
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()) ||
+                    appointment.phone.includes(searchQuery)
+                )
+                .map((appointment) => (
+                  <TableRow
+                    key={appointment.id}
+                    appointment={appointment}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onStatusChange={handleStatusChange}
+                  />
+                ))}
             </tbody>
           </table>
         )}
@@ -318,36 +345,80 @@ const AppointmentManagement: React.FC = () => {
         {/* Schedule View */}
         {view === "schedule" && (
           <div className="schedule-view">
-            <div className="time-slots-grid">
-              {timeSlots.map((time) => {
-                const matchingAppointment = appointments.find(
-                  (app) =>
-                    app.time === time &&
-                    selectedDate?.toDateString() === new Date().toDateString()
-                );
-                let status: "free" | "waiting" | "busy" = "free";
-                if (matchingAppointment) {
-                  status =
-                    matchingAppointment.status === "pending"
-                      ? "waiting"
-                      : matchingAppointment.status === "completed"
-                      ? "busy"
-                      : "free";
-                }
-                return (
-                  <div key={time} className={`time-slot ${status}`}>
-                    <div className="time">{time}</div>
-                    {matchingAppointment && (
-                      <div className="patient-info">
-                        <div className="patient-name">
-                          {matchingAppointment.fullName}
-                        </div>
-                        <div>{matchingAppointment.phone}</div>
+            <div className="time-slot-schedule">
+              {/* Morning Section */}
+              <div>
+                <h3 className="time-slots-section-title">Morning Schedule</h3>
+                <div className="time-slots-section">
+                  {timeSlots.slice(0, 9).map((time) => {
+                    const matchingAppointment = appointments.find(
+                      (app) =>
+                        app.time === time &&
+                        selectedDate?.toDateString() ===
+                          new Date().toDateString()
+                    );
+                    let status: "free" | "waiting" | "busy" = "free";
+                    if (matchingAppointment) {
+                      status =
+                        matchingAppointment.status === "pending"
+                          ? "waiting"
+                          : matchingAppointment.status === "completed"
+                          ? "busy"
+                          : "free";
+                    }
+                    return (
+                      <div key={time} className={`time-slot ${status}`}>
+                        <div className="time">{time}</div>
+                        {matchingAppointment && (
+                          <div className="patient-info">
+                            <div className="patient-name">
+                              {matchingAppointment.fullName}
+                            </div>
+                            <div>{matchingAppointment.phone}</div>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                );
-              })}
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Afternoon Section */}
+              <div>
+                <h3 className="time-slots-section-title">Afternoon Schedule</h3>
+                <div className="time-slots-section">
+                  {timeSlots.slice(9).map((time) => {
+                    const matchingAppointment = appointments.find(
+                      (app) =>
+                        app.time === time &&
+                        selectedDate?.toDateString() ===
+                          new Date().toDateString()
+                    );
+                    let status: "free" | "waiting" | "busy" = "free";
+                    if (matchingAppointment) {
+                      status =
+                        matchingAppointment.status === "pending"
+                          ? "waiting"
+                          : matchingAppointment.status === "completed"
+                          ? "busy"
+                          : "free";
+                    }
+                    return (
+                      <div key={time} className={`time-slot ${status}`}>
+                        <div className="time">{time}</div>
+                        {matchingAppointment && (
+                          <div className="patient-info">
+                            <div className="patient-name">
+                              {matchingAppointment.fullName}
+                            </div>
+                            <div>{matchingAppointment.phone}</div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         )}
