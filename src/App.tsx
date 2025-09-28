@@ -16,9 +16,14 @@ import {
   LoginModalProvider,
   useLoginModal,
 } from "./contexts/LoginModalContext";
+import {
+  SignUpModalProvider,
+  useSignUpModal,
+} from "./contexts/SignUpModalContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Login from "./components/Login";
+import SignUp from "./components/SignUp";
 import Home from "./components/Home";
 import About from "./components/About";
 import Information from "./components/Information";
@@ -27,6 +32,7 @@ import Demo from "./components/Demo";
 // Main App Content
 const AppContent: React.FC = () => {
   const { showLogin, closeLogin } = useLoginModal();
+  const { showSignUp, closeSignUp } = useSignUpModal();
 
   return (
     <div className="App">
@@ -41,8 +47,9 @@ const AppContent: React.FC = () => {
         <Footer />
       </Router>
 
-      {/* Login Modal at App level for proper positioning */}
+      {/* Modals at App level for proper positioning */}
       {showLogin && <Login onClose={closeLogin} />}
+      {showSignUp && <SignUp onClose={closeSignUp} />}
     </div>
   );
 };
@@ -52,7 +59,9 @@ function App() {
     <AuthProvider>
       <NotificationProvider>
         <LoginModalProvider>
-          <AppContent />
+          <SignUpModalProvider>
+            <AppContent />
+          </SignUpModalProvider>
         </LoginModalProvider>
       </NotificationProvider>
     </AuthProvider>
