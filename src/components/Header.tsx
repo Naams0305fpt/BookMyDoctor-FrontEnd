@@ -73,7 +73,7 @@ const Header: React.FC = () => {
               </Link>
             )} */}
             {/*Only show Schedules for doctors */}
-            {user?.userType === "doctor" && (
+            {/* {user?.userType === "doctor" && (
               <Link
                 to="#Schedules"
                 className={`nav-link ${
@@ -82,7 +82,7 @@ const Header: React.FC = () => {
               >
                 Schedules
               </Link>
-            )}
+            )} */}
             {/* Only show Demo link when not logged in */}
             {
               <Link
