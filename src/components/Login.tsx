@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../contexts/AuthContext";
 import { useNotification } from "../contexts/NotificationContext";
+import { useSignUpModal } from "../contexts/SignUpModalContext";
 import "./Login.css";
 
 interface LoginProps {
@@ -17,23 +18,24 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ onClose }) => {
-  const [email, setPhone] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const { login, isLoading } = useAuth();
   const { showNotification } = useNotification();
+  const { openSignUp } = useSignUpModal();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (!email || !password) {
+    if (!phoneNumber || !password) {
       setError("Please fill in all fields");
       return;
     }
 
-    const success = await login(email, password);
+    const success = await login(phoneNumber, password);
     if (success) {
       showNotification(
         "success",
@@ -43,7 +45,7 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
       );
       onClose();
     } else {
-      setError("Invalid email or password");
+      setError("Invalid phone number or password");
     }
   };
 
@@ -61,15 +63,17 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Phone number</label>
+            <label htmlFor="phoneNumber">Phone number</label>
             <div className="input-wrapper">
               <FontAwesomeIcon icon={faUser} className="input-icon" />
               <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setPhone(e.target.value)}
+                type="tel"
+                id="phoneNumber"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="Enter your phone number"
+                pattern="[0-9]*"
+                maxLength={10}
                 required
               />
             </div>
@@ -116,7 +120,16 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
 
         <div className="login-footer">
           <p>
-            Don't have an account? <a href="#signup">Sign up here</a>
+            Don't have an account?{" "}
+            <a
+              onClick={(e) => {
+                e.preventDefault();
+                onClose();
+                openSignUp();
+              }}
+            >
+              Sign up here
+            </a>
           </p>
           <p>
             Or{" "}

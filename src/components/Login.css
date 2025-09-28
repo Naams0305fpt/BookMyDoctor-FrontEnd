@@ -28,7 +28,7 @@
 }
 
 .login-header {
-  padding: var(--spacing-5) var(--spacing-5) var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5) var(--spacing-3);
   text-align: center;
   background: var(--primary-gradient);
   border-radius: var(--radius-container) var(--radius-container) 0 0;
@@ -78,7 +78,7 @@
 }
 
 .login-form {
-  padding: var(--spacing-5);
+  padding: var(--spacing-3);
   padding-bottom: var(--spacing-2);
 }
 
@@ -155,7 +155,11 @@
 .login-btn {
   width: 100%;
   padding: 16px 24px;
-  background: linear-gradient(135deg, var(--primary-teal), var(--secondary-blue));
+  background: linear-gradient(
+    135deg,
+    var(--primary-teal),
+    var(--secondary-blue)
+  );
   color: white;
   border: none;
   border-radius: var(--radius-card);
@@ -211,7 +215,7 @@
     margin: var(--spacing-2);
     max-width: none;
   }
-  
+
   .login-header,
   .login-form {
     padding-left: var(--spacing-3);
