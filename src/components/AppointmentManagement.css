@@ -126,12 +126,43 @@
   width: max-content;
   margin-left: auto;
   margin-bottom: 5px;
- 
 }
 
 .date-picker input {
   border: 2px solid #11c7d4;
 }
+
+.appointment-controls {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 2rem;
+}
+
+.search-bar {
+  flex: 0 1 300px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 0;
+  border: none;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  background: transparent;
+}
+
+.search-input:focus {
+  outline: none;
+  border-bottom-color: #11c7d4;
+}
+
+.search-input::placeholder {
+  color: #94a3b8;
+  font-style: italic;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -146,11 +177,27 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.time-slots-grid {
+.time-slots-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 1rem 0;
+}
+
+.time-slots-section {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 1rem;
-  margin: 1rem 0;
+  margin-bottom: 20px;
+}
+
+.time-slots-section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .time-slot {

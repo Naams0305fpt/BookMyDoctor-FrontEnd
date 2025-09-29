@@ -1,0 +1,25 @@
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-3);
+}
+
+/* Add some spacing between form sections */
+.signup-form .form-group + .form-group {
+  margin-top: var(--spacing-3);
+}
+
+/* Style for password requirements text */
+.password-requirements {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2);
+  }
+}

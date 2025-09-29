@@ -16,7 +16,7 @@ const Demo: React.FC = () => {
 
   const demoUsers = [
     {
-      email: "admin@bookmydoctor.com",
+      phoneNumber: "0123456789",
       name: "Dr. Admin Smith",
       type: "Admin",
       icon: faUserShield,
@@ -30,7 +30,7 @@ const Demo: React.FC = () => {
       ],
     },
     {
-      email: "doctor@bookmydoctor.com",
+      phoneNumber: "0987654321",
       name: "Dr. Sarah Johnson",
       type: "Doctor",
       icon: faUserMd,
@@ -45,7 +45,7 @@ const Demo: React.FC = () => {
       isVerified: true,
     },
     {
-      email: "patient@bookmydoctor.com",
+      phoneNumber: "0983214567",
       name: "John Doe",
       type: "Patient",
       icon: faUserInjured,
@@ -140,7 +140,7 @@ const Demo: React.FC = () => {
 
               <div className="demo-credentials">
                 <p>
-                  <strong>Email:</strong> {demoUser.email}
+                  <strong>Phone number:</strong> {demoUser.phoneNumber}
                 </p>
                 <p>
                   <strong>Password:</strong> demo123

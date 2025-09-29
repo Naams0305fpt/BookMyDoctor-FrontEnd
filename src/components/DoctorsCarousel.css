@@ -263,11 +263,13 @@
   .doctors-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+  .doctors-grid .doctor-card:nth-child(3) {
+    display: none;
+  }
   .prev-btn {
     left: -20px;
   }
-  
+
   .next-btn {
     right: -20px;
   }
@@ -277,22 +279,22 @@
   .carousel-container {
     padding: var(--spacing-4);
   }
-  
+
   .doctor-avatar {
     width: 180px;
     height: 180px;
   }
-  
+
   .arrow-btn {
     width: 50px;
     height: 50px;
     font-size: 20px;
   }
-  
+
   .prev-btn {
     left: -15px;
   }
-  
+
   .next-btn {
     right: -15px;
   }
@@ -302,36 +304,39 @@
   .doctors-grid {
     grid-template-columns: 1fr;
   }
-  
+  .doctors-grid .doctor-card:nth-child(2) {
+    display: none;
+  }
+
   .carousel-container {
     padding: var(--spacing-3);
     margin: 0 var(--spacing-2);
   }
-  
+
   .arrow-btn {
     width: 44px;
     height: 44px;
     font-size: 18px;
   }
-  
+
   .prev-btn {
     left: -10px;
   }
-  
+
   .next-btn {
     right: -10px;
   }
-  
+
   .doctor-avatar {
     width: 160px;
     height: 160px;
   }
-  
+
   .modal-body {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .modal-avatar {
     align-self: center;
   }
@@ -341,24 +346,24 @@
   .arrow-btn {
     display: none;
   }
-  
+
   .carousel-container {
     padding: var(--spacing-2);
   }
-  
+
   .doctor-card {
     padding: var(--spacing-3);
   }
-  
+
   .doctor-avatar {
     width: 140px;
     height: 140px;
   }
-  
+
   .section-title h2 {
     font-size: 28px;
   }
-  
+
   .title-icon {
     font-size: 24px;
   }

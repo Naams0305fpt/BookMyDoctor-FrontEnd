@@ -1,6 +1,11 @@
 .booking-section {
   padding: var(--spacing-6) 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent, rgba(255,255,255,0.3));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.3),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );
 }
 
 /* Section Header */
@@ -48,8 +53,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: linear-gradient(135deg, #C8F3E1 0%, #A8E1EA 50%, #90B8F7 100%),
-                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="medical" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23medical)"/></svg>');
+  background-image: linear-gradient(
+      135deg,
+      #c8f3e1 0%,
+      #a8e1ea 50%,
+      #90b8f7 100%
+    ),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="medical" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23medical)"/></svg>');
   background-size: cover;
   background-position: center;
   z-index: 1;
@@ -192,14 +202,14 @@
 .booking-form .input.error,
 .booking-form select.error,
 .booking-form textarea.error {
-  border-color: #EF4444;
+  border-color: #ef4444;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
 .booking-form .input.success,
 .booking-form select.success,
 .booking-form textarea.success {
-  border-color: #10B981;
+  border-color: #10b981;
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
@@ -218,6 +228,7 @@
   background: white !important;
   transition: all 0.15s ease !important;
   min-height: 48px !important;
+  box-shadow: var(--shadow-soft);
 }
 
 .react-datepicker-popper {
@@ -251,7 +262,7 @@ select {
 
 /* Error Messages */
 .error-message {
-  color: #EF4444;
+  color: #ef4444;
   font-size: 12px;
   font-weight: 500;
   margin-top: 4px;
@@ -280,19 +291,28 @@ select {
 }
 
 .booking-submit.loading::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
   animation: loading 1.5s infinite;
 }
 
 @keyframes loading {
-  0% { left: -100%; }
-  100% { left: 100%; }
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 /* Status Messages */
@@ -309,12 +329,12 @@ select {
 }
 
 .status-message.success {
-  background: #10B981;
+  background: #10b981;
   color: white;
 }
 
 .status-message.error {
-  background: #EF4444;
+  background: #ef4444;
   color: white;
 }
 
@@ -334,11 +354,11 @@ select {
   .form-columns {
     gap: var(--spacing-4);
   }
-  
+
   .booking-form {
     padding: var(--spacing-4);
   }
-  
+
   .symptom-textarea {
     height: 180px !important;
     min-height: 180px !important;
@@ -350,27 +370,27 @@ select {
     grid-template-columns: 1fr;
     gap: var(--spacing-3);
   }
-  
+
   .booking-form {
     padding: var(--spacing-3);
     margin: var(--spacing-2);
   }
-  
+
   .form-column {
     gap: var(--spacing-2);
   }
-  
+
   .symptom-textarea {
     height: 150px !important;
     min-height: 150px !important;
   }
-  
+
   .booking-submit {
     font-size: 18px;
     padding: 14px 32px;
     min-width: 100%;
   }
-  
+
   .status-message {
     right: 10px;
     left: 10px;
@@ -382,24 +402,24 @@ select {
   .booking-section {
     padding: var(--spacing-4) 0;
   }
-  
+
   .section-title h2 {
     font-size: 28px;
   }
-  
+
   .title-icon {
     font-size: 24px;
   }
-  
+
   .booking-form {
     padding: var(--spacing-2);
     margin: var(--spacing-1);
   }
-  
+
   .form-group {
     gap: 6px;
   }
-  
+
   .booking-form .input,
   .booking-form select,
   .booking-form textarea {
@@ -407,12 +427,12 @@ select {
     font-size: 14px;
     min-height: 44px;
   }
-  
+
   .symptom-textarea {
     height: 120px !important;
     min-height: 120px !important;
   }
-  
+
   .booking-submit {
     font-size: 16px;
     padding: 12px 24px;

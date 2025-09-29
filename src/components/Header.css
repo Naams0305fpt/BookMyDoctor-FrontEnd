@@ -6,9 +6,9 @@
   /* background: var(--primary-gradient); */
   background: linear-gradient(
     90deg,
-    rgba(200, 243, 225, 0.6) 0%,   /* #C8F3E1 */
-    rgba(168, 225, 234, 0.6) 35%,  /* #A8E1EA */
-    rgba(144, 184, 247, 0.6) 100%  /* #90B8F7 */
+    rgba(200, 243, 225, 0.6) 0%,
+    /* #C8F3E1 */ rgba(168, 225, 234, 0.6) 35%,
+    /* #A8E1EA */ rgba(144, 184, 247, 0.6) 100% /* #90B8F7 */
   );
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -34,6 +34,7 @@
   padding: 8px;
   border-radius: 8px;
   transition: all 0.15s ease;
+  width: 33.3%;
 }
 
 .hamburger-btn:hover {
@@ -44,7 +45,9 @@
 .logo-section {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
+  width: 33.3%;
 }
 
 .logo-section img {
@@ -54,11 +57,10 @@
 /* Navigation */
 .nav-links {
   display: flex;
-  gap: var(--spacing-4);
+  gap: var(--spacing-1);
   white-space: nowrap;
+  width: 33.3%;
 }
-
-
 
 .nav-link {
   color: var(--accent-navy);
@@ -84,7 +86,7 @@
 }
 
 .nav-link.active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -2px;
   left: 50%;
@@ -100,6 +102,13 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
+  width: 33.3%;
+  justify-content: flex-end;
+}
+
+/* Right section when logged in */
+.header-content .right-section.logged-in {
+  flex-direction: column-reverse;
 }
 
 /* Search container */
@@ -111,15 +120,15 @@
   border-radius: var(--radius-pill);
   padding: 0 20px;
   width: 360px;
-  height: 40px;
+  height: 45px;
   box-shadow: var(--shadow-soft);
   transition: all 0.25s ease;
 }
 
-.search-container.expanded {
+/* .search-container.expanded {
   width: 420px;
   box-shadow: 0 0 0 3px rgba(19, 182, 198, 0.2);
-}
+} */
 
 .search-icon {
   color: var(--primary-teal);
@@ -135,10 +144,14 @@
   font-size: 16px;
   color: var(--body-text);
   background: transparent;
+  width: 100%;
 }
 
 .search-input::placeholder {
   color: rgba(14, 43, 58, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Icon buttons */
@@ -173,7 +186,8 @@
 }
 
 @keyframes subtlePulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: var(--shadow-button);
   }
   50% {
@@ -182,7 +196,11 @@
 }
 
 .icon-btn[aria-label="Sign In"]:hover {
-  background: linear-gradient(135deg, var(--primary-teal), var(--secondary-blue));
+  background: linear-gradient(
+    135deg,
+    var(--primary-teal),
+    var(--secondary-blue)
+  );
   color: white;
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 8px 20px rgba(19, 182, 198, 0.4);
@@ -195,19 +213,25 @@
 
 /* Responsive design */
 @media (max-width: 991px) {
-  .nav-links {
-    gap: var(--spacing-2);
+  .hamburger-btn {
+    display: block;
   }
-  
+  .nav-links {
+    display: none;
+  }
+
   .nav-link {
     font-size: 14px;
     padding: 6px 12px;
   }
-  
+  .right-section.logged-in {
+    flex-direction: column-reverse;
+    flex-wrap: wrap;
+  }
   .search-container {
     width: 280px;
   }
-  
+
   .search-container.expanded {
     width: 320px;
   }
@@ -217,44 +241,44 @@
   .hamburger-btn {
     display: block;
   }
-  
+
   .nav-links {
     display: none;
   }
-  
+
   .logo-text {
     font-size: 14px;
   }
-  
+
   .logo-circle {
     width: 48px;
     height: 48px;
     font-size: 20px;
   }
-  
+
   .search-container {
     width: 200px;
   }
-  
+
   .search-container.expanded {
     width: 250px;
   }
-  
+
   .right-section {
     gap: var(--spacing-1);
   }
-  
+
   .icon-btn {
     width: 40px;
     height: 40px;
     font-size: 18px;
   }
-  
+
   /* Ensure sign-in animation is subtle on mobile */
   .icon-btn[aria-label="Sign In"] {
     animation: none;
   }
-  
+
   .icon-btn[aria-label="Sign In"]:hover {
     transform: translateY(-1px) scale(1.02);
   }
@@ -281,17 +305,18 @@
 
 @media (max-width: 480px) {
   .header-content {
+    justify-content: space-between;
     gap: var(--spacing-1);
   }
-  
+
   .logo-text {
     display: none;
   }
-  
+
   .search-container {
     width: 120px;
   }
-  
+
   .search-container.expanded {
     position: absolute;
     top: 100%;
