@@ -18,7 +18,7 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ onClose }) => {
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [identifier, setIdentifier] = useState(""); // thay phoneNumber -> identifier
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -30,12 +30,12 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
     e.preventDefault();
     setError("");
 
-    if (!phoneNumber || !password) {
+    if (!identifier || !password) {
       setError("Please fill in all fields");
       return;
     }
 
-    const success = await login(phoneNumber, password);
+    const success = await login(identifier, password);
     if (success) {
       showNotification(
         "success",
@@ -45,7 +45,7 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
       );
       onClose();
     } else {
-      setError("Invalid phone number or password");
+      setError("Invalid identifier or password");
     }
   };
 
@@ -63,17 +63,16 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="phoneNumber">Phone number</label>
+            <label htmlFor="identifier">Username, Phone or Email</label>
+
             <div className="input-wrapper">
               <FontAwesomeIcon icon={faUser} className="input-icon" />
               <input
-                type="tel"
-                id="phoneNumber"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="Enter your phone number"
-                pattern="[0-9]*"
-                maxLength={10}
+                type="text"
+                id="identifier"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder="Enter your phone or email"
                 required
               />
             </div>
@@ -121,7 +120,8 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
         <div className="login-footer">
           <p>
             Don't have an account?{" "}
-            <a
+            <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 onClose();
@@ -129,7 +129,7 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
               }}
             >
               Sign up here
-            </a>
+            </button>
           </p>
           <p>
             Or{" "}

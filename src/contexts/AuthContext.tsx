@@ -5,6 +5,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
+import { api } from "../services/api";
 
 export type UserType = "admin" | "doctor" | "patient";
 
@@ -12,16 +13,16 @@ export interface User {
   id: string;
   name: string;
   userType: UserType;
-  phone: string; // Made required since it's our primary identifier
-  email?: string; // Made optional since we're using phone-based auth
+  phone: string;
+  email?: string;
   avatar?: string;
-  specialization?: string; // For doctors
-  isVerified?: boolean; // For doctors
+  specialization?: string;
+  isVerified?: boolean;
 }
 
 export interface RegisterData {
-  firstName: string;
-  lastName: string;
+  username: string;
+  email?: string;
   phone: string;
   password: string;
 }
@@ -29,43 +30,15 @@ export interface RegisterData {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (phoneNumber: string, password: string) => Promise<boolean>;
-  register: (data: RegisterData) => Promise<boolean>;
+  login: (identifier: string, password: string) => Promise<boolean>;
+  register: (
+    data: RegisterData
+  ) => Promise<{ success: boolean; message?: string }>; // <-- sửa đây
   logout: () => void;
   isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Mock users for demonstration
-const mockUsers: User[] = [
-  {
-    id: "1",
-    phone: "0123456789",
-    name: "Dr. Admin Smith",
-    userType: "admin",
-    avatar: "/images/admin-avatar.png",
-    email: "admin@bookmydoctor.com",
-  },
-  {
-    id: "2",
-    phone: "0987654321",
-    name: "Dr. Sarah Johnson",
-    userType: "doctor",
-    avatar: "/images/doctor-avatar.png",
-    specialization: "Cardiology",
-    isVerified: true,
-    email: "doctor@bookmydoctor.com",
-  },
-  {
-    id: "3",
-    phone: "0983214567",
-    name: "John Doe",
-    userType: "patient",
-    avatar: "/images/patient-avatar.png",
-    email: "patient@bookmydoctor.com",
-  },
-];
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -76,7 +49,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored user session on app load
     const storedUser = localStorage.getItem("currentUser");
     if (storedUser) {
       try {
@@ -90,66 +62,83 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (
-    phoneNumber: string,
+    identifier: string,
     password: string
   ): Promise<boolean> => {
     setIsLoading(true);
+    try {
+      const result = await api.login({ identifier, password });
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (result) {
+        const loggedUser: User = {
+          id: result.id || "temp-id",
+          name: result.username || identifier,
+          phone: result.phone || identifier,
+          userType: "patient", // Hoặc lấy từ result.role nếu backend có trả
+          email: result.email,
+          avatar: "/images/default-avatar.png",
+        };
 
-    // Check if the phone number exists and the password matches demo123
-    const foundUser = mockUsers.find((u) => u.phone === phoneNumber);
-    const isValidPassword = password === "demo123";
+        setUser(loggedUser);
+        localStorage.setItem("currentUser", JSON.stringify(loggedUser));
+        if (result.token) {
+          localStorage.setItem("token", result.token);
+        }
 
-    if (foundUser && isValidPassword) {
-      setUser(foundUser);
-      localStorage.setItem("currentUser", JSON.stringify(foundUser));
-      setIsLoading(false);
-      return true;
+        setIsLoading(false);
+        return true;
+      }
+    } catch (err) {
+      console.error("Login failed:", err);
     }
-
     setIsLoading(false);
     return false;
   };
 
-  const register = async (data: RegisterData): Promise<boolean> => {
+  const register = async (
+    data: RegisterData
+  ): Promise<{ success: boolean; message?: string }> => {
     setIsLoading(true);
+    try {
+      const result = await api.register({
+        username: data.username,
+        email: data.email || "",
+        phone: data.phone,
+        password: data.password,
+      });
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (result) {
+        const newUser: User = {
+          id: result.id || "temp-id",
+          name: data.username,
+          userType: "patient",
+          phone: data.phone,
+          email: data.email,
+          avatar: "/images/default-avatar.png",
+        };
 
-    // Check if user already exists with the same phone number
-    const userExists = mockUsers.some((u) => u.phone === data.phone);
+        setUser(newUser);
+        localStorage.setItem("currentUser", JSON.stringify(newUser));
+        if (result.token) {
+          localStorage.setItem("token", result.token);
+        }
 
-    if (userExists) {
-      setIsLoading(false);
-      return false;
+        setIsLoading(false);
+        return { success: true, message: "Registration successful" };
+      }
+    } catch (err: any) {
+      console.error("Register failed:", err);
+      return { success: false, message: err.message || "Registration failed" };
     }
 
-    // Create new user
-    const newUser: User = {
-      id: (mockUsers.length + 1).toString(),
-      name: `${data.firstName} ${data.lastName}`,
-      userType: "patient",
-      phone: data.phone,
-      avatar: "/images/default-avatar.png",
-    };
-
-    // In a real app, you would make an API call here
-    mockUsers.push(newUser);
-
-    // Log in the new user
-    setUser(newUser);
-    localStorage.setItem("currentUser", JSON.stringify(newUser));
-
     setIsLoading(false);
-    return true;
+    return { success: false, message: "Registration failed" };
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("currentUser");
+    localStorage.removeItem("token");
   };
 
   const value: AuthContextType = {

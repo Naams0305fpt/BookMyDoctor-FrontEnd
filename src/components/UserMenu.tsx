@@ -1,19 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faUser, 
-  faSignOutAlt, 
+import React, { useState, useRef, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUser,
+  faSignOutAlt,
   faChevronDown,
   faCrown,
   faUserShield,
   faUserMd,
   faUserInjured,
   faCog,
-  faCalendarAlt
-} from '@fortawesome/free-solid-svg-icons';
-import { useAuth, UserType } from '../contexts/AuthContext';
-import { useNotification } from '../contexts/NotificationContext';
-import './UserMenu.css';
+  faCalendarAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import { useAuth, UserType } from "../contexts/AuthContext";
+import { useNotification } from "../contexts/NotificationContext";
+import "./UserMenu.css";
 
 const UserMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,17 +28,17 @@ const UserMenu: React.FC = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const getUserIcon = (userType: UserType) => {
     switch (userType) {
-      case 'admin':
+      case "admin":
         return faUserShield;
-      case 'doctor':
+      case "doctor":
         return faUserMd;
-      case 'patient':
+      case "patient":
         return faUserInjured;
       default:
         return faUser;
@@ -47,14 +47,14 @@ const UserMenu: React.FC = () => {
 
   const getUserBadgeColor = (userType: UserType) => {
     switch (userType) {
-      case 'admin':
-        return 'admin';
-      case 'doctor':
-        return 'doctor';
-      case 'patient':
-        return 'patient';
+      case "admin":
+        return "admin";
+      case "doctor":
+        return "doctor";
+      case "patient":
+        return "patient";
       default:
-        return 'patient';
+        return "patient";
     }
   };
 
@@ -62,9 +62,9 @@ const UserMenu: React.FC = () => {
     logout();
     setIsOpen(false);
     showNotification(
-      'success',
-      'Signed Out',
-      'You have been successfully signed out.',
+      "success",
+      "Signed Out",
+      "You have been successfully signed out.",
       3000
     );
   };
@@ -73,27 +73,31 @@ const UserMenu: React.FC = () => {
 
   return (
     <div className="user-menu" ref={menuRef}>
-      <button 
+      <button
         className="user-menu-trigger"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
-        <div className="user-avatar">
-          <FontAwesomeIcon icon={getUserIcon(user.userType)} />
+        <div className="user-info-container">
+          <div className="user-avatar">
+            <FontAwesomeIcon icon={getUserIcon(user.userType)} />
+          </div>
+          <div className="user-info">
+            <span className="user-name">{user.name}</span>
+            <span className={`user-type ${getUserBadgeColor(user.userType)}`}>
+              {user.userType === "doctor" && user.isVerified && (
+                <FontAwesomeIcon icon={faCrown} className="verified-icon" />
+              )}
+              {user.userType.charAt(0).toUpperCase() + user.userType.slice(1)}
+            </span>
+          </div>
         </div>
-        <div className="user-info">
-          <span className="user-name">{user.name}</span>
-          <span className={`user-type ${getUserBadgeColor(user.userType)}`}>
-            {user.userType === 'doctor' && user.isVerified && (
-              <FontAwesomeIcon icon={faCrown} className="verified-icon" />
-            )}
-            {user.userType.charAt(0).toUpperCase() + user.userType.slice(1)}
-          </span>
+        <div className="dropdown-icon">
+          <FontAwesomeIcon
+            icon={faChevronDown}
+            className={`dropdown-arrow ${isOpen ? "open" : ""}`}
+          />
         </div>
-        <FontAwesomeIcon 
-          icon={faChevronDown} 
-          className={`dropdown-arrow ${isOpen ? 'open' : ''}`} 
-        />
       </button>
 
       {isOpen && (
@@ -105,20 +109,22 @@ const UserMenu: React.FC = () => {
             <div className="user-details">
               <h4>{user.name}</h4>
               <p>{user.email}</p>
-              {user.userType === 'doctor' && user.specialization && (
+              {user.userType === "doctor" && user.specialization && (
                 <p className="specialization">{user.specialization}</p>
               )}
-              <span className={`user-badge ${getUserBadgeColor(user.userType)}`}>
-                {user.userType === 'doctor' && user.isVerified && (
+              <span
+                className={`user-badge ${getUserBadgeColor(user.userType)}`}
+              >
+                {user.userType === "doctor" && user.isVerified && (
                   <FontAwesomeIcon icon={faCrown} className="verified-icon" />
                 )}
                 {user.userType.charAt(0).toUpperCase() + user.userType.slice(1)}
               </span>
             </div>
           </div>
-          
+
           <div className="dropdown-divider"></div>
-          
+
           <div className="dropdown-menu">
             <button className="menu-item">
               <FontAwesomeIcon icon={faUser} />

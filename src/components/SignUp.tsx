@@ -21,8 +21,8 @@ interface SignUpProps {
 
 const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    username: "",
+    email: "",
     phone: "",
     password: "",
     confirmPassword: "",
@@ -68,14 +68,14 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
     }
 
     try {
-      const success = await register({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        phone: formData.phone,
+      const result = await register({
+        username: formData.username,
         password: formData.password,
+        email: formData.email,
+        phone: formData.phone,
       });
 
-      if (success) {
+      if (result.success) {
         showNotification(
           "success",
           "Welcome!",
@@ -84,10 +84,10 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
         );
         onClose();
       } else {
-        setError("An account with this phone number already exists.");
+        setError(result.message || "Failed to create account");
       }
-    } catch (err) {
-      setError("Failed to create account. Please try again.");
+    } catch (err: any) {
+      setError(err.message || "Failed to create account. Please try again.");
     }
   };
 
@@ -104,37 +104,37 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="firstName">First Name</label>
-              <div className="input-wrapper">
-                <FontAwesomeIcon icon={faUser} className="input-icon" />
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  placeholder="First Name"
-                  required
-                />
-              </div>
-            </div>
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <div className="input-wrapper">
+              <FontAwesomeIcon icon={faUser} className="input-icon" />
 
-            <div className="form-group">
-              <label htmlFor="lastName">Last Name</label>
-              <div className="input-wrapper">
-                <FontAwesomeIcon icon={faUser} className="input-icon" />
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  placeholder="Last Name"
-                  required
-                />
-              </div>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Enter your username"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="username">Email</label>
+            <div className="input-wrapper">
+              <FontAwesomeIcon icon={faUser} className="input-icon" />
+
+              <input
+                type="text"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                required
+              />
             </div>
           </div>
 
@@ -225,7 +225,8 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
         <div className="login-footer">
           <p>
             Already have an account?{" "}
-            <a
+            <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 onClose();
@@ -233,7 +234,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               }}
             >
               Sign in here
-            </a>
+            </button>
           </p>
         </div>
       </div>

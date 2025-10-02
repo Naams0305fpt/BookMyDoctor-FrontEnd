@@ -15,6 +15,7 @@
   transition: all 0.2s ease;
   backdrop-filter: blur(10px);
   font-family: var(--font-ui);
+  width: 360px;
 }
 
 .user-menu-trigger:hover {
@@ -22,6 +23,14 @@
   border-color: var(--primary-teal);
   transform: translateY(-1px);
   box-shadow: var(--shadow-card);
+}
+
+.user-info-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex: 1;
+  min-width: 0;
 }
 
 .user-avatar {
@@ -255,20 +264,20 @@
     padding: 6px 12px;
     gap: var(--spacing-1);
   }
-  
+
   .user-info {
     display: none;
   }
-  
+
   .user-dropdown {
     width: 260px;
     right: -10px;
   }
-  
+
   .dropdown-header {
     padding: var(--spacing-3);
   }
-  
+
   .user-avatar-large {
     width: 50px;
     height: 50px;

@@ -197,11 +197,12 @@
   font-size: 14px;
 }
 
-.login-footer a {
+.login-footer button {
+  background: none;
+  border: none;
   color: var(--primary-teal);
-  text-decoration: none;
+  cursor: pointer;
   font-weight: 600;
-  transition: color 0.2s ease;
 }
 
 .login-footer a:hover {
