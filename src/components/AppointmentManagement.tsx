@@ -12,8 +12,6 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./AppointmentManagement.css";
-import { time } from "console";
-import Time from "react-datepicker/dist/time";
 
 // Types
 interface Appointment {
@@ -26,12 +24,6 @@ interface Appointment {
   prescription: string;
   status: "pending" | "completed" | "cancelled";
   time?: string;
-}
-
-interface TimeSlot {
-  time: string;
-  status: "free" | "waiting" | "busy";
-  appointmentId?: number;
 }
 
 interface TableRowProps {
