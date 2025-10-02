@@ -97,7 +97,10 @@ const Header: React.FC = () => {
           </nav>
           {/* Center - Logo */}
           <div className="logo-section">
-            <img src="/images/logo.png" alt="logo" />
+            <a href="/">
+              {" "}
+              <img src="/images/logo.png" alt="logo" />
+            </a>
           </div>
 
           {/* Right - Search and Icons */}
