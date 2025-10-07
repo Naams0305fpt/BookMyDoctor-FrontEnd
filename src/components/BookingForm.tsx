@@ -205,7 +205,6 @@ const BookingForm: React.FC = () => {
                     id="fullName"
                     type="text"
                     className={getInputClass("fullName")}
-                    value={formData.fullName}
                     onChange={(e) =>
                       handleInputChange("fullName", e.target.value)
                     }
@@ -222,7 +221,6 @@ const BookingForm: React.FC = () => {
                     id="phone"
                     type="tel"
                     className={getInputClass("phone")}
-                    value={formData.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                     placeholder="Enter phone number"
                   />
@@ -267,7 +265,6 @@ const BookingForm: React.FC = () => {
                   <select
                     id="gender"
                     className={getInputClass("gender")}
-                    value={formData.gender}
                     onChange={(e) =>
                       handleInputChange("gender", e.target.value)
                     }
@@ -292,7 +289,6 @@ const BookingForm: React.FC = () => {
                   <select
                     id="doctor"
                     className={getInputClass("doctor")}
-                    value={formData.doctor}
                     onChange={(e) => {
                       handleInputChange("doctor", e.target.value);
                       // Reset time when doctor changes
@@ -311,50 +307,48 @@ const BookingForm: React.FC = () => {
                   )}
                 </div>
 
-                {formData.doctor &&
-                  formData.doctor !== "Auto choose doctor" && (
-                    <div className="form-group">
-                      <label htmlFor="time">Available Hours</label>
-                      <div className="time-slots-grid">
-                        {timeSlots.map((time) => {
-                          const isBusy =
-                            busySlotsByDoctor[formData.doctor]?.some(
-                              (slot: TimeSlot) => slot.time === time
-                            ) || false;
-                          return (
-                            <div
-                              key={time}
-                              className={`time-slot ${
-                                isBusy ? "busy" : "free"
-                              } ${formData.time === time ? "selected" : ""}`}
-                              onClick={() => {
-                                if (isBusy) {
-                                  setNotification(
-                                    "This time slot is already booked!"
-                                  );
-                                  setTimeout(() => setNotification(""), 3000);
-                                } else {
-                                  handleInputChange("time", time);
-                                }
-                              }}
-                            >
-                              {time}
-                            </div>
-                          );
-                        })}
-                      </div>
-                      {errors.time && (
-                        <span className="error-message">{errors.time}</span>
-                      )}
+                {formData.doctor && (
+                  <div className="form-group">
+                    <label htmlFor="time">Available Hours</label>
+                    <div className="time-slots-grid">
+                      {timeSlots.map((time) => {
+                        const isBusy =
+                          busySlotsByDoctor[formData.doctor]?.some(
+                            (slot: TimeSlot) => slot.time === time
+                          ) || false;
+                        return (
+                          <div
+                            key={time}
+                            className={`time-slot ${isBusy ? "busy" : "free"} ${
+                              formData.time === time ? "selected" : ""
+                            }`}
+                            onClick={() => {
+                              if (isBusy) {
+                                setNotification(
+                                  "This time slot is already booked!"
+                                );
+                                setTimeout(() => setNotification(""), 3000);
+                              } else {
+                                handleInputChange("time", time);
+                              }
+                            }}
+                          >
+                            {time}
+                          </div>
+                        );
+                      })}
                     </div>
-                  )}
+                    {errors.time && (
+                      <span className="error-message">{errors.time}</span>
+                    )}
+                  </div>
+                )}
 
                 <div className="form-group">
                   <label htmlFor="symptom">Symptom (short)</label>
                   <textarea
                     id="symptom"
                     className={`${getInputClass("symptom")} symptom-textarea`}
-                    value={formData.symptom}
                     onChange={(e) =>
                       handleInputChange("symptom", e.target.value)
                     }
