@@ -8,6 +8,7 @@ import {
   faSignInAlt,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
+import ResetPassword from "./ResetPassword";
 import { useAuth } from "../contexts/AuthContext";
 import { useNotification } from "../contexts/NotificationContext";
 import { useSignUpModal } from "../contexts/SignUpModalContext";
@@ -18,10 +19,11 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ onClose }) => {
-  const [identifier, setIdentifier] = useState(""); // thay phoneNumber -> identifier
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [showResetPassword, setShowResetPassword] = useState(false);
   const { login, isLoading } = useAuth();
   const { showNotification } = useNotification();
   const { openSignUp } = useSignUpModal();
@@ -51,94 +53,111 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
 
   return (
     <div className="login-overlay" onClick={onClose}>
-      <div className="login-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="login-header">
-          <img src="/images/logo.png" alt="logo" />
-          <h2>Welcome Back</h2>
-          <p>Sign in to your BookMyDoctor account</p>
-          <button className="close-btn" onClick={onClose}>
-            ×
-          </button>
-        </div>
-
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="identifier">Username, Phone or Email</label>
-
-            <div className="input-wrapper">
-              <FontAwesomeIcon icon={faUser} className="input-icon" />
-              <input
-                type="text"
-                id="identifier"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="Enter your phone or email"
-                required
-              />
-            </div>
+      {!showResetPassword ? (
+        <div className="login-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="login-header">
+            <img src="/images/logo.png" alt="logo" />
+            <h2>Welcome Back</h2>
+            <p>Sign in to your BookMyDoctor account</p>
+            <button className="close-btn" onClick={onClose}>
+              ×
+            </button>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <div className="input-wrapper">
-              <FontAwesomeIcon icon={faLock} className="input-icon" />
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-              />
+          <form className="login-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="identifier">Username, Phone or Email</label>
+
+              <div className="input-wrapper">
+                <FontAwesomeIcon icon={faUser} className="input-icon" />
+                <input
+                  type="text"
+                  id="identifier"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder="Enter your phone or email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <div className="password-header">
+                <label htmlFor="password">Password</label>
+                <button
+                  type="button"
+                  className="forgot-password-link"
+                  onClick={(e) => {
+                    e.preventDefault();
+
+                    setShowResetPassword(true);
+                  }}
+                >
+                  Forgot Password?
+                </button>
+              </div>
+              <div className="input-wrapper">
+                <FontAwesomeIcon icon={faLock} className="input-icon" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                </button>
+              </div>
+            </div>
+
+            {error && <div className="error-message">{error}</div>}
+
+            <button type="submit" className="login-btn" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <FontAwesomeIcon icon={faSpinner} spin />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <FontAwesomeIcon icon={faSignInAlt} />
+                  Sign In
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="login-footer">
+            <p>
+              Don't have an account?{" "}
               <button
                 type="button"
-                className="password-toggle"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onClose();
+                  openSignUp();
+                }}
               >
-                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                Sign up here
               </button>
-            </div>
+            </p>
+            <p>
+              Or <a onClick={onClose}>Continue as guest</a>
+            </p>
           </div>
-
-          {error && <div className="error-message">{error}</div>}
-
-          <button type="submit" className="login-btn" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <FontAwesomeIcon icon={faSpinner} spin />
-                Signing in...
-              </>
-            ) : (
-              <>
-                <FontAwesomeIcon icon={faSignInAlt} />
-                Sign In
-              </>
-            )}
-          </button>
-        </form>
-
-        <div className="login-footer">
-          <p>
-            Don't have an account?{" "}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                onClose();
-                openSignUp();
-              }}
-            >
-              Sign up here
-            </button>
-          </p>
-          <p>
-            Or{" "}
-            <a href="#guest" onClick={onClose}>
-              Continue as guest
-            </a>
-          </p>
         </div>
-      </div>
+      ) : (
+        <ResetPassword
+          onClose={onClose}
+          onBack={() => setShowResetPassword(false)}
+        />
+      )}
     </div>
   );
 };

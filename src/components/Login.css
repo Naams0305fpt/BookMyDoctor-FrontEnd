@@ -83,15 +83,37 @@
 }
 
 .form-group {
-  margin-bottom: var(--spacing-4);
+  margin-bottom: var(--spacing-1);
+}
+
+.password-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-1);
 }
 
 .form-group label {
   display: block;
-  margin-bottom: var(--spacing-1);
   font-weight: 600;
   color: var(--accent-navy);
   font-size: 14px;
+}
+
+.forgot-password-link {
+  background: none;
+  border: none;
+  color: var(--primary-teal);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.forgot-password-link:hover {
+  color: var(--secondary-blue);
+  text-decoration: underline;
 }
 
 .input-wrapper {
