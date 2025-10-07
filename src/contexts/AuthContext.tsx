@@ -9,6 +9,38 @@ import { api } from "../services/api";
 
 export type UserType = "admin" | "doctor" | "patient";
 
+// Mock users for testing
+const mockUsers = {
+  admin: {
+    id: "mock-admin-1",
+    name: "Admin User",
+    userType: "admin" as UserType,
+    phone: "0123456789",
+    email: "admin@bookdoctor.com",
+    avatar: "/images/default-avatar.png",
+    isVerified: true,
+  },
+  doctor: {
+    id: "mock-doctor-1",
+    name: "Dr. John Smith",
+    userType: "doctor" as UserType,
+    phone: "0987654321",
+    email: "dr.smith@bookdoctor.com",
+    avatar: "/images/doctor1.png",
+    specialization: "General Medicine",
+    isVerified: true,
+  },
+  patient: {
+    id: "mock-patient-1",
+    name: "Alice Johnson",
+    userType: "patient" as UserType,
+    phone: "+0983214567",
+    email: "alice@example.com",
+    avatar: "/images/default-avatar.png",
+    isVerified: true,
+  },
+};
+
 export interface User {
   id: string;
   name: string;
@@ -66,31 +98,63 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     password: string
   ): Promise<boolean> => {
     setIsLoading(true);
-    try {
-      const result = await api.login({ identifier, password });
 
-      if (result) {
-        const loggedUser: User = {
-          id: result.id || "temp-id",
-          name: result.username || identifier,
-          phone: result.phone || identifier,
-          userType: "patient", // Hoặc lấy từ result.role nếu backend có trả
-          email: result.email,
-          avatar: "/images/default-avatar.png",
-        };
+    // Mock login for testing - password is demmo123 for all mock users
+    if (password === "demo123") {
+      let mockUser = null;
 
-        setUser(loggedUser);
-        localStorage.setItem("currentUser", JSON.stringify(loggedUser));
-        if (result.token) {
-          localStorage.setItem("token", result.token);
-        }
+      if (
+        identifier === "admin@bookdoctor.com" ||
+        identifier === "0123456789"
+      ) {
+        mockUser = mockUsers.admin;
+      } else if (
+        identifier === "dr.smith@bookdoctor.com" ||
+        identifier === "0987654321"
+      ) {
+        mockUser = mockUsers.doctor;
+      } else if (
+        identifier === "alice@example.com" ||
+        identifier === "0983214567"
+      ) {
+        mockUser = mockUsers.patient;
+      }
 
+      if (mockUser) {
+        setUser(mockUser);
+        localStorage.setItem("currentUser", JSON.stringify(mockUser));
+        localStorage.setItem("token", `mock-token-${mockUser.userType}`);
         setIsLoading(false);
         return true;
       }
-    } catch (err) {
-      console.error("Login failed:", err);
     }
+
+    // Real API login
+    // try {
+    //   const result = await api.login({ identifier, password });
+
+    //   if (result) {
+    //     const loggedUser: User = {
+    //       id: result.id || "temp-id",
+    //       name: result.username || identifier,
+    //       phone: result.phone || identifier,
+    //       userType: "patient",
+    //       email: result.email,
+    //       avatar: "/images/default-avatar.png",
+    //     };
+
+    //     setUser(loggedUser);
+    //     localStorage.setItem("currentUser", JSON.stringify(loggedUser));
+    //     if (result.token) {
+    //       localStorage.setItem("token", result.token);
+    //     }
+
+    //     setIsLoading(false);
+    //     return true;
+    //   }
+    // } catch (err) {
+    //   console.error("Login failed:", err);
+    // }
     setIsLoading(false);
     return false;
   };
