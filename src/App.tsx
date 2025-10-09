@@ -28,6 +28,7 @@ import Home from "./components/Home";
 import About from "./components/About";
 import Information from "./components/Information";
 import Demo from "./components/Demo";
+import Profile from "./components/Profile";
 
 // Main App Content
 const AppContent: React.FC = () => {
@@ -43,6 +44,7 @@ const AppContent: React.FC = () => {
           <Route path="/about" element={<About />} />
           <Route path="/information" element={<Information />} />
           <Route path="/demo" element={<Demo />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
         <Footer />
       </Router>
