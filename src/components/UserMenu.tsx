@@ -63,6 +63,7 @@ const UserMenu: React.FC = () => {
   const handleLogout = () => {
     logout();
     setIsOpen(false);
+    navigate("/");
     showNotification(
       "success",
       "Signed Out",

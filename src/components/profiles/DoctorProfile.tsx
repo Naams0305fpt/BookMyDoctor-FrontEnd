@@ -82,7 +82,7 @@ const DoctorProfile: React.FC = () => {
           <FontAwesomeIcon icon={faUserMd} />
         </div>
         <div className="profile-info">
-          <h1>Dr. {user?.name}</h1>
+          <h1>{user?.name}</h1>
           <p className="profile-type doctor">
             {user?.isVerified && (
               <FontAwesomeIcon icon={faCrown} className="verified-icon" />

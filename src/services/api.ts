@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://26.152.198.212:7243/api';
+import config from '../config';
+
+const API_BASE_URL = config.apiBaseUrl;
 
 export interface RegisterRequest {
   username: string;
