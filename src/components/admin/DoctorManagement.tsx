@@ -7,9 +7,8 @@ import {
   faUserCheck,
   faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import "./AdminTables.css";
 
-const mockDoctors = [
+const doctors = [
   {
     id: 1,
     fullName: "Dr. Nguyễn Văn B",
@@ -59,8 +58,8 @@ const DoctorManagement = () => {
           <h2>Doctor Management</h2>
         </div>
       </div>
-      <div className="table-wrapper">
-        <table className="admin-table">
+      <div className="appointment">
+        <table className="appointments-table">
           <thead>
             <tr>
               <th></th>
@@ -77,7 +76,7 @@ const DoctorManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {mockDoctors.map((d) => (
+            {doctors.map((d) => (
               <tr key={d.id}>
                 <td>{d.id}</td>
                 <td>{d.fullName}</td>

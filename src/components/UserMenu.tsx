@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -19,6 +20,7 @@ const UserMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
   const { showNotification } = useNotification();
+  const navigate = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,6 +69,11 @@ const UserMenu: React.FC = () => {
       "You have been successfully signed out.",
       3000
     );
+  };
+
+  const handleProfileClick = () => {
+    navigate("/profile");
+    setIsOpen(false);
   };
 
   if (!user) return null;
@@ -126,7 +133,7 @@ const UserMenu: React.FC = () => {
           <div className="dropdown-divider"></div>
 
           <div className="dropdown-menu">
-            <button className="menu-item">
+            <button className="menu-item" onClick={handleProfileClick}>
               <FontAwesomeIcon icon={faUser} />
               <span>Profile</span>
             </button>

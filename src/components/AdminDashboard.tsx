@@ -8,7 +8,7 @@ const AdminDashboard = () => {
   const [view, setView] = useState("patients");
 
   return (
-    <div className="admin-container">
+    <section className="appointment-management">
       <h1 className="admin-title">Admin Dashboard</h1>
 
       <div className="view-toggles">
@@ -42,7 +42,7 @@ const AdminDashboard = () => {
         {view === "patients" && <PatientManagement />}
         {view === "schedules" && <ScheduleManagement />}
       </div>
-    </div>
+    </section>
   );
 };
 

@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFileExport,
-  faEdit,
-  faTrash,
-  faUserCheck,
-  faUserSlash,
-} from "@fortawesome/free-solid-svg-icons";
-import "./AdminTables.css";
+import { faFileExport, faTrash } from "@fortawesome/free-solid-svg-icons";
+import DatePicker from "react-datepicker";
 
 interface Patient {
   id: number;
@@ -61,16 +55,9 @@ const PatientManagement: React.FC = () => {
       setPatients(patients.filter((patient) => patient.id !== id));
     }
   };
-
-  const handleStatusToggle = (id: number) => {
-    setPatients(
-      patients.map((patient) =>
-        patient.id === id
-          ? { ...patient, isActive: !patient.isActive }
-          : patient
-      )
-    );
-  };
+  const [view, setView] = useState("appointment");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [searchQuery, setSearchQuery] = useState("");
 
   const getStatusClass = (status: Patient["status"]) => {
     switch (status) {
@@ -105,10 +92,35 @@ const PatientManagement: React.FC = () => {
           <h2>Patient Management</h2>
         </div>
       </div>
-      <div className="table-wrapper">
-        <table className="admin-table">
+
+      <div className="appointment">
+        <div className="appointment-controls">
+          {view === "appointment" && (
+            <div className="search-container">
+              <div className="search-bar">
+                <input
+                  type="text"
+                  placeholder="Search by patient name or phone..."
+                  className="search-input"
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={searchQuery}
+                />
+              </div>
+            </div>
+          )}
+          <div className="date-picker">
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              dateFormat="dd/MM/yyyy"
+              className="date-picker"
+            />
+          </div>
+        </div>
+        <table className="appointments-table">
           <thead>
             <tr>
+              <th></th>
               <th>Full Name</th>
               <th>Username</th>
               <th>Date</th>
@@ -121,34 +133,44 @@ const PatientManagement: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {patients.map((patient) => (
-              <tr key={patient.id}>
-                <td>{patient.fullname}</td>
-                <td>{patient.username}</td>
-                <td>{patient.date}</td>
-                <td>{patient.gender}</td>
-                <td>{patient.phone}</td>
+            {patients
+              .filter(
+                (patient) =>
+                  patient.fullname
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()) ||
+                  patient.phone.includes(searchQuery)
+              )
+              .map((patient) => (
+                <tr key={patient.id}>
+                  <td>{patient.id}</td>
+                  <td>{patient.fullname}</td>
+                  <td>{patient.username}</td>
+                  <td>{patient.date}</td>
+                  <td>{patient.gender}</td>
+                  <td>{patient.phone}</td>
 
-                <td>
-                  <span
-                    className={`status-badge ${getStatusClass(patient.status)}`}
-                  >
-                    {patient.status}
-                  </span>
-                </td>
-                <td>{patient.symptom}</td>
-                <td>{patient.prescription}</td>
-                <td className="action-buttons">
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDelete(patient.id)}
-                    title="Delete Patient"
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                  <td>
+                    <span
+                      className={`status-badge ${getStatusClass(
+                        patient.status
+                      )}`}
+                    >
+                      {patient.status}
+                    </span>
+                  </td>
+                  <td>{patient.symptom}</td>
+                  <td>{patient.prescription}</td>
+                  <td className="action-buttons">
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      className="delete-icon"
+                      onClick={() => handleDelete(patient.id)}
+                      title="Delete Schedule"
+                    />
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

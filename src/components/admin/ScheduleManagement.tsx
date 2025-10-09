@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlus,
-  faEdit,
-  faTrash,
-  faCheck,
-  faTimes,
-} from "@fortawesome/free-solid-svg-icons";
-import "./AdminTables.css";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 interface Schedule {
   id: number;
@@ -55,20 +48,6 @@ const ScheduleManagement = () => {
     }
   };
 
-  const handleStatusToggle = (id: number) => {
-    setSchedules(
-      schedules.map((schedule) =>
-        schedule.id === id
-          ? {
-              ...schedule,
-              status:
-                schedule.status === "available" ? "unavailable" : "available",
-            }
-          : schedule
-      )
-    );
-  };
-
   return (
     <div className="admin-table-container">
       <div className="section-header">
@@ -89,10 +68,11 @@ const ScheduleManagement = () => {
           <h2>Schedule Management</h2>
         </div>
       </div>
-      <div className="table-wrapper">
-        <table className="admin-table">
+      <div className="appointment">
+        <table className="appointments-table">
           <thead>
             <tr>
+              <th></th>
               <th>Doctor</th>
               <th>Work Date</th>
               <th>Start Time</th>
@@ -104,6 +84,7 @@ const ScheduleManagement = () => {
           <tbody>
             {schedules.map((schedule) => (
               <tr key={schedule.id}>
+                <td>{schedule.id}</td>
                 <td>{schedule.doctor}</td>
                 <td>{schedule.workDate}</td>
                 <td>{schedule.start}</td>
@@ -122,29 +103,12 @@ const ScheduleManagement = () => {
                   </span>
                 </td>
                 <td className="action-buttons">
-                  <button
-                    className="verify-btn"
-                    onClick={() => handleStatusToggle(schedule.id)}
-                    title={
-                      schedule.status === "available"
-                        ? "Mark as Unavailable"
-                        : "Mark as Available"
-                    }
-                  >
-                    <FontAwesomeIcon
-                      icon={schedule.status === "available" ? faTimes : faCheck}
-                    />
-                  </button>
-                  <button className="edit-btn" title="Edit Schedule">
-                    <FontAwesomeIcon icon={faEdit} />
-                  </button>
-                  <button
-                    className="delete-btn"
+                  <FontAwesomeIcon
+                    icon={faTrash}
+                    className="delete-icon"
                     onClick={() => handleDelete(schedule.id)}
                     title="Delete Schedule"
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
+                  />
                 </td>
               </tr>
             ))}
