@@ -107,19 +107,6 @@ const Header: React.FC = () => {
           <div
             className={`right-section ${isAuthenticated ? "logged-in" : ""}`}
           >
-            <div className={`search-container`}>
-              <FontAwesomeIcon icon={faSearch} className="search-icon" />
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search doctors, specialties..."
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                // onFocus={handleSearchFocus}
-                // onBlur={handleSearchBlur}
-              />
-            </div>
-
             {/* User Authentication Icon - Shows login modal when not logged in, user menu when logged in */}
             {isAuthenticated ? (
               <UserMenu />
