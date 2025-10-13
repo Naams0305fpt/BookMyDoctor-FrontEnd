@@ -1,0 +1,306 @@
+/* Create Doctor Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: var(--spacing-3);
+  overflow-y: auto;
+}
+
+.modal-content {
+  background: white;
+  border-radius: var(--radius-container);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  position: relative;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: var(--spacing-3);
+  right: var(--spacing-3);
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--accent-navy);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.modal-header {
+  text-align: center;
+  padding: var(--spacing-4) var(--spacing-5) var(--spacing-3);
+  background: var(--primary-gradient);
+  border-radius: var(--radius-container) var(--radius-container) 0 0;
+}
+
+.modal-icon {
+  font-size: 3rem;
+  color: var(--primary-teal);
+  margin-bottom: var(--spacing-2);
+}
+
+.modal-header h2 {
+  margin: 0 0 var(--spacing-1) 0;
+  font-size: 32px;
+  color: var(--accent-navy);
+  font-weight: 700;
+}
+
+.modal-header p {
+  margin: 0;
+  color: var(--body-text);
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+.doctor-form {
+  padding: var(--spacing-3);
+  padding-bottom: var(--spacing-2);
+}
+
+.form-group {
+  margin-bottom: var(--spacing-2);
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--accent-navy);
+  margin-bottom: var(--spacing-1);
+  font-size: 14px;
+}
+
+.form-group label svg {
+  color: var(--primary-teal);
+  font-size: 1rem;
+}
+
+.required {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.optional {
+  color: var(--body-text);
+  font-weight: 400;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 16px 20px 16px 50px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: var(--font-ui);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-teal);
+  box-shadow: 0 0 0 3px rgba(19, 182, 198, 0.1);
+}
+
+.form-group input.error {
+  border-color: #dc2626;
+}
+
+.form-group input.error:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.error-message {
+  display: block;
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.field-note {
+  display: block;
+  color: var(--body-text);
+  font-size: 13px;
+  margin-top: 4px;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  padding-right: 3rem;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--body-text);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 8px;
+  transition: color 0.3s ease;
+  opacity: 0.7;
+}
+
+.toggle-password:hover {
+  color: var(--primary-teal);
+  opacity: 1;
+}
+
+.readonly-field {
+  background-color: #f9fafb;
+  cursor: not-allowed;
+  color: var(--body-text);
+  opacity: 0.8;
+}
+
+.info-box {
+  display: flex;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  background: linear-gradient(135deg, #c8f3e1, #d1fae5);
+  border-left: 4px solid var(--primary-teal);
+  border-radius: 12px;
+  margin-bottom: var(--spacing-2);
+}
+
+.info-icon {
+  font-size: 1.5rem;
+  color: var(--primary-teal);
+  flex-shrink: 0;
+}
+
+.info-content strong {
+  display: block;
+  color: var(--accent-navy);
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.info-content p {
+  margin: 0;
+  color: var(--body-text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-3);
+}
+
+.cancel-btn,
+.submit-btn {
+  flex: 1;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.cancel-btn {
+  background-color: #f3f4f6;
+  color: var(--accent-navy);
+}
+
+.cancel-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, var(--primary-teal), var(--surface-aqua));
+  color: white;
+  box-shadow: var(--shadow-button);
+}
+
+.submit-btn:hover {
+  background: linear-gradient(135deg, var(--surface-aqua), var(--primary-teal));
+  box-shadow: 0 4px 12px rgba(19, 182, 198, 0.3);
+  transform: translateY(-2px);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .modal-content {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    max-height: 100vh;
+  }
+
+  .modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+
+  .doctor-form {
+    padding: 1.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .cancel-btn,
+  .submit-btn {
+    width: 100%;
+  }
+}

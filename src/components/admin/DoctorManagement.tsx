@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
@@ -6,7 +6,9 @@ import {
   faTrash,
   faUserCheck,
   faUserSlash,
+  faUserMd,
 } from "@fortawesome/free-solid-svg-icons";
+import CreateDoctorModal from "./CreateDoctorModal";
 
 const doctors = [
   {
@@ -38,6 +40,31 @@ const doctors = [
 ];
 
 const DoctorManagement = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [doctorList, setDoctorList] = useState(doctors);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const handleCreateDoctor = () => {
+    setShowCreateModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowCreateModal(false);
+  };
+
+  const handleDoctorCreated = (newDoctor: any) => {
+    // Add the new doctor to the list with a new ID
+    const newId = Math.max(...doctorList.map((d) => d.id)) + 1;
+    setDoctorList([...doctorList, { ...newDoctor, id: newId }]);
+    setShowCreateModal(false);
+  };
+
+  const handleDelete = (id: number) => {
+    if (window.confirm("Are you sure you want to delete this doctor?")) {
+      setDoctorList(doctorList.filter((doctor) => doctor.id !== id));
+    }
+  };
+
   return (
     <div className="admin-table-container">
       <div className="section-header">
@@ -59,10 +86,27 @@ const DoctorManagement = () => {
         </div>
       </div>
       <div className="appointment">
+        <div className="appointment-controls">
+          <div className="search-container">
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Search by doctor name, email, or department..."
+                className="search-input"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchQuery}
+              />
+            </div>
+          </div>
+          <button className="create-doctor-btn" onClick={handleCreateDoctor}>
+            <FontAwesomeIcon icon={faUserMd} />
+            <span>Create Doctor Account</span>
+          </button>
+        </div>
         <table className="appointments-table">
           <thead>
             <tr>
-              <th></th>
+              <th>No.</th>
               <th>Full Name</th>
               <th>Username</th>
               <th>Password</th>
@@ -73,27 +117,53 @@ const DoctorManagement = () => {
               <th>Email</th>
               <th>Department</th>
               <th>Experience</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {doctors.map((d) => (
-              <tr key={d.id}>
-                <td>{d.id}</td>
-                <td>{d.fullName}</td>
-                <td>{d.username}</td>
-                <td>{d.password}</td>
-                <td>{d.dob}</td>
-                <td>{d.gender}</td>
-                <td>{d.phone}</td>
-                <td>{d.address}</td>
-                <td>{d.email}</td>
-                <td>{d.department}</td>
-                <td>{d.experience}</td>
-              </tr>
-            ))}
+            {doctorList
+              .filter((doctor) => {
+                const searchLower = searchQuery.toLowerCase();
+                return (
+                  doctor.fullName.toLowerCase().includes(searchLower) ||
+                  doctor.email.toLowerCase().includes(searchLower) ||
+                  doctor.department.toLowerCase().includes(searchLower) ||
+                  doctor.phone.includes(searchQuery)
+                );
+              })
+              .map((d, index) => (
+                <tr key={d.id}>
+                  <td>{index + 1}</td>
+                  <td>{d.fullName}</td>
+                  <td>{d.username}</td>
+                  <td>{d.password}</td>
+                  <td>{d.dob}</td>
+                  <td>{d.gender}</td>
+                  <td>{d.phone}</td>
+                  <td>{d.address}</td>
+                  <td>{d.email}</td>
+                  <td>{d.department}</td>
+                  <td>{d.experience}</td>
+                  <td className="action-buttons">
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      className="delete-icon"
+                      onClick={() => handleDelete(d.id)}
+                      title="Delete Doctor"
+                    />
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
+
+      {showCreateModal && (
+        <CreateDoctorModal
+          onClose={handleCloseModal}
+          onSubmit={handleDoctorCreated}
+        />
+      )}
     </div>
   );
 };

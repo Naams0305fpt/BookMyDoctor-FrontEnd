@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface Schedule {
   id: number;
@@ -41,10 +47,28 @@ const mockSchedules: Schedule[] = [
 
 const ScheduleManagement = () => {
   const [schedules, setSchedules] = useState<Schedule[]>(mockSchedules);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleDelete = (id: number) => {
     if (window.confirm("Are you sure you want to delete this schedule?")) {
       setSchedules(schedules.filter((schedule) => schedule.id !== id));
+    }
+  };
+
+  const goToPreviousDay = () => {
+    if (selectedDate) {
+      const previousDay = new Date(selectedDate);
+      previousDay.setDate(previousDay.getDate() - 1);
+      setSelectedDate(previousDay);
+    }
+  };
+
+  const goToNextDay = () => {
+    if (selectedDate) {
+      const nextDay = new Date(selectedDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+      setSelectedDate(nextDay);
     }
   };
 
@@ -69,10 +93,48 @@ const ScheduleManagement = () => {
         </div>
       </div>
       <div className="appointment">
+        <div className="appointment-controls">
+          <div className="search-container">
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Search by doctor name, email, or phone..."
+                className="search-input"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchQuery}
+              />
+            </div>
+          </div>
+          <div className="date-navigation">
+            <button
+              className="date-nav-btn"
+              onClick={goToPreviousDay}
+              title="Previous Day"
+            >
+              <FontAwesomeIcon icon={faChevronLeft} />
+            </button>
+            <div className="date-picker">
+              <DatePicker
+                selected={selectedDate}
+                onChange={(date) => setSelectedDate(date)}
+                dateFormat="dd/MM/yyyy"
+                className="date-picker"
+                placeholderText="Select date"
+              />
+            </div>
+            <button
+              className="date-nav-btn"
+              onClick={goToNextDay}
+              title="Next Day"
+            >
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+          </div>
+        </div>
         <table className="appointments-table">
           <thead>
             <tr>
-              <th></th>
+              <th>No.</th>
               <th>Doctor</th>
               <th>Work Date</th>
               <th>Start Time</th>
@@ -82,36 +144,54 @@ const ScheduleManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {schedules.map((schedule) => (
-              <tr key={schedule.id}>
-                <td>{schedule.id}</td>
-                <td>{schedule.doctor}</td>
-                <td>{schedule.workDate}</td>
-                <td>{schedule.start}</td>
-                <td>{schedule.end}</td>
-                <td>
-                  <span
-                    className={`status-badge ${
-                      schedule.status === "available"
-                        ? "verified"
-                        : "unverified"
-                    }`}
-                  >
-                    {schedule.status === "available"
-                      ? "Available"
-                      : "Unavailable"}
-                  </span>
-                </td>
-                <td className="action-buttons">
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    className="delete-icon"
-                    onClick={() => handleDelete(schedule.id)}
-                    title="Delete Schedule"
-                  />
-                </td>
-              </tr>
-            ))}
+            {schedules
+              .filter((schedule) => {
+                const matchesSearch =
+                  schedule.doctor
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()) ||
+                  schedule.email
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()) ||
+                  schedule.phone.includes(searchQuery);
+
+                const matchesDate =
+                  !selectedDate ||
+                  new Date(schedule.workDate).toDateString() ===
+                    selectedDate.toDateString();
+
+                return matchesSearch && matchesDate;
+              })
+              .map((schedule, index) => (
+                <tr key={schedule.id}>
+                  <td>{index + 1}</td>
+                  <td>{schedule.doctor}</td>
+                  <td>{schedule.workDate}</td>
+                  <td>{schedule.start}</td>
+                  <td>{schedule.end}</td>
+                  <td>
+                    <span
+                      className={`status-badge ${
+                        schedule.status === "available"
+                          ? "verified"
+                          : "unverified"
+                      }`}
+                    >
+                      {schedule.status === "available"
+                        ? "Available"
+                        : "Unavailable"}
+                    </span>
+                  </td>
+                  <td className="action-buttons">
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      className="delete-icon"
+                      onClick={() => handleDelete(schedule.id)}
+                      title="Delete Schedule"
+                    />
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
