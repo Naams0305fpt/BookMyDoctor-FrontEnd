@@ -122,12 +122,11 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="username">Email</label>
+            <label htmlFor="email">Email</label>
             <div className="input-wrapper">
               <FontAwesomeIcon icon={faUser} className="input-icon" />
-
               <input
-                type="text"
+                type="email"
                 id="email"
                 name="email"
                 value={formData.email}

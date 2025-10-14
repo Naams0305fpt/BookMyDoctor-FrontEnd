@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faUser,
-  faEnvelope,
   faSpinner,
   faArrowLeft,
+  faLock,
+  faEye,
+  faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import "./ResetPassword.css";
+import EmailVerification from "./EmailVerification";
+import { useNotification } from "../contexts/NotificationContext";
 
 interface ResetPasswordProps {
   onClose: () => void;
@@ -14,71 +17,28 @@ interface ResetPasswordProps {
 }
 
 const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
-  const [step, setStep] = useState<"verify" | "newPassword">("verify");
   const [email, setEmail] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [codeSent, setCodeSent] = useState(false);
+  const { showNotification } = useNotification();
 
-  const handleRequestReset = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) {
-      setError("Please enter your email address");
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address");
-      return;
-    }
-    setError("");
-    setIsLoading(true);
-
-    try {
-      // TODO: Implement API call to request password reset
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-      setCodeSent(true);
-      setError("");
-      // Show success message instead of error
-      setError("Verification code sent! Please check your email.");
-    } catch (err) {
-      setError("Failed to send reset code. Please try again later.");
-      setCodeSent(false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleVerifyCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!verificationCode) {
-      setError("Please enter the verification code");
-      return;
-    }
-    if (!/^\d{6}$/.test(verificationCode)) {
-      setError("Verification code must be 6 digits");
-      return;
-    }
-    setError("");
-    setIsLoading(true);
-
-    try {
-      // TODO: Implement API call to verify code
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-      setStep("newPassword");
-      setError("");
-    } catch (err) {
-      setError("Invalid verification code. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+  const handleEmailVerified = () => {
+    setIsEmailVerified(true);
   };
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!isEmailVerified) {
+      setError("Please verify your email first");
+      return;
+    }
 
     if (!newPassword) {
       setError("Please enter a new password");
@@ -113,12 +73,24 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
     setIsLoading(true);
 
     try {
-      // TODO: Implement API call to reset password
+      // TODO: Implement API call to reset password with email and new password
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+
+      showNotification(
+        "success",
+        "Password Reset Successful",
+        "Your password has been reset successfully. You can now login with your new password.",
+        4000
+      );
       onClose();
-      // TODO: Show success notification via NotificationContext
     } catch (err) {
       setError("Failed to reset password. Please try again later.");
+      showNotification(
+        "error",
+        "Reset Failed",
+        "Failed to reset password. Please try again.",
+        4000
+      );
     } finally {
       setIsLoading(false);
     }
@@ -139,128 +111,105 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
           </button>
           <img src="/images/logo.png" alt="logo" />
           <h2>Reset Password</h2>
-          <p>
-            {step === "verify" && "Enter your email and the verification code"}
-            {step === "newPassword" && "Create your new password"}
-          </p>
+          <p>Verify your email and create a new password</p>
         </div>
 
-        {step === "verify" && (
-          <form className="reset-password-form" onSubmit={handleVerifyCode}>
-            <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+        <form className="reset-password-form" onSubmit={handleResetPassword}>
+          {/* Email Verification Section */}
+          <EmailVerification
+            email={email}
+            onVerified={handleEmailVerified}
+            mode="reset"
+            showEmailInput={true}
+            onEmailChange={setEmail}
+          />
 
-              <div className="input-group">
-                <div className="input-wrapper">
-                  <FontAwesomeIcon icon={faEnvelope} className="input-icon" />
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="send-code-btn"
-                    onClick={handleRequestReset}
-                    disabled={isLoading || !email}
-                  >
-                    {isLoading ? (
-                      <>
-                        <FontAwesomeIcon icon={faSpinner} spin />
-                        Sending...
-                      </>
-                    ) : (
-                      "Send Code"
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="verify-section">
-              <div className="form-group">
-                <label htmlFor="code">Verification Code</label>
-                <div className="input-wrapper verification-code">
-                  <input
-                    type="text"
-                    id="code"
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
-                    placeholder="Enter 6-digit code"
-                    maxLength={6}
-                    required={codeSent}
-                    disabled={!codeSent}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {error && <div className="error-message">{error}</div>}
-
-            <button
-              type="submit"
-              className="reset-btn"
-              disabled={isLoading || !codeSent}
-            >
-              {isLoading ? (
-                <>
-                  <FontAwesomeIcon icon={faSpinner} spin />
-                  Verifying...
-                </>
-              ) : (
-                "Verify & Continue"
-              )}
-            </button>
-          </form>
-        )}
-
-        {step === "newPassword" && (
-          <form className="reset-password-form" onSubmit={handleResetPassword}>
+          {/* New Password Section */}
+          <div className="password-reset-section">
             <div className="form-group">
               <label htmlFor="newPassword">New Password</label>
               <div className="input-wrapper">
+                <FontAwesomeIcon icon={faLock} className="input-icon" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   id="newPassword"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Enter new password"
+                  placeholder="Enter new password (min 8 characters)"
                   required
+                  disabled={!isEmailVerified}
                 />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                </button>
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
+              <label htmlFor="confirmPassword">Confirm New Password</label>
               <div className="input-wrapper">
+                <FontAwesomeIcon icon={faLock} className="input-icon" />
                 <input
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   id="confirmPassword"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm new password"
                   required
+                  disabled={!isEmailVerified}
                 />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  <FontAwesomeIcon
+                    icon={showConfirmPassword ? faEyeSlash : faEye}
+                  />
+                </button>
               </div>
             </div>
 
-            {/* {error && <div className="error-message">{error}</div>} */}
+            <div className="password-requirements">
+              <p>Password must contain:</p>
+              <ul>
+                <li className={newPassword.length >= 8 ? "valid" : ""}>
+                  At least 8 characters
+                </li>
+                <li className={/(?=.*[a-z])/.test(newPassword) ? "valid" : ""}>
+                  One lowercase letter
+                </li>
+                <li className={/(?=.*[A-Z])/.test(newPassword) ? "valid" : ""}>
+                  One uppercase letter
+                </li>
+                <li className={/(?=.*\d)/.test(newPassword) ? "valid" : ""}>
+                  One number
+                </li>
+              </ul>
+            </div>
+          </div>
 
-            <button type="submit" className="reset-btn" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <FontAwesomeIcon icon={faSpinner} spin />
-                  Resetting...
-                </>
-              ) : (
-                "Reset Password"
-              )}
-            </button>
-          </form>
-        )}
+          {error && <div className="error-message">{error}</div>}
+
+          <button
+            type="submit"
+            className="reset-btn"
+            disabled={isLoading || !isEmailVerified}
+          >
+            {isLoading ? (
+              <>
+                <FontAwesomeIcon icon={faSpinner} spin />
+                Resetting Password...
+              </>
+            ) : (
+              "Reset Password"
+            )}
+          </button>
+        </form>
       </div>
     </div>
   );
