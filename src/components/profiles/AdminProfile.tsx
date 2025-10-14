@@ -24,7 +24,7 @@ const AdminProfile: React.FC = () => {
     email: user?.email || "",
     phone: user?.phone || "",
     department: "System Administration",
-    role: "Super Admin",
+    role: "Admin",
     joinDate: "2023-01-15",
     permissions: "Full Access",
   });
