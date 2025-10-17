@@ -140,7 +140,6 @@ const ScheduleManagement = () => {
               <th>Start Time</th>
               <th>End Time</th>
               <th>Status</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -181,14 +180,6 @@ const ScheduleManagement = () => {
                         ? "Available"
                         : "Unavailable"}
                     </span>
-                  </td>
-                  <td className="action-buttons">
-                    <FontAwesomeIcon
-                      icon={faTrash}
-                      className="delete-icon"
-                      onClick={() => handleDelete(schedule.id)}
-                      title="Delete Schedule"
-                    />
                   </td>
                 </tr>
               ))}

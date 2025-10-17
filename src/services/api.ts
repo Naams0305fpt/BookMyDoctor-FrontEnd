@@ -35,19 +35,14 @@ export const api = {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.message || errorData.error || errorData.title || 'Login failed';
-        throw new Error(errorMessage);
+        throw new Error('Login failed');
       }
 
       const result = await response.json();
       return result;
     } catch (error) {
       console.error('Login error:', error);
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error('Login failed');
+      throw error;
     }
   },
 
@@ -62,19 +57,14 @@ export const api = {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.message || errorData.error || errorData.title || 'Registration failed';
-        throw new Error(errorMessage);
+        throw new Error('Registration failed');
       }
 
       const result = await response.json();
       return result;
     } catch (error) {
       console.error('Registration error:', error);
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error('Registration failed');
+      throw error;
     }
   },
 
@@ -89,19 +79,15 @@ export const api = {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.message || errorData.error || errorData.title || 'Failed to send verification code';
-        throw new Error(errorMessage);
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to send verification code');
       }
 
       const result = await response.json();
       return result;
     } catch (error) {
       console.error('Send verification code error:', error);
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error('Failed to send verification code');
+      throw error;
     }
   },
 
@@ -116,19 +102,15 @@ export const api = {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.message || errorData.error || errorData.title || 'Invalid verification code';
-        throw new Error(errorMessage);
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Invalid verification code');
       }
 
       const result = await response.json();
       return result;
     } catch (error) {
       console.error('Verify code error:', error);
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error('Invalid verification code');
+      throw error;
     }
   },
 };

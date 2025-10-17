@@ -13,6 +13,7 @@ interface TimeSlot {
 interface FormData {
   fullName: string;
   phone: string;
+  email: string;
   date: Date | null;
   time: string;
   dateOfBirth: Date | null;
@@ -29,6 +30,7 @@ const BookingForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     fullName: "Tran Thi M",
     phone: "0123456789",
+    email: "tranthim@gmail.com",
     date: new Date(),
     time: "17:00",
     dateOfBirth: new Date("2005-10-06"),
@@ -209,6 +211,7 @@ const BookingForm: React.FC = () => {
                       handleInputChange("fullName", e.target.value)
                     }
                     placeholder="Enter your full name"
+                    value={formData.fullName}
                   />
                   {errors.fullName && (
                     <span className="error-message">{errors.fullName}</span>
@@ -223,12 +226,26 @@ const BookingForm: React.FC = () => {
                     className={getInputClass("phone")}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                     placeholder="Enter phone number"
+                    value={formData.phone}
                   />
                   {errors.phone && (
                     <span className="error-message">{errors.phone}</span>
                   )}
                 </div>
-
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    className={getInputClass("email")}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    placeholder="Enter email"
+                    value={formData.email}
+                  />
+                  {errors.email && (
+                    <span className="error-message">{errors.email}</span>
+                  )}
+                </div>
                 <div className="form-group">
                   <label htmlFor="date">Date</label>
                   <DatePicker

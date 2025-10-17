@@ -16,6 +16,7 @@ interface Patient {
   dob: string; // Date of Birth
   gender: string;
   phone: string;
+  email?: string;
   address: string;
   appointmentDate: string; // Appointment Date
   status: "Completed" | "Pending" | "Cancelled";
@@ -33,6 +34,7 @@ const mockPatients: Patient[] = [
     dob: "2000-03-14",
     gender: "Male",
     phone: "0987123456",
+    email: "nguynvana@gmail.com",
     address: "Hà Nội",
     appointmentDate: "2025-10-06",
     status: "Completed",
@@ -73,6 +75,7 @@ const mockPatients: Patient[] = [
     dob: "2002-05-19",
     gender: "Female",
     phone: "0923456789",
+    email: "phamthud@gmail.com",
     address: "Hải Phòng",
     appointmentDate: "2025-10-07",
     status: "Pending",
@@ -100,6 +103,7 @@ const mockPatients: Patient[] = [
     dob: "1999-12-30",
     gender: "Female",
     phone: "0945678901",
+    email: "dothif@gmail.com",
     address: "Huế",
     appointmentDate: "2025-10-08",
     status: "Cancelled",
@@ -127,6 +131,7 @@ const mockPatients: Patient[] = [
     dob: "2001-08-07",
     gender: "Female",
     phone: "0967890123",
+    email: "buithuh@gmail.com",
     address: "Vũng Tàu",
     appointmentDate: "2025-10-09",
     status: "Pending",
@@ -141,6 +146,7 @@ const mockPatients: Patient[] = [
     dob: "1994-06-12",
     gender: "Male",
     phone: "0978901234",
+    email: "ngovani@gmail.com",
     address: "Biên Hòa",
     appointmentDate: "2025-10-10",
     status: "Pending",
@@ -154,6 +160,7 @@ const mockPatients: Patient[] = [
     dob: "2000-10-28",
     gender: "Female",
     phone: "0989012345",
+    email: "lythik@gmail.com",
     address: "Quy Nhơn",
     appointmentDate: "2025-10-10",
     status: "Pending",
@@ -274,10 +281,10 @@ const PatientManagement: React.FC = () => {
               <th>Date of Birth</th>
               <th>Gender</th>
               <th>Phone</th>
+              <th>Email</th>
               <th>Status</th>
               <th>Symptom</th>
               <th>Prescription</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -304,7 +311,7 @@ const PatientManagement: React.FC = () => {
                   <td>{patient.dob}</td>
                   <td>{patient.gender}</td>
                   <td>{patient.phone}</td>
-
+                  <td>{patient.email || "N/A"}</td>
                   <td>
                     <span
                       className={`status-badge ${getStatusClass(
@@ -316,14 +323,6 @@ const PatientManagement: React.FC = () => {
                   </td>
                   <td>{patient.symptom}</td>
                   <td>{patient.prescription}</td>
-                  <td className="action-buttons">
-                    <FontAwesomeIcon
-                      icon={faTrash}
-                      className="delete-icon"
-                      onClick={() => handleDelete(patient.id)}
-                      title="Delete Schedule"
-                    />
-                  </td>
                 </tr>
               ))}
           </tbody>

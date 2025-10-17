@@ -1,38 +1,39 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlus,
-  faEdit,
-  faTrash,
-  faUserCheck,
-  faUserSlash,
-  faUserMd,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faUserMd } from "@fortawesome/free-solid-svg-icons";
 import CreateDoctorModal from "./CreateDoctorModal";
 
-const doctors = [
+interface Doctor {
+  id: number;
+  fullName: string;
+  username: string;
+  dob: Date;
+  gender: string;
+  phone: string;
+  email?: string;
+  department: string;
+  experience: string;
+}
+
+const mockDoctors: Doctor[] = [
   {
     id: 1,
-    fullName: "Dr. Nguyễn Văn B",
+    fullName: "Nguyễn Văn B",
     username: "doctorb",
-    password: "123456",
-    dob: "1985-06-20",
+    dob: new Date("1985-06-20"),
     gender: "Male",
     phone: "0988888888",
-    address: "Đà Nẵng",
     email: "doctorb@example.com",
     department: "Cardiology",
     experience: "10 years",
   },
   {
     id: 2,
-    fullName: "Dr. Trần Thị C",
+    fullName: "Trần Thị C",
     username: "doctorc",
-    password: "123456",
-    dob: "1990-10-12",
+    dob: new Date("1990-09-15"),
     gender: "Female",
     phone: "0911222333",
-    address: "Cần Thơ",
     email: "doctorc@example.com",
     department: "Neurology",
     experience: "6 years",
@@ -41,7 +42,7 @@ const doctors = [
 
 const DoctorManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [doctorList, setDoctorList] = useState(doctors);
+  const [doctorList, setDoctorList] = useState(mockDoctors);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const handleCreateDoctor = () => {
@@ -109,11 +110,9 @@ const DoctorManagement = () => {
               <th>No.</th>
               <th>Full Name</th>
               <th>Username</th>
-              <th>Password</th>
-              <th>DOB</th>
+              <th>Date of Birth</th>
               <th>Gender</th>
               <th>Phone</th>
-              <th>Address</th>
               <th>Email</th>
               <th>Department</th>
               <th>Experience</th>
@@ -126,7 +125,6 @@ const DoctorManagement = () => {
                 const searchLower = searchQuery.toLowerCase();
                 return (
                   doctor.fullName.toLowerCase().includes(searchLower) ||
-                  doctor.email.toLowerCase().includes(searchLower) ||
                   doctor.department.toLowerCase().includes(searchLower) ||
                   doctor.phone.includes(searchQuery)
                 );
@@ -136,11 +134,9 @@ const DoctorManagement = () => {
                   <td>{index + 1}</td>
                   <td>{d.fullName}</td>
                   <td>{d.username}</td>
-                  <td>{d.password}</td>
-                  <td>{d.dob}</td>
+                  <td>{d.dob.toLocaleDateString("en-GB")}</td>
                   <td>{d.gender}</td>
                   <td>{d.phone}</td>
-                  <td>{d.address}</td>
                   <td>{d.email}</td>
                   <td>{d.department}</td>
                   <td>{d.experience}</td>
