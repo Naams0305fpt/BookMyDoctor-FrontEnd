@@ -77,6 +77,11 @@ const UserMenu: React.FC = () => {
     setIsOpen(false);
   };
 
+  const handleBookingHistoryClick = () => {
+    navigate("/booking-history");
+    setIsOpen(false);
+  };
+
   if (!user) return null;
 
   return (
@@ -138,10 +143,12 @@ const UserMenu: React.FC = () => {
               <FontAwesomeIcon icon={faUser} />
               <span>Profile</span>
             </button>
-            <button className="menu-item">
-              <FontAwesomeIcon icon={faCalendarAlt} />
-              <span>Booking History</span>
-            </button>
+            {user.userType === "patient" && (
+              <button className="menu-item" onClick={handleBookingHistoryClick}>
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                <span>Booking History</span>
+              </button>
+            )}
             <button className="menu-item">
               <FontAwesomeIcon icon={faCog} />
               <span>Settings</span>

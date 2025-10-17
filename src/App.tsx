@@ -29,6 +29,7 @@ import About from "./components/About";
 import Information from "./components/Information";
 import Demo from "./components/Demo";
 import Profile from "./components/Profile";
+import BookingHistory from "./components/BookingHistory";
 
 // Main App Content
 const AppContent: React.FC = () => {
@@ -45,6 +46,7 @@ const AppContent: React.FC = () => {
           <Route path="/information" element={<Information />} />
           <Route path="/demo" element={<Demo />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/booking-history" element={<BookingHistory />} />
         </Routes>
         <Footer />
       </Router>
