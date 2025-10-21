@@ -403,6 +403,9 @@ const PatientProfile: React.FC = () => {
           </div>
         </div>
       </div>
+      <div className="btn delete-btn">
+        <button>Delete Account</button>
+      </div>
     </div>
   );
 };

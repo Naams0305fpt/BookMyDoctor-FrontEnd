@@ -225,6 +225,9 @@ const AdminProfile: React.FC = () => {
           </div>
         </div>
       </div>
+      <div className="delete-btn">
+        <button className="btn">Delete Account</button>
+      </div>
     </div>
   );
 };

@@ -279,6 +279,22 @@
   color: #1e293b;
 }
 
+.delete-btn {
+  margin-top: 1.5rem;
+  text-align: right;
+}
+
+.delete-btn .btn {
+  background-color: #dc2626;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .profile-header {
