@@ -61,28 +61,6 @@ const Header: React.FC = () => {
             >
               Information
             </Link>
-            {/* Only show Get Pro for doctors */}
-            {/* {user?.userType === "doctor" && (
-              <Link
-                to="/get-pro"
-                className={`nav-link ${
-                  isActiveLink("/get-pro") ? "active" : ""
-                }`}
-              >
-                Get Pro
-              </Link>
-            )} */}
-            {/*Only show Schedules for doctors */}
-            {/* {user?.userType === "doctor" && (
-              <Link
-                to="#Schedules"
-                className={`nav-link ${
-                  isActiveLink("#Schedules") ? "active" : ""
-                }`}
-              >
-                Schedules
-              </Link>
-            )} */}
             {/* Only show Demo link when not logged in */}
             {
               <Link
