@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import Notification, { NotificationType } from "../components/Notification";
+import Notification, {
+  NotificationType,
+} from "../components/common/Notification";
 
 interface NotificationData {
   id: string;

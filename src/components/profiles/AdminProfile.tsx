@@ -13,7 +13,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
-import "../Profile.css";
+import "../pages/Profile.css";
 
 const AdminProfile: React.FC = () => {
   const { user } = useAuth();
