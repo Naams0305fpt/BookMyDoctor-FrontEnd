@@ -20,16 +20,16 @@ import {
   SignUpModalProvider,
   useSignUpModal,
 } from "./contexts/SignUpModalContext";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Login from "./components/Login";
-import SignUp from "./components/SignUp";
-import Home from "./components/Home";
-import About from "./components/About";
-import Information from "./components/Information";
-import Demo from "./components/Demo";
-import Profile from "./components/Profile";
-import BookingHistory from "./components/BookingHistory";
+import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
+import Login from "./components/auth/Login";
+import SignUp from "./components/auth/SignUp";
+import Home from "./components/pages/Home";
+import About from "./components/pages/About";
+import Information from "./components/pages/Information";
+import Demo from "./components/pages/Demo";
+import Profile from "./components/pages/Profile";
+import BookingHistory from "./components/pages/BookingHistory";
 
 // Main App Content
 const AppContent: React.FC = () => {

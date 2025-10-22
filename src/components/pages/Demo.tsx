@@ -8,7 +8,7 @@ import {
   faCheckCircle,
   faCrown,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import "./Demo.css";
 
 const Demo: React.FC = () => {

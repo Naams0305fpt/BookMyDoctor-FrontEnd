@@ -1,10 +1,10 @@
 import React from "react";
-import { useAuth } from "../contexts/AuthContext";
-import Hero from "./Hero";
-import DoctorsCarousel from "./DoctorsCarousel";
-import AppointmentManagement from "./AppointmentManagement";
-import BookingForm from "./BookingForm";
-import AdminDashboard from "./AdminDashboard";
+import { useAuth } from "../../contexts/AuthContext";
+import Hero from "../common/Hero";
+import DoctorsCarousel from "../common/DoctorsCarousel";
+import AppointmentManagement from "../dashboard/AppointmentManagement";
+import BookingForm from "../booking/BookingForm";
+import AdminDashboard from "../dashboard/AdminDashboard";
 
 const Home: React.FC = () => {
   const { user } = useAuth();

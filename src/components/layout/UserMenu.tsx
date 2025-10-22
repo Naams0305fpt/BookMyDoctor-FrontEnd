@@ -12,8 +12,8 @@ import {
   faCog,
   faCalendarAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAuth, UserType } from "../contexts/AuthContext";
-import { useNotification } from "../contexts/NotificationContext";
+import { useAuth, UserType } from "../../contexts/AuthContext";
+import { useNotification } from "../../contexts/NotificationContext";
 import "./UserMenu.css";
 
 const UserMenu: React.FC = () => {

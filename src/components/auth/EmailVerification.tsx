@@ -6,8 +6,8 @@ import {
   faSpinner,
   faShieldAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNotification } from "../contexts/NotificationContext";
-import { api } from "../services/api";
+import { useNotification } from "../../contexts/NotificationContext";
+import { api } from "../../services/api";
 import "./EmailVerification.css";
 
 interface EmailVerificationProps {

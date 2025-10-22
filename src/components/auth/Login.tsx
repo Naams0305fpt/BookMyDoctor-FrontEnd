@@ -9,9 +9,9 @@ import {
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import ResetPassword from "./ResetPassword";
-import { useAuth } from "../contexts/AuthContext";
-import { useNotification } from "../contexts/NotificationContext";
-import { useSignUpModal } from "../contexts/SignUpModalContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNotification } from "../../contexts/NotificationContext";
+import { useSignUpModal } from "../../contexts/SignUpModalContext";
 import "./Login.css";
 
 interface LoginProps {

@@ -9,11 +9,11 @@ import {
   faSpinner,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "../contexts/AuthContext";
-import { useNotification } from "../contexts/NotificationContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNotification } from "../../contexts/NotificationContext";
 import "./Login.css"; // Base styles
 import "./SignUp.css"; // Additional signup-specific styles
-import { useLoginModal } from "../contexts/LoginModalContext";
+import { useLoginModal } from "../../contexts/LoginModalContext";
 
 interface SignUpProps {
   onClose: () => void;

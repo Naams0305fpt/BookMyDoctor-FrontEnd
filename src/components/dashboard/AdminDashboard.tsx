@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import PatientManagement from "./admin/PatientManagement";
-import DoctorManagement from "./admin/DoctorManagement";
-import ScheduleManagement from "./admin/ScheduleManagement";
+import PatientManagement from "../admin/PatientManagement";
+import DoctorManagement from "../admin/DoctorManagement";
+import ScheduleManagement from "../admin/ScheduleManagement";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {

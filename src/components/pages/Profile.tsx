@@ -1,8 +1,8 @@
 import React from "react";
-import { useAuth } from "../contexts/AuthContext";
-import AdminProfile from "./profiles/AdminProfile";
-import DoctorProfile from "./profiles/DoctorProfile";
-import PatientProfile from "./profiles/PatientProfile";
+import { useAuth } from "../../contexts/AuthContext";
+import AdminProfile from "../profiles/AdminProfile";
+import DoctorProfile from "../profiles/DoctorProfile";
+import PatientProfile from "../profiles/PatientProfile";
 
 const Profile: React.FC = () => {
   const { user } = useAuth();

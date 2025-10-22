@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "../contexts/AuthContext";
-import { useLoginModal } from "../contexts/LoginModalContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useLoginModal } from "../../contexts/LoginModalContext";
 import UserMenu from "./UserMenu";
 import "./Header.css";
 

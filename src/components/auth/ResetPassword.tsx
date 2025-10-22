@@ -9,7 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "./ResetPassword.css";
 import EmailVerification from "./EmailVerification";
-import { useNotification } from "../contexts/NotificationContext";
+import { useNotification } from "../../contexts/NotificationContext";
 
 interface ResetPasswordProps {
   onClose: () => void;
