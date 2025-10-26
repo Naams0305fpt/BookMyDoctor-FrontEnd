@@ -66,6 +66,7 @@ const BookingForm: React.FC = () => {
 
   // Dữ liệu master (cố định)
   const timeSlots = [
+    // Sáng
     "08:00",
     "08:30",
     "09:00",
@@ -74,6 +75,8 @@ const BookingForm: React.FC = () => {
     "10:30",
     "11:00",
     "11:30",
+    // Chiều
+    "13:30",
     "14:00",
     "14:30",
     "15:00",
@@ -81,8 +84,6 @@ const BookingForm: React.FC = () => {
     "16:00",
     "16:30",
     "17:00",
-    "17:30",
-    "18:00",
   ];
   const genders = ["Male", "Female", "Other"];
 
@@ -210,9 +211,20 @@ const BookingForm: React.FC = () => {
       return;
     }
 
-    // 3. Tạo payload cho API
+    // 3. Tìm thông tin doctor để lấy Department
+    const selectedDoctor = allDoctors.find(
+      (doctor) => doctor.DoctorId === parseInt(formData.doctorId)
+    );
+
+    if (!selectedDoctor) {
+      setErrors((prev) => ({ ...prev, doctor: "Selected doctor not found." }));
+      return;
+    }
+
+    // 4. Tạo payload cho API
     const payload: BookingRequest = {
       DoctorId: parseInt(formData.doctorId), // Dùng ID
+      Department: selectedDoctor.Department, // Thêm Department
       FullName: formData.fullName,
       Phone: formData.phone,
       Email: formData.email,
@@ -224,7 +236,7 @@ const BookingForm: React.FC = () => {
       Symptom: formData.symptom,
     };
 
-    // 4. Gọi API
+    // 5. Gọi API
     setIsSubmitting(true);
     setSubmitStatus("idle");
     setNotification("");
@@ -410,7 +422,7 @@ const BookingForm: React.FC = () => {
                     {allDoctors.map((doctor) => (
                       // THAY ĐỔI: value là ID (React sẽ tự chuyển sang string)
                       <option key={doctor.DoctorId} value={doctor.DoctorId}>
-                        {doctor.Name}
+                        {doctor.Name} ({doctor.Department})
                       </option>
                     ))}
                   </select>
