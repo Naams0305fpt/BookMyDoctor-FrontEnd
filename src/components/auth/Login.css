@@ -39,6 +39,7 @@
   font-size: 32px;
   font-weight: 700;
   color: var(--accent-navy);
+  margin-top: var(--spacing-3);
   margin-bottom: var(--spacing-1);
 }
 

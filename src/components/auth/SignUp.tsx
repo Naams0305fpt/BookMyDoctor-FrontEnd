@@ -21,11 +21,11 @@ interface SignUpProps {
 
 const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
   const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    phone: "",
-    password: "",
-    confirmPassword: "",
+    Username: "",
+    Email: "",
+    Phone: "",
+    Password: "",
+    ConfirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -52,27 +52,30 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.Password !== formData.ConfirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
-    if (formData.password.length < 6) {
+    if (formData.Password.length < 6) {
       setError("Password must be at least 6 characters long");
       return;
     }
 
-    if (!/^\d{10}$/.test(formData.phone)) {
+    if (!/^\d{10}$/.test(formData.Phone)) {
       setError("Phone number must be exactly 10 digits");
       return;
     }
 
     try {
+      // THAY ĐỔI: Ánh xạ (map) state (chữ thường)
+      // sang payload (chữ hoa) mà API yêu cầu
       const result = await register({
-        username: formData.username,
-        password: formData.password,
-        email: formData.email,
-        phone: formData.phone,
+        Username: formData.Username,
+        Password: formData.Password,
+        ConfirmPassword: formData.ConfirmPassword,
+        Email: formData.Email,
+        Phone: formData.Phone,
       });
 
       if (result.success) {
@@ -112,8 +115,8 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               <input
                 type="text"
                 id="username"
-                name="username"
-                value={formData.username}
+                name="Username"
+                value={formData.Username}
                 onChange={handleChange}
                 placeholder="Enter your username"
                 required
@@ -128,8 +131,8 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               <input
                 type="email"
                 id="email"
-                name="email"
-                value={formData.email}
+                name="Email"
+                value={formData.Email}
                 onChange={handleChange}
                 placeholder="Enter your email"
                 required
@@ -144,8 +147,8 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               <input
                 type="tel"
                 id="phone"
-                name="phone"
-                value={formData.phone}
+                name="Phone"
+                value={formData.Phone}
                 onChange={handleChange}
                 placeholder="Enter your 10-digit phone number"
                 pattern="[0-9]*"
@@ -163,8 +166,8 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                name="password"
-                value={formData.password}
+                name="Password"
+                value={formData.Password}
                 onChange={handleChange}
                 placeholder="Create password"
                 required
@@ -186,8 +189,8 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
+                name="ConfirmPassword"
+                value={formData.ConfirmPassword}
                 onChange={handleChange}
                 placeholder="Confirm password"
                 required
