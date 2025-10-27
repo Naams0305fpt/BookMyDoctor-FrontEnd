@@ -224,7 +224,7 @@ const BookingForm: React.FC = () => {
     // 4. Tạo payload cho API
     const payload: BookingRequest = {
       DoctorId: parseInt(formData.doctorId), // Dùng ID
-      Department: selectedDoctor.Department, // Thêm Department
+      //Department: selectedDoctor.Department, // Thêm Department
       FullName: formData.fullName,
       Phone: formData.phone,
       Email: formData.email,
