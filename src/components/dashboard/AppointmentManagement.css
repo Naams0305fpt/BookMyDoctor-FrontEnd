@@ -107,6 +107,10 @@
   color: #dc3545;
 }
 
+.status-scheduled {
+  color: #fbbf24;
+}
+
 .editable-field {
   display: flex;
   align-items: center;
@@ -188,7 +192,7 @@
 
 .time-slots-section {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 1rem;
   margin-bottom: 20px;
 }
@@ -245,6 +249,12 @@
   background-color: #fef9c3;
   color: #854d0e;
   border-color: #fde047;
+}
+
+.time-slot.scheduled {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-color: #fbbf24;
 }
 
 .time-slot.busy {

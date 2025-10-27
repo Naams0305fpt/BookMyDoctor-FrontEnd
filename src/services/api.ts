@@ -59,6 +59,21 @@ export interface BookingRequest {
   Symptom: string;
 }
 
+export interface Patient {
+  id?: number; // ID có thể không có trong mọi response, nhưng hữu ích
+  FullName: string;
+  Username: string;
+  DateOfBirth: string; // "YYYY-MM-DD"
+  Gender: string;
+  PhoneNumber: string;
+  Email?: string;
+  Address: string;
+  AppointDate: string; // "YYYY-MM-DD"
+  Status: "Completed" | "Scheduled" | "Cancelled";
+  Symptoms: string;
+  Prescription: string;
+}
+
 export interface Doctor {
   DoctorId: number;
   UserId: number;
@@ -75,14 +90,43 @@ export interface Doctor {
   IsActive: boolean;
 }
 
+export interface CreateDoctorRequest {
+  Username: string;
+  Password: string;
+  Phone: string;
+  Email: string;
+  Name: string;
+  Gender: string;
+  DateOfBirth: string; // "YYYY-MM-DD"
+  Identification: string;
+  Department: string;
+  ExperienceYears: number; // <-- Lưu ý: API này dùng ExperienceYears (số nhiều, không gạch dưới)
+}
+
+// --- THÊM MỚI: INTERFACE CHO SCHEDULE (TỪ API MỚI) ---
+export interface Schedule {
+  ScheduleId?: number; // API gốc có vẻ không trả về, nhưng có thể hữu ích
+  DoctorId: number;
+  DoctorName: string; // <-- Quan trọng!
+  WorkDate: string; // "YYYY-MM-DD"
+  StartTime: string; // "HH:mm:ss"
+  EndTime: string; // "HH:mm:ss"
+  Status: string; // Ví dụ: "Scheduled", "Available"...
+  IsActive?: boolean; // API gốc có, thêm vào nếu cần
+}
+// --- KẾT THÚC THÊM MỚI ---
+
 export interface ScheduleResponseItem {
   AppointHour: string; // "HH:mm:ss"
   Status: string; // "Scheduled", "Cancelled", v.v...
 }
 
 // --- HELPER FUNCTION (Giữ nguyên) ---
-export const formatDateForAPI = (date: Date): string => {
-  if (!date) return "";
+export const formatDateForAPI = (date: Date | null): string => {
+  // Trả về chuỗi rỗng nếu date là null hoặc undefined
+  if (!date) return ""; 
+
+  // Phần còn lại giữ nguyên
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const day = date.getDate().toString().padStart(2, '0');
@@ -185,9 +229,63 @@ export const api = {
     return user;
   },
 
+  getPatients: async (
+    name: string,
+    appointDate: string,
+    status: string
+  ): Promise<Patient[]> => {
+    
+    // Xây dựng params, chỉ gửi nếu có giá trị
+    const params: any = {};
+    if (name) params.name = name;
+    if (appointDate) params.appointDate = appointDate;
+    if (status) params.status = status;
+
+    const response = await apiClient.get("/Patients/AllPatientsAndSearch", {
+      params: params,
+    });
+    return response.data as Patient[];
+  },
+
+  // --- THÊM MỚI: HÀM TẠO BÁC SĨ ---
+  createDoctor: async (data: CreateDoctorRequest): Promise<any> => { 
+    // Gọi đúng endpoint POST /api/Owner/create-doctor
+    // axios sẽ tự động gửi 'data' làm request body
+    const response = await apiClient.post("/Owner/create-doctor", data);
+    
+    // API có thể trả về thông báo, hoặc đối tượng Doctor vừa tạo
+    // Trả về response.data để component tự xử lý
+    return response.data;
+  },
+  // --- KẾT THÚC THÊM MỚI ---
+
   getDoctors: async (): Promise<Doctor[]> => {
     const response = await apiClient.get<Doctor[]>('/Doctors/All-Doctors');
     return response.data;
+  },
+
+  deleteDoctor: async (id: number): Promise<any> => {
+    // API của bạn dùng query param 'id'
+    const response = await apiClient.delete("/Doctors/DeleteDoctor", {
+      params: { id: id },
+    });
+    return response.data; // Trả về data (thường là rỗng hoặc 200 OK)
+  },
+
+  getAllSchedules: async (
+    doctorName: string, // Giả định API hỗ trợ lọc theo tên
+    date: string // Giả định API hỗ trợ lọc theo ngày "YYYY-MM-DD"
+  ): Promise<Schedule[]> => {
+    
+    // Xây dựng params, chỉ gửi nếu có giá trị
+    const params: any = {};
+    if (doctorName) params.doctorName = doctorName; // Hoặc tên param API dùng (vd: doctorSearch)
+    if (date) params.date = date;
+
+    const response = await apiClient.get("/Schedule/List_All_Schedules_Doctors", {
+      params: params,
+    });
+    return response.data as Schedule[];
   },
 
   getDoctorSchedule: async (
@@ -211,4 +309,6 @@ export const api = {
     const response = await apiClient.post('/booking/public', data);
     return response.data;
   },
+  
 };
+

@@ -1,207 +1,82 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faFileExport,
-  faTrash,
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { api, Patient, formatDateForAPI } from "../../services/api"; // <-- Import API
 
-interface Patient {
-  id: number;
-  fullname: string;
-  username: string;
-  dob: string; // Date of Birth
-  gender: string;
-  phone: string;
-  email?: string;
-  address: string;
-  appointmentDate: string; // Appointment Date
-  status: "Completed" | "Pending" | "Cancelled";
-  symptom: string;
-  prescription: string;
-  isActive?: boolean;
-}
-
-const mockPatients: Patient[] = [
-  // October 6, 2025 - 2 patients
-  {
-    id: 1,
-    fullname: "Nguyễn Văn A",
-    username: "nguyenvana",
-    dob: "2000-03-14",
-    gender: "Male",
-    phone: "0987123456",
-    email: "nguynvana@gmail.com",
-    address: "Hà Nội",
-    appointmentDate: "2025-10-06",
-    status: "Completed",
-    symptom: "Fever",
-    prescription: "Paracetamol 500mg",
-  },
-  {
-    id: 2,
-    fullname: "Trần Thị B",
-    username: "tranthib",
-    dob: "1998-07-22",
-    gender: "Female",
-    phone: "0905123456",
-    address: "TP. HCM",
-    appointmentDate: "2025-10-06",
-    status: "Completed",
-    symptom: "Headache",
-    prescription: "Ibuprofen 400mg",
-  },
-  // October 7, 2025 - 2 patients
-  {
-    id: 3,
-    fullname: "Lê Minh C",
-    username: "leminhc",
-    dob: "1995-11-08",
-    gender: "Male",
-    phone: "0912345678",
-    address: "Đà Nẵng",
-    appointmentDate: "2025-10-07",
-    status: "Completed",
-    symptom: "Cough and cold",
-    prescription: "Amoxicillin 250mg",
-  },
-  {
-    id: 4,
-    fullname: "Phạm Thu D",
-    username: "phamthud",
-    dob: "2002-05-19",
-    gender: "Female",
-    phone: "0923456789",
-    email: "phamthud@gmail.com",
-    address: "Hải Phòng",
-    appointmentDate: "2025-10-07",
-    status: "Pending",
-    symptom: "Stomach pain",
-    prescription: "-",
-  },
-  // October 8, 2025 - 2 patients
-  {
-    id: 5,
-    fullname: "Hoàng Văn E",
-    username: "hoangvane",
-    dob: "1992-09-25",
-    gender: "Male",
-    phone: "0934567890",
-    address: "Cần Thơ",
-    appointmentDate: "2025-10-08",
-    status: "Completed",
-    symptom: "Back pain",
-    prescription: "Diclofenac 50mg",
-  },
-  {
-    id: 6,
-    fullname: "Đỗ Thị F",
-    username: "dothif",
-    dob: "1999-12-30",
-    gender: "Female",
-    phone: "0945678901",
-    email: "dothif@gmail.com",
-    address: "Huế",
-    appointmentDate: "2025-10-08",
-    status: "Cancelled",
-    symptom: "Allergic reaction",
-    prescription: "-",
-  },
-  // October 9, 2025 - 2 patients
-  {
-    id: 7,
-    fullname: "Vũ Minh G",
-    username: "vuminhg",
-    dob: "1997-04-15",
-    gender: "Male",
-    phone: "0956789012",
-    address: "Nha Trang",
-    appointmentDate: "2025-10-09",
-    status: "Completed",
-    symptom: "Sore throat",
-    prescription: "Azithromycin 500mg",
-  },
-  {
-    id: 8,
-    fullname: "Bùi Thu H",
-    username: "buithuh",
-    dob: "2001-08-07",
-    gender: "Female",
-    phone: "0967890123",
-    email: "buithuh@gmail.com",
-    address: "Vũng Tàu",
-    appointmentDate: "2025-10-09",
-    status: "Pending",
-    symptom: "Dizziness",
-    prescription: "-",
-  },
-  // October 10, 2025 - 2 patients
-  {
-    id: 9,
-    fullname: "Ngô Văn I",
-    username: "ngovani",
-    dob: "1994-06-12",
-    gender: "Male",
-    phone: "0978901234",
-    email: "ngovani@gmail.com",
-    address: "Biên Hòa",
-    appointmentDate: "2025-10-10",
-    status: "Pending",
-    symptom: "Chest pain",
-    prescription: "-",
-  },
-  {
-    id: 10,
-    fullname: "Lý Thị K",
-    username: "lythik",
-    dob: "2000-10-28",
-    gender: "Female",
-    phone: "0989012345",
-    email: "lythik@gmail.com",
-    address: "Quy Nhơn",
-    appointmentDate: "2025-10-10",
-    status: "Pending",
-    symptom: "Skin rash",
-    prescription: "-",
-  },
-];
+// (Component Loading/Error có thể thêm vào đây)
+const LoadingSpinner = () => (
+  <div style={{ textAlign: "center", padding: "2rem" }}>
+    Loading patients...
+  </div>
+);
 
 const PatientManagement: React.FC = () => {
-  const [patients, setPatients] = useState<Patient[]>(mockPatients);
+  // State cho dữ liệu
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this patient?")) {
-      setPatients(patients.filter((patient) => patient.id !== id));
+  // State cho bộ lọc
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // <-- Sửa: Bắt đầu là null
+  const [selectedStatus, setSelectedStatus] = useState(""); // <-- Thêm: Bộ lọc status
+
+  // Hàm fetch data chính
+  const fetchPatients = async (
+    name: string,
+    date: Date | null,
+    status: string
+  ) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      // Chuyển đổi Date object thành string "YYYY-MM-DD"
+      const formattedDate = date ? formatDateForAPI(date) : "";
+
+      const data = await api.getPatients(name, formattedDate, status);
+      setPatients(data);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch patients.");
+    } finally {
+      setIsLoading(false);
     }
   };
-  const [view, setView] = useState("appointment");
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const [searchQuery, setSearchQuery] = useState("");
 
+  // Gọi API khi component mount và khi bộ lọc thay đổi
+  useEffect(() => {
+    // Sử dụng debounce để tránh gọi API liên tục khi gõ search
+    const timerId = setTimeout(() => {
+      fetchPatients(searchQuery, selectedDate, selectedStatus);
+    }, 500); // <-- Chờ 500ms sau khi gõ xong
+
+    return () => clearTimeout(timerId); // Hủy timer nếu user gõ tiếp
+  }, [searchQuery, selectedDate, selectedStatus]);
+
+  // Các hàm điều khiển (giữ nguyên)
   const goToPreviousDay = () => {
-    if (selectedDate) {
-      const previousDay = new Date(selectedDate);
-      previousDay.setDate(previousDay.getDate() - 1);
-      setSelectedDate(previousDay);
-    }
+    const date = selectedDate || new Date(); // Bắt đầu từ hôm nay nếu null
+    const previousDay = new Date(date);
+    previousDay.setDate(previousDay.getDate() - 1);
+    setSelectedDate(previousDay);
   };
 
   const goToNextDay = () => {
-    if (selectedDate) {
-      const nextDay = new Date(selectedDate);
-      nextDay.setDate(nextDay.getDate() + 1);
-      setSelectedDate(nextDay);
-    }
+    const date = selectedDate || new Date(); // Bắt đầu từ hôm nay nếu null
+    const nextDay = new Date(date);
+    nextDay.setDate(nextDay.getDate() + 1);
+    setSelectedDate(nextDay);
   };
 
-  const getStatusClass = (status: Patient["status"]) => {
+  const getStatusClass = (status: Patient["Status"]) => {
     switch (status) {
       case "Completed":
         return "verified";
-      case "Pending":
+      case "Scheduled":
         return "pending";
       case "Cancelled":
         return "unverified";
@@ -212,6 +87,7 @@ const PatientManagement: React.FC = () => {
 
   return (
     <div className="admin-table-container">
+      {/* (Phần SVG title của bạn) */}
       <div className="section-header">
         <div className="section-title">
           <svg
@@ -233,19 +109,20 @@ const PatientManagement: React.FC = () => {
 
       <div className="appointment">
         <div className="appointment-controls">
-          {view === "appointment" && (
-            <div className="search-container">
-              <div className="search-bar">
-                <input
-                  type="text"
-                  placeholder="Search by patient name or phone..."
-                  className="search-input"
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  value={searchQuery}
-                />
-              </div>
+          {/* Search Bar (Giữ nguyên) */}
+          <div className="search-container">
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Search by patient name or phone..."
+                className="search-input"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchQuery}
+              />
             </div>
-          )}
+          </div>
+
+          {/* Date Navigation (Giữ nguyên) */}
           <div className="date-navigation">
             <button
               className="date-nav-btn"
@@ -260,7 +137,8 @@ const PatientManagement: React.FC = () => {
                 onChange={(date) => setSelectedDate(date)}
                 dateFormat="dd/MM/yyyy"
                 className="date-picker"
-                placeholderText="Select date"
+                placeholderText="All Dates" // <-- Sửa
+                isClearable // Cho phép xóa
               />
             </div>
             <button
@@ -271,7 +149,23 @@ const PatientManagement: React.FC = () => {
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>
+
+          {/* THÊM: Bộ lọc Status */}
+          <div className="status-filter">
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="search-input" // Tận dụng class cũ
+            >
+              <option value="">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
         </div>
+
+        {/* Bảng Dữ liệu */}
         <table className="appointments-table">
           <thead>
             <tr>
@@ -282,49 +176,66 @@ const PatientManagement: React.FC = () => {
               <th>Gender</th>
               <th>Phone</th>
               <th>Email</th>
+              <th>Address</th>
               <th>Status</th>
               <th>Symptom</th>
               <th>Prescription</th>
             </tr>
           </thead>
           <tbody>
-            {patients
-              .filter((patient) => {
-                const matchesSearch =
-                  patient.fullname
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase()) ||
-                  patient.phone.includes(searchQuery);
-
-                const matchesDate =
-                  !selectedDate ||
-                  new Date(patient.appointmentDate).toDateString() ===
-                    selectedDate.toDateString();
-
-                return matchesSearch && matchesDate;
-              })
-              .map((patient, index) => (
-                <tr key={patient.id}>
+            {isLoading && (
+              <tr>
+                <td colSpan={11} style={{ textAlign: "center" }}>
+                  Loading...
+                </td>
+              </tr>
+            )}
+            {error && (
+              <tr>
+                <td colSpan={11} style={{ textAlign: "center", color: "red" }}>
+                  {error}
+                </td>
+              </tr>
+            )}
+            {!isLoading &&
+              !error &&
+              patients.length > 0 &&
+              patients.map((patient, index) => (
+                <tr key={patient.Username}>
+                  {" "}
+                  {/* Dùng Username hoặc key duy nhất */}
                   <td>{index + 1}</td>
-                  <td>{patient.fullname}</td>
-                  <td>{patient.username}</td>
-                  <td>{patient.dob}</td>
-                  <td>{patient.gender}</td>
-                  <td>{patient.phone}</td>
-                  <td>{patient.email || "N/A"}</td>
+                  {/* SỬA: Dùng đúng tên thuộc tính (viết hoa) */}
+                  <td>{patient.FullName}</td>
+                  <td>{patient.Username}</td>
+                  <td>
+                    {new Date(patient.DateOfBirth).toLocaleDateString("en-GB")}
+                  </td>
+                  <td>{patient.Gender}</td>
+                  <td>{patient.PhoneNumber}</td>
+                  <td>{patient.Email || "N/A"}</td>
+                  {/* SỬA: Đổi thứ tự 2 cột này */}
+                  <td>{patient.Address}</td>
                   <td>
                     <span
                       className={`status-badge ${getStatusClass(
-                        patient.status
+                        patient.Status
                       )}`}
                     >
-                      {patient.status}
+                      {patient.Status}
                     </span>
                   </td>
-                  <td>{patient.symptom}</td>
-                  <td>{patient.prescription}</td>
+                  <td>{patient.Symptoms}</td>
+                  <td>{patient.Prescription}</td>
                 </tr>
               ))}
+            {/* {!isLoading && !error && patients.length === 0 && (
+              <tr>
+                <td colSpan={11} style={{ textAlign: "center" }}>
+                  No patients found.
+                </td>
+              </tr>
+            )} */}
           </tbody>
         </table>
       </div>

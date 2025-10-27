@@ -1,79 +1,104 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react"; // Thêm useEffect, useCallback
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faTrash,
+  // faTrash, // Tạm thời bỏ nếu chưa cần xóa
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+// Import từ API service
+import { api, Schedule, formatDateForAPI } from "../../services/api";
 
-interface Schedule {
-  id: number;
-  doctor: string;
-  gender: string;
-  phone: string;
-  email: string;
-  workDate: string;
-  start: string;
-  end: string;
-  status?: "available" | "unavailable";
-}
+// Bỏ interface cũ và mock data
+// interface Schedule { ... }
+// const mockSchedules: Schedule[] = [ ... ];
 
-const mockSchedules: Schedule[] = [
-  {
-    id: 1,
-    doctor: "Dr. Nguyễn Văn B",
-    gender: "Male",
-    phone: "0988888888",
-    email: "doctorb@example.com",
-    workDate: "2025-10-10",
-    start: "08:00",
-    end: "17:00",
-    status: "available",
-  },
-  {
-    id: 2,
-    doctor: "Dr. Trần Thị C",
-    gender: "Female",
-    phone: "0911222333",
-    email: "doctorc@example.com",
-    workDate: "2025-10-11",
-    start: "09:00",
-    end: "16:00",
-    status: "unavailable",
-  },
-];
+// Component Loading/Error (Tương tự các component khác)
+const LoadingSpinner = () => (
+  <div style={{ textAlign: "center", padding: "2rem" }}>
+    Loading schedules...
+  </div>
+);
+const ErrorDisplay = ({ message }: { message: string }) => (
+  <div style={{ color: "red", textAlign: "center", padding: "2rem" }}>
+    Error: {message}
+  </div>
+);
 
 const ScheduleManagement = () => {
-  const [schedules, setSchedules] = useState<Schedule[]>(mockSchedules);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const [searchQuery, setSearchQuery] = useState("");
+  // Sửa state: dùng Schedule từ API, bỏ mock data
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date()); // Giữ nguyên
+  const [searchQuery, setSearchQuery] = useState(""); // Giữ nguyên (tìm theo tên BS)
 
+  // Thêm state loading và error
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Hàm fetch data (tương tự PatientManagement)
+  const fetchSchedules = useCallback(
+    async (doctorName: string, date: Date | null) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const formattedDate = date ? formatDateForAPI(date) : "";
+        // Gọi hàm API mới getAllSchedules
+        const data = await api.getAllSchedules(doctorName, formattedDate);
+        setSchedules(data);
+      } catch (err: any) {
+        setError(err.message || "Failed to load schedules.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  ); // Hàm này không thay đổi dependency
+
+  // Gọi API khi filter thay đổi (tương tự PatientManagement)
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      fetchSchedules(searchQuery, selectedDate);
+    }, 500); // Debounce search query
+
+    return () => clearTimeout(timerId);
+  }, [searchQuery, selectedDate, fetchSchedules]);
+
+  // Bỏ hàm handleDelete (nếu không cần)
+  /*
   const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this schedule?")) {
-      setSchedules(schedules.filter((schedule) => schedule.id !== id));
-    }
+    // ... logic gọi API xóa schedule
   };
+  */
 
+  // Date navigation (Giữ nguyên)
   const goToPreviousDay = () => {
-    if (selectedDate) {
-      const previousDay = new Date(selectedDate);
-      previousDay.setDate(previousDay.getDate() - 1);
-      setSelectedDate(previousDay);
-    }
+    const date = selectedDate || new Date();
+    const previousDay = new Date(date);
+    previousDay.setDate(previousDay.getDate() - 1);
+    setSelectedDate(previousDay);
   };
 
   const goToNextDay = () => {
-    if (selectedDate) {
-      const nextDay = new Date(selectedDate);
-      nextDay.setDate(nextDay.getDate() + 1);
-      setSelectedDate(nextDay);
+    const date = selectedDate || new Date();
+    const nextDay = new Date(date);
+    nextDay.setDate(nextDay.getDate() + 1);
+    setSelectedDate(nextDay);
+  };
+
+  // Helper định dạng giờ HH:mm (bỏ giây)
+  const formatTime = (timeString: string | undefined) => {
+    if (!timeString) return "N/A";
+    try {
+      return timeString.substring(0, 5); // Lấy HH:mm
+    } catch {
+      return timeString;
     }
   };
 
   return (
     <div className="admin-table-container">
+      {/* Header (Giữ nguyên) */}
       <div className="section-header">
         <div className="section-title">
           <svg
@@ -83,6 +108,7 @@ const ScheduleManagement = () => {
             role="img"
             viewBox="0 0 448 512"
             aria-hidden="true"
+            style={{ width: "1em", marginRight: "0.5rem" }}
           >
             <path
               fill="currentColor"
@@ -93,12 +119,13 @@ const ScheduleManagement = () => {
         </div>
       </div>
       <div className="appointment">
+        {/* Controls (Sửa placeholder) */}
         <div className="appointment-controls">
           <div className="search-container">
             <div className="search-bar">
               <input
                 type="text"
-                placeholder="Search by doctor name, email, or phone..."
+                placeholder="Search by doctor name..." // Chỉ tìm theo tên BS
                 className="search-input"
                 onChange={(e) => setSearchQuery(e.target.value)}
                 value={searchQuery}
@@ -119,7 +146,8 @@ const ScheduleManagement = () => {
                 onChange={(date) => setSelectedDate(date)}
                 dateFormat="dd/MM/yyyy"
                 className="date-picker"
-                placeholderText="Select date"
+                placeholderText="Select date" // Hoặc "All Dates" nếu API hỗ trợ date rỗng
+                isClearable // Cho phép xóa ngày
               />
             </div>
             <button
@@ -131,6 +159,7 @@ const ScheduleManagement = () => {
             </button>
           </div>
         </div>
+        {/* Bảng Dữ liệu */}
         <table className="appointments-table">
           <thead>
             <tr>
@@ -140,49 +169,65 @@ const ScheduleManagement = () => {
               <th>Start Time</th>
               <th>End Time</th>
               <th>Status</th>
+              {/* <th>Actions</th> */}
             </tr>
           </thead>
           <tbody>
-            {schedules
-              .filter((schedule) => {
-                const matchesSearch =
-                  schedule.doctor
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase()) ||
-                  schedule.email
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase()) ||
-                  schedule.phone.includes(searchQuery);
-
-                const matchesDate =
-                  !selectedDate ||
-                  new Date(schedule.workDate).toDateString() ===
-                    selectedDate.toDateString();
-
-                return matchesSearch && matchesDate;
-              })
-              .map((schedule, index) => (
-                <tr key={schedule.id}>
+            {/* Hiển thị loading */}
+            {isLoading && (
+              <tr>
+                <td colSpan={6} style={{ textAlign: "center" }}>
+                  Loading...
+                </td>
+              </tr>
+            )}
+            {/* Hiển thị lỗi */}
+            {error && (
+              <tr>
+                <td colSpan={6} style={{ textAlign: "center", color: "red" }}>
+                  {error}
+                </td>
+              </tr>
+            )}
+            {/* Hiển thị dữ liệu */}
+            {!isLoading &&
+              !error &&
+              schedules.length > 0 &&
+              schedules.map((schedule, index) => (
+                <tr
+                  key={`${schedule.DoctorId}-${schedule.WorkDate}-${schedule.StartTime}`}
+                >
                   <td>{index + 1}</td>
-                  <td>{schedule.doctor}</td>
-                  <td>{schedule.workDate}</td>
-                  <td>{schedule.start}</td>
-                  <td>{schedule.end}</td>
+                  {/* Dùng đúng tên trường từ API */}
+                  <td>{schedule.DoctorName}</td>
                   <td>
+                    {new Date(schedule.WorkDate).toLocaleDateString("en-GB")}
+                  </td>
+                  <td>{formatTime(schedule.StartTime)}</td>
+                  <td>{formatTime(schedule.EndTime)}</td>
+                  <td>
+                    {/* Hiển thị status từ API, có thể thêm class CSS */}
                     <span
-                      className={`status-badge ${
-                        schedule.status === "available"
-                          ? "verified"
-                          : "unverified"
-                      }`}
+                      className={`status-${schedule.Status?.toLowerCase()}`}
                     >
-                      {schedule.status === "available"
-                        ? "Available"
-                        : "Unavailable"}
+                      {schedule.Status}
                     </span>
                   </td>
+                  {/*
+                <td className="action-buttons">
+                   <FontAwesomeIcon icon={faTrash} className="delete-icon" onClick={() => handleDelete(schedule.ScheduleId)} />
+                </td>
+                */}
                 </tr>
               ))}
+            {/* Hiển thị khi không có dữ liệu */}
+            {/* {!isLoading && !error && schedules.length === 0 && (
+              <tr>
+                <td colSpan={6} style={{ textAlign: "center" }}>
+                  No schedules found for the selected criteria.
+                </td>
+              </tr>
+            )} */}
           </tbody>
         </table>
       </div>

@@ -9,120 +9,159 @@ import {
   faUserMd,
   faEye,
   faEyeSlash,
+  faVenusMars,
+  faCalendarAlt,
+  faIdCard,
+  faBriefcase,
+  faBuilding,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNotification } from "../../contexts/NotificationContext";
-import "./CreateDoctorModal.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./CreateDoctorModal.css"; // Import file CSS của bạn
+import { api, CreateDoctorRequest, formatDateForAPI } from "../../services/api"; // Đường dẫn đến api.ts
 
 interface CreateDoctorModalProps {
   onClose: () => void;
-  onSubmit: (doctorData: any) => void;
+  onSubmit: () => void; // Chỉ báo hiệu thành công
 }
 
 const CreateDoctorModal: React.FC<CreateDoctorModalProps> = ({
   onClose,
   onSubmit,
 }) => {
-  const { showNotification } = useNotification();
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    phone: "",
-    password: "Doctor@123",
-    role: "doctor",
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({
-    username: "",
-    email: "",
+  // Hàm hiển thị thông báo (bạn có thể thay bằng context của mình)
+  const showNotification = (type: string, title: string, msg: string) => {
+    console.log(`${title}: ${msg}`);
+    if (type === "error") alert(`ERROR: ${msg}`);
+    else alert(`SUCCESS: ${msg}`);
+  };
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // State khớp với CreateDoctorRequest
+  const [formData, setFormData] = useState<CreateDoctorRequest>({
+    // Bắt buộc
+    Username: "",
+    Email: "",
+    Password: "Doctor@123", // Mật khẩu mặc định
+    Phone: "",
+    Name: "",
+    Identification: "",
+    Gender: "",
+    DateOfBirth: "",
+    Department: "", // Bắt buộc - khởi tạo rỗng
+    ExperienceYears: 0, // Bắt buộc - khởi tạo 0
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    // Clear error when user starts typing
-    if (errors[name as keyof typeof errors]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
+    // Xử lý ExperienceYears: Nếu input trống thì vẫn là chuỗi rỗng để validate
+    const finalValue =
+      name === "ExperienceYears"
+        ? value // Giữ là string để validate isEmpty, sẽ convert thành number khi submit
+        : value;
+
+    setFormData((prev) => ({ ...prev, [name]: finalValue }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
+  const handleDateChange = (date: Date | null) => {
+    setStartDate(date);
+    setFormData((prev) => ({ ...prev, DateOfBirth: formatDateForAPI(date) }));
+    if (errors.DateOfBirth) {
+      setErrors((prev) => ({ ...prev, DateOfBirth: "" }));
+    }
+  };
+
+  // SỬA ĐỔI: Thêm validation cho Department và ExperienceYears
   const validateForm = () => {
     let isValid = true;
-    const newErrors = { username: "", email: "" };
+    const newErrors: Record<string, string> = {};
 
-    // Validate username
-    if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
-      isValid = false;
-    } else if (formData.username.length < 3) {
-      newErrors.username = "Username must be at least 3 characters";
-      isValid = false;
-    }
-
-    // Validate email
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-      isValid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-      isValid = false;
+    // Kiểm tra các trường bắt buộc
+    if (!formData.Username.trim()) newErrors.Username = "Username is required";
+    if (!formData.Email.trim()) newErrors.Email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Email))
+      newErrors.Email = "Invalid email format";
+    if (!formData.Password.trim()) newErrors.Password = "Password is required";
+    if (!formData.Name.trim()) newErrors.Name = "Full Name is required";
+    if (!formData.Identification.trim())
+      newErrors.Identification = "Identification (ID Card) is required";
+    if (!formData.Phone.trim()) newErrors.Phone = "Phone number is required";
+    if (!formData.Gender) newErrors.Gender = "Gender is required";
+    if (!formData.DateOfBirth)
+      newErrors.DateOfBirth = "Date of Birth is required";
+    // Thêm kiểm tra
+    if (!formData.Department.trim())
+      newErrors.Department = "Department is required";
+    // Kiểm tra ExperienceYears không rỗng và không âm
+    const expYearsString = String(formData.ExperienceYears).trim(); // Convert to string for trim check
+    if (expYearsString === "") {
+      newErrors.ExperienceYears = "Experience is required";
+    } else {
+      const expYearsNum = Number(expYearsString);
+      if (isNaN(expYearsNum) || expYearsNum < 0) {
+        newErrors.ExperienceYears = "Experience must be a non-negative number";
+      }
     }
 
     setErrors(newErrors);
+    isValid = Object.keys(newErrors).length === 0;
     return isValid;
   };
 
+  // Gọi API createDoctor
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
+      showNotification(
+        "error",
+        "Validation Failed",
+        "Please check all required fields."
+      );
       return;
     }
 
-    try {
-      // TODO: Replace with actual API call
-      console.log("Creating doctor account:", formData);
+    setIsSubmitting(true);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // Chuẩn bị data, đảm bảo ExperienceYears là number
+      const dataToSend: CreateDoctorRequest = {
+        ...formData,
+        ExperienceYears: Number(formData.ExperienceYears), // Convert sang number trước khi gửi
+      };
+
+      await api.createDoctor(dataToSend);
 
       showNotification(
         "success",
         "Account Created",
-        `Doctor account for ${formData.username} has been created successfully. An activation email has been sent to ${formData.email}.`,
-        5000
+        `Doctor account for ${formData.Name} has been created.`
       );
 
-      // Call the onSubmit prop with the new doctor data
-      onSubmit({
-        fullName: formData.username,
-        username: formData.username,
-        password: formData.password,
-        email: formData.email,
-        phone: formData.phone || "N/A",
-        dob: "N/A",
-        gender: "N/A",
-        address: "N/A",
-        department: "N/A",
-        experience: "0 years",
-      });
-
+      onSubmit();
       onClose();
-    } catch (error) {
+    } catch (err: any) {
+      console.error("Create doctor failed:", err);
       showNotification(
         "error",
         "Creation Failed",
-        "Failed to create doctor account. Please try again.",
-        4000
+        err.message || "Failed to create doctor account."
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  // JSX Render
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
@@ -133,144 +172,267 @@ const CreateDoctorModal: React.FC<CreateDoctorModalProps> = ({
           <FontAwesomeIcon icon={faTimes} />
         </button>
 
-        <div className="modal-header">
+        <div className="modal-header create-doctor-header">
           <FontAwesomeIcon icon={faUserMd} className="modal-icon" />
           <h2>Create Doctor Account</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="doctor-form">
-          <div className="form-group">
-            <label htmlFor="username">
-              <FontAwesomeIcon icon={faUser} />
-              Username <span className="required">*</span>
-            </label>
-            <div className="input-wrapper">
-              <FontAwesomeIcon icon={faUser} className="input-icon" />
-              <input
-                type="text"
-                id="username"
-                name="username"
-                value={formData.username}
-                onChange={handleInputChange}
-                placeholder="Enter username"
-                className={errors.username ? "error" : ""}
-              />
+          <div className="form-grid">
+            {/* Cột 1 */}
+            <div className="form-group-column">
+              {/* --- BẮT BUỘC --- */}
+              <div className="form-group">
+                <label htmlFor="Name">
+                  Full Name <span className="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <FontAwesomeIcon icon={faUser} className="input-icon" />
+                  <input
+                    type="text"
+                    id="Name"
+                    name="Name"
+                    value={formData.Name}
+                    onChange={handleInputChange}
+                    placeholder="Nguyen Van A"
+                    className={errors.Name ? "error" : ""}
+                  />
+                </div>
+                {errors.Name && (
+                  <span className="error-message">{errors.Name}</span>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="Username">
+                  Username <span className="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <FontAwesomeIcon icon={faUser} className="input-icon" />
+                  <input
+                    type="text"
+                    id="Username"
+                    name="Username"
+                    value={formData.Username}
+                    onChange={handleInputChange}
+                    placeholder="nguyenvana"
+                    className={errors.Username ? "error" : ""}
+                  />
+                </div>
+                {errors.Username && (
+                  <span className="error-message">{errors.Username}</span>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="Password">
+                  Password <span className="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <FontAwesomeIcon icon={faLock} className="input-icon" />
+                  <input
+                    type="password"
+                    id="Password"
+                    name="Password"
+                    value={formData.Password}
+                    onChange={handleInputChange}
+                    className={errors.Password ? "error" : ""}
+                  />
+                </div>
+                {errors.Password && (
+                  <span className="error-message">{errors.Password}</span>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="Identification">
+                  Identification (ID) <span className="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <FontAwesomeIcon icon={faIdCard} className="input-icon" />
+                  <input
+                    type="text"
+                    id="Identification"
+                    name="Identification"
+                    value={formData.Identification}
+                    onChange={handleInputChange}
+                    placeholder="Enter ID Card Number"
+                    className={errors.Identification ? "error" : ""}
+                  />
+                </div>
+                {errors.Identification && (
+                  <span className="error-message">{errors.Identification}</span>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="DateOfBirth">
+                  Date of Birth <span className="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <FontAwesomeIcon
+                    icon={faCalendarAlt}
+                    className="input-icon"
+                  />
+                  <DatePicker
+                    selected={startDate}
+                    onChange={handleDateChange}
+                    id="DateOfBirth"
+                    name="DateOfBirth"
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText="Select date"
+                    className={errors.DateOfBirth ? "error" : ""}
+                    showYearDropdown
+                    scrollableYearDropdown
+                    yearDropdownItemNumber={70}
+                    isClearable={false}
+                  />
+                </div>
+                {errors.DateOfBirth && (
+                  <span className="error-message">{errors.DateOfBirth}</span>
+                )}
+              </div>
             </div>
 
-            {errors.username && (
-              <span className="error-message">{errors.username}</span>
-            )}
-          </div>
+            {/* Cột 2 */}
+            <div className="form-group-column">
+              {/* --- BẮT BUỘC --- */}
+              <div className="form-group">
+                <label htmlFor="Email">
+                  Email <span className="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <FontAwesomeIcon icon={faEnvelope} className="input-icon" />
+                  <input
+                    type="email"
+                    id="Email"
+                    name="Email"
+                    value={formData.Email}
+                    onChange={handleInputChange}
+                    placeholder="doctor@example.com"
+                    className={errors.Email ? "error" : ""}
+                  />
+                </div>
+                {errors.Email && (
+                  <span className="error-message">{errors.Email}</span>
+                )}
+              </div>
 
-          <div className="form-group">
-            <label htmlFor="email">
-              <FontAwesomeIcon icon={faEnvelope} />
-              Email <span className="required">*</span>
-            </label>
-            <div className="input-wrapper">
-              <FontAwesomeIcon icon={faEnvelope} className="input-icon" />
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="doctor@example.com"
-                className={errors.email ? "error" : ""}
-              />
+              <div className="form-group">
+                <label htmlFor="Phone">
+                  Phone <span className="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <FontAwesomeIcon icon={faPhone} className="input-icon" />
+                  <input
+                    type="tel"
+                    id="Phone"
+                    name="Phone"
+                    value={formData.Phone}
+                    onChange={handleInputChange}
+                    placeholder="Enter phone number"
+                    className={errors.Phone ? "error" : ""}
+                  />
+                </div>
+                {errors.Phone && (
+                  <span className="error-message">{errors.Phone}</span>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="Gender">
+                  Gender <span className="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <FontAwesomeIcon icon={faVenusMars} className="input-icon" />
+                  <select
+                    id="Gender"
+                    name="Gender"
+                    value={formData.Gender}
+                    onChange={handleInputChange}
+                    className={errors.Gender ? "error" : ""}
+                  >
+                    <option value="">Select gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                {errors.Gender && (
+                  <span className="error-message">{errors.Gender}</span>
+                )}
+              </div>
+
+              {/* --- SỬA ĐỔI: Department BẮT BUỘC --- */}
+              <div className="form-group">
+                <label htmlFor="Department">
+                  Department <span className="required">*</span>{" "}
+                  {/* Sửa label */}
+                </label>
+                <div className="input-wrapper">
+                  <FontAwesomeIcon icon={faBuilding} className="input-icon" />
+                  <input
+                    type="text"
+                    id="Department"
+                    name="Department"
+                    value={formData.Department}
+                    onChange={handleInputChange}
+                    placeholder="e.g., Cardiology"
+                    className={errors.Department ? "error" : ""} // Sửa placeholder
+                  />
+                </div>
+                {/* Hiển thị lỗi */}
+                {errors.Department && (
+                  <span className="error-message">{errors.Department}</span>
+                )}
+              </div>
+
+              {/* --- SỬA ĐỔI: ExperienceYears BẮT BUỘC --- */}
+              <div className="form-group">
+                <label htmlFor="ExperienceYears">
+                  Experience (Years) <span className="required">*</span>{" "}
+                  {/* Sửa label */}
+                </label>
+                <div className="input-wrapper">
+                  <FontAwesomeIcon icon={faBriefcase} className="input-icon" />
+                  <input
+                    type="number"
+                    id="ExperienceYears"
+                    name="ExperienceYears"
+                    value={formData.ExperienceYears}
+                    onChange={handleInputChange}
+                    placeholder="0"
+                    className={errors.ExperienceYears ? "error" : ""}
+                    min="0" // Sửa placeholder
+                  />
+                </div>
+                {/* Hiển thị lỗi */}
+                {errors.ExperienceYears && (
+                  <span className="error-message">
+                    {errors.ExperienceYears}
+                  </span>
+                )}
+              </div>
             </div>
-
-            {errors.email && (
-              <span className="error-message">{errors.email}</span>
-            )}
-            <span className="field-note">
-              An activation link will be sent to this email
-            </span>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="phone">
-              <FontAwesomeIcon icon={faPhone} />
-              Phone <span className="optional">(Optional)</span>
-            </label>
-            <div className="input-wrapper">
-              <FontAwesomeIcon icon={faPhone} className="input-icon" />
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                placeholder="Enter doctor's phone number"
-              />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">
-              <FontAwesomeIcon icon={faLock} />
-              Default Password
-            </label>
-            <div className="password-input-wrapper">
-              <FontAwesomeIcon icon={faLock} className="input-icon" />
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                readOnly
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-              </button>
-            </div>
-            <span className="field-note">
-              Doctor can change this password after first login
-            </span>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="role">
-              <FontAwesomeIcon icon={faUserMd} />
-              Role
-            </label>
-            <div className="input-wrapper">
-              <FontAwesomeIcon icon={faUserMd} className="input-icon" />
-              <input
-                type="text"
-                id="role"
-                name="role"
-                value={formData.role}
-                readOnly
-                className="readonly-field"
-              />
-            </div>
-          </div>
-
-          <div className="info-box">
-            <FontAwesomeIcon icon={faEnvelope} className="info-icon" />
-            <div className="info-content">
-              <strong>Email Activation Required</strong>
-              <p>
-                The doctor will receive an activation email at the provided
-                address. They must click the activation link to complete the
-                account setup.
-              </p>
-            </div>
-          </div>
-
+          {/* Actions */}
           <div className="form-actions">
-            <button type="button" className="cancel-btn" onClick={onClose}>
+            <button
+              type="button"
+              className="cancel-btn"
+              onClick={onClose}
+              disabled={isSubmitting}
+            >
               Cancel
             </button>
-            <button type="submit" className="submit-btn">
+            <button
+              type="submit"
+              className="submit-btn"
+              disabled={isSubmitting}
+            >
               <FontAwesomeIcon icon={faUserMd} />
-              Create Account
+              {isSubmitting ? "Creating..." : "Create Account"}
             </button>
           </div>
         </form>
