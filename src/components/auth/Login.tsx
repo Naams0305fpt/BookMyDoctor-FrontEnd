@@ -65,8 +65,10 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
           </div>
 
           <form className="login-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="identifier">Username, Phone or Email</label>
+            <div className="form-group-login">
+              <div className="login-input-header">
+                <label htmlFor="identifier">Username, Phone or Email</label>
+              </div>
 
               <div className="input-wrapper">
                 <FontAwesomeIcon icon={faUser} className="input-icon" />
@@ -81,8 +83,8 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
               </div>
             </div>
 
-            <div className="form-group">
-              <div className="password-header">
+            <div className="form-group-login">
+              <div className="login-input-header">
                 <label htmlFor="password">Password</label>
                 <button
                   type="button"

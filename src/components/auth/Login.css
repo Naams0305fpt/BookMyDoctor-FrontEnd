@@ -39,7 +39,6 @@
   font-size: 32px;
   font-weight: 700;
   color: var(--accent-navy);
-  margin-top: var(--spacing-3);
   margin-bottom: var(--spacing-1);
 }
 
@@ -83,22 +82,15 @@
   padding-bottom: var(--spacing-2);
 }
 
-.form-group {
+.form-group-login {
   margin-bottom: var(--spacing-1);
 }
 
-.password-header {
+.login-input-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-1);
-}
-
-.form-group label {
-  display: block;
-  font-weight: 600;
-  color: var(--accent-navy);
-  font-size: 14px;
 }
 
 .forgot-password-link {
@@ -177,6 +169,7 @@
 
 .login-btn {
   width: 100%;
+  margin-top: var(--spacing-3);
   padding: 16px 24px;
   background: linear-gradient(
     135deg,
