@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "../contexts/AuthContext";
-import { useLoginModal } from "../contexts/LoginModalContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useLoginModal } from "../../contexts/LoginModalContext";
 import UserMenu from "./UserMenu";
 import "./Header.css";
 
@@ -61,28 +61,6 @@ const Header: React.FC = () => {
             >
               Information
             </Link>
-            {/* Only show Get Pro for doctors */}
-            {/* {user?.userType === "doctor" && (
-              <Link
-                to="/get-pro"
-                className={`nav-link ${
-                  isActiveLink("/get-pro") ? "active" : ""
-                }`}
-              >
-                Get Pro
-              </Link>
-            )} */}
-            {/*Only show Schedules for doctors */}
-            {/* {user?.userType === "doctor" && (
-              <Link
-                to="#Schedules"
-                className={`nav-link ${
-                  isActiveLink("#Schedules") ? "active" : ""
-                }`}
-              >
-                Schedules
-              </Link>
-            )} */}
             {/* Only show Demo link when not logged in */}
             {
               <Link
@@ -97,26 +75,16 @@ const Header: React.FC = () => {
           </nav>
           {/* Center - Logo */}
           <div className="logo-section">
-            <img src="/images/logo.png" alt="logo" />
+            <a href="/">
+              {" "}
+              <img src="/images/logo.png" alt="logo" />
+            </a>
           </div>
 
           {/* Right - Search and Icons */}
           <div
             className={`right-section ${isAuthenticated ? "logged-in" : ""}`}
           >
-            <div className={`search-container`}>
-              <FontAwesomeIcon icon={faSearch} className="search-icon" />
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search doctors, specialties..."
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                // onFocus={handleSearchFocus}
-                // onBlur={handleSearchBlur}
-              />
-            </div>
-
             {/* User Authentication Icon - Shows login modal when not logged in, user menu when logged in */}
             {isAuthenticated ? (
               <UserMenu />

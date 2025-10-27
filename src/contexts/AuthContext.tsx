@@ -5,6 +5,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
+import { api, RegisterRequest } from "../services/api";
 
 export type UserType = "admin" | "doctor" | "patient";
 
@@ -12,60 +13,25 @@ export interface User {
   id: string;
   name: string;
   userType: UserType;
-  phone: string; // Made required since it's our primary identifier
-  email?: string; // Made optional since we're using phone-based auth
+  phone?: string;
+  email?: string;
   avatar?: string;
-  specialization?: string; // For doctors
-  isVerified?: boolean; // For doctors
-}
-
-export interface RegisterData {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  password: string;
+  specialization?: string;
+  isVerified?: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (phoneNumber: string, password: string) => Promise<boolean>;
-  register: (data: RegisterData) => Promise<boolean>;
+  login: (identifier: string, password: string) => Promise<boolean>;
+  register: (
+    data: RegisterRequest
+  ) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Mock users for demonstration
-const mockUsers: User[] = [
-  {
-    id: "1",
-    phone: "0123456789",
-    name: "Dr. Admin Smith",
-    userType: "admin",
-    avatar: "/images/admin-avatar.png",
-    email: "admin@bookmydoctor.com",
-  },
-  {
-    id: "2",
-    phone: "0987654321",
-    name: "Dr. Sarah Johnson",
-    userType: "doctor",
-    avatar: "/images/doctor-avatar.png",
-    specialization: "Cardiology",
-    isVerified: true,
-    email: "doctor@bookmydoctor.com",
-  },
-  {
-    id: "3",
-    phone: "0983214567",
-    name: "John Doe",
-    userType: "patient",
-    avatar: "/images/patient-avatar.png",
-    email: "patient@bookmydoctor.com",
-  },
-];
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -75,81 +41,91 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // useEffect (checkAuthStatus) đã chuẩn, vì nó đọc roleName
+  // Giữ nguyên phần này
   useEffect(() => {
-    // Check for stored user session on app load
-    const storedUser = localStorage.getItem("currentUser");
-    if (storedUser) {
+    const checkAuth = async () => {
       try {
-        setUser(JSON.parse(storedUser));
+        // api.checkAuthStatus đang hoạt động đúng (vì nó đọc roleName)
+        const currentUser = await api.checkAuthStatus();
+        setUser(currentUser);
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
       } catch (error) {
-        console.error("Error parsing stored user:", error);
+        setUser(null);
         localStorage.removeItem("currentUser");
+      } finally {
+        setIsLoading(false);
       }
-    }
-    setIsLoading(false);
+    };
+
+    checkAuth();
   }, []);
 
   const login = async (
-    phoneNumber: string,
+    identifier: string,
     password: string
   ): Promise<boolean> => {
     setIsLoading(true);
+    try {
+      // Bước 1: Gọi API login. Nó chỉ set cookie và trả về { message: "..." }
+      await api.login({
+        UsernameOrPhoneOrEmail: identifier,
+        Password: password,
+      });
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Bước 2: Nếu login thành công, GỌI checkAuthStatus để lấy dữ liệu user
+      const currentUser = await api.checkAuthStatus();
 
-    // Check if the phone number exists and the password matches demo123
-    const foundUser = mockUsers.find((u) => u.phone === phoneNumber);
-    const isValidPassword = password === "demo123";
+      // Bước 3: Set user và lưu vào localStorage
+      setUser(currentUser);
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
-    if (foundUser && isValidPassword) {
-      setUser(foundUser);
-      localStorage.setItem("currentUser", JSON.stringify(foundUser));
       setIsLoading(false);
       return true;
-    }
-
-    setIsLoading(false);
-    return false;
-  };
-
-  const register = async (data: RegisterData): Promise<boolean> => {
-    setIsLoading(true);
-
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Check if user already exists with the same phone number
-    const userExists = mockUsers.some((u) => u.phone === data.phone);
-
-    if (userExists) {
+    } catch (err) {
+      // Bất kỳ lỗi nào (login sai, checkAuth lỗi) đều sẽ nhảy vào đây
+      console.error("Login failed:", err);
       setIsLoading(false);
       return false;
     }
-
-    // Create new user
-    const newUser: User = {
-      id: (mockUsers.length + 1).toString(),
-      name: `${data.firstName} ${data.lastName}`,
-      userType: "patient",
-      phone: data.phone,
-      avatar: "/images/default-avatar.png",
-    };
-
-    // In a real app, you would make an API call here
-    mockUsers.push(newUser);
-
-    // Log in the new user
-    setUser(newUser);
-    localStorage.setItem("currentUser", JSON.stringify(newUser));
-
-    setIsLoading(false);
-    return true;
   };
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
     localStorage.removeItem("currentUser");
+    try {
+      await api.logout();
+    } catch (error) {
+      console.error("Error during API logout:", error);
+    }
+  };
+
+  const register = async (
+    data: RegisterRequest
+  ): Promise<{ success: boolean; message?: string }> => {
+    setIsLoading(true);
+    try {
+      // Bước 1: Gọi API register.
+      // Giả định nó cũng tự động login (set cookie) và chỉ trả về thông báo
+      const result = await api.register(data);
+
+      // Bước 2: Nếu register thành công, GỌI checkAuthStatus
+      const currentUser = await api.checkAuthStatus();
+
+      // Bước 3: Set user
+      setUser(currentUser);
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+      setIsLoading(false);
+      return {
+        success: true,
+        message: result.message || "Registration successful",
+      };
+    } catch (err: any) {
+      console.error("Register failed:", err);
+      setIsLoading(false);
+      return { success: false, message: err.message || "Registration failed" };
+    }
   };
 
   const value: AuthContextType = {

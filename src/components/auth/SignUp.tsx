@@ -9,11 +9,11 @@ import {
   faSpinner,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "../contexts/AuthContext";
-import { useNotification } from "../contexts/NotificationContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNotification } from "../../contexts/NotificationContext";
 import "./Login.css"; // Base styles
 import "./SignUp.css"; // Additional signup-specific styles
-import { useLoginModal } from "../contexts/LoginModalContext";
+import { useLoginModal } from "../../contexts/LoginModalContext";
 
 interface SignUpProps {
   onClose: () => void;
@@ -21,11 +21,11 @@ interface SignUpProps {
 
 const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    password: "",
-    confirmPassword: "",
+    Username: "",
+    Email: "",
+    Phone: "",
+    Password: "",
+    ConfirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -52,30 +52,33 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.Password !== formData.ConfirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
-    if (formData.password.length < 6) {
+    if (formData.Password.length < 6) {
       setError("Password must be at least 6 characters long");
       return;
     }
 
-    if (!/^\d{10}$/.test(formData.phone)) {
+    if (!/^\d{10}$/.test(formData.Phone)) {
       setError("Phone number must be exactly 10 digits");
       return;
     }
 
     try {
-      const success = await register({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        phone: formData.phone,
-        password: formData.password,
+      // THAY ĐỔI: Ánh xạ (map) state (chữ thường)
+      // sang payload (chữ hoa) mà API yêu cầu
+      const result = await register({
+        Username: formData.Username,
+        Password: formData.Password,
+        ConfirmPassword: formData.ConfirmPassword,
+        Email: formData.Email,
+        Phone: formData.Phone,
       });
 
-      if (success) {
+      if (result.success) {
         showNotification(
           "success",
           "Welcome!",
@@ -84,10 +87,10 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
         );
         onClose();
       } else {
-        setError("An account with this phone number already exists.");
+        setError(result.message || "Failed to create account");
       }
-    } catch (err) {
-      setError("Failed to create account. Please try again.");
+    } catch (err: any) {
+      setError(err.message || "Failed to create account. Please try again.");
     }
   };
 
@@ -104,37 +107,36 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="firstName">First Name</label>
-              <div className="input-wrapper">
-                <FontAwesomeIcon icon={faUser} className="input-icon" />
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  placeholder="First Name"
-                  required
-                />
-              </div>
-            </div>
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <div className="input-wrapper">
+              <FontAwesomeIcon icon={faUser} className="input-icon" />
 
-            <div className="form-group">
-              <label htmlFor="lastName">Last Name</label>
-              <div className="input-wrapper">
-                <FontAwesomeIcon icon={faUser} className="input-icon" />
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  placeholder="Last Name"
-                  required
-                />
-              </div>
+              <input
+                type="text"
+                id="username"
+                name="Username"
+                value={formData.Username}
+                onChange={handleChange}
+                placeholder="Enter your username"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <div className="input-wrapper">
+              <FontAwesomeIcon icon={faUser} className="input-icon" />
+              <input
+                type="email"
+                id="email"
+                name="Email"
+                value={formData.Email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                required
+              />
             </div>
           </div>
 
@@ -145,8 +147,8 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               <input
                 type="tel"
                 id="phone"
-                name="phone"
-                value={formData.phone}
+                name="Phone"
+                value={formData.Phone}
                 onChange={handleChange}
                 placeholder="Enter your 10-digit phone number"
                 pattern="[0-9]*"
@@ -164,8 +166,8 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                name="password"
-                value={formData.password}
+                name="Password"
+                value={formData.Password}
                 onChange={handleChange}
                 placeholder="Create password"
                 required
@@ -187,8 +189,8 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
+                name="ConfirmPassword"
+                value={formData.ConfirmPassword}
                 onChange={handleChange}
                 placeholder="Confirm password"
                 required
@@ -225,7 +227,8 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
         <div className="login-footer">
           <p>
             Already have an account?{" "}
-            <a
+            <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 onClose();
@@ -233,7 +236,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               }}
             >
               Sign in here
-            </a>
+            </button>
           </p>
         </div>
       </div>

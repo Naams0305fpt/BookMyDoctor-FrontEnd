@@ -107,6 +107,10 @@
   color: #dc3545;
 }
 
+.status-scheduled {
+  color: #fbbf24;
+}
+
 .editable-field {
   display: flex;
   align-items: center;
@@ -124,24 +128,26 @@
 .date-picker {
   min-width: 120px;
   width: max-content;
-  margin-left: auto;
-  margin-bottom: 5px;
 }
 
 .date-picker input {
   border: 2px solid #11c7d4;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
 }
 
 .appointment-controls {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
   gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .search-bar {
-  flex: 0 1 300px;
+  width: 100%;
 }
 
 .search-input {
@@ -186,7 +192,7 @@
 
 .time-slots-section {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 1rem;
   margin-bottom: 20px;
 }
@@ -245,8 +251,117 @@
   border-color: #fde047;
 }
 
+.time-slot.scheduled {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-color: #fbbf24;
+}
+
 .time-slot.busy {
   background-color: #fee2e2;
   color: #991b1b;
   border-color: #fca5a5;
+}
+
+/* Date Navigation Styles */
+.date-navigation {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  order: 2;
+  margin-left: auto;
+}
+
+.date-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #11c7d4;
+  border-radius: 8px;
+  background-color: white;
+  color: #11c7d4;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.date-nav-btn:hover {
+  background-color: #11c7d4;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.date-nav-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design for Controls */
+@media (max-width: 768px) {
+  .appointment-controls {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .search-container {
+    order: 1;
+    flex: 1;
+  }
+
+  .date-navigation {
+    order: 2;
+    margin-left: 0;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .appointment-controls {
+    gap: 0.5rem;
+  }
+
+  .date-navigation {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .date-nav-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Create Doctor Button */
+.create-doctor-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #059669, #047857);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
+  margin-left: auto;
+}
+
+.create-doctor-btn:hover {
+  background: linear-gradient(135deg, #047857, #065f46);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(5, 150, 105, 0.3);
+}
+
+.create-doctor-btn:active {
+  transform: translateY(0);
+}
+
+.create-doctor-btn svg {
+  font-size: 1.1rem;
 }

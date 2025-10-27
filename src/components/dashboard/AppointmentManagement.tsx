@@ -12,8 +12,6 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./AppointmentManagement.css";
-import { time } from "console";
-import Time from "react-datepicker/dist/time";
 
 // Types
 interface Appointment {
@@ -26,12 +24,6 @@ interface Appointment {
   prescription: string;
   status: "pending" | "completed" | "cancelled";
   time?: string;
-}
-
-interface TimeSlot {
-  time: string;
-  status: "free" | "waiting" | "busy";
-  appointmentId?: number;
 }
 
 interface TableRowProps {
@@ -201,7 +193,7 @@ const AppointmentManagement: React.FC = () => {
 
   // Available time slots
   const timeSlots = [
-    // Morning slots (9 slots)
+    // Morning slots (8 slots)
     "08:00",
     "08:30",
     "09:00",
@@ -210,8 +202,8 @@ const AppointmentManagement: React.FC = () => {
     "10:30",
     "11:00",
     "11:30",
-    "12:00",
-    // Afternoon slots (9 slots)
+    // Afternoon slots (8 slots)
+    "13:30",
     "14:00",
     "14:30",
     "15:00",
@@ -219,8 +211,6 @@ const AppointmentManagement: React.FC = () => {
     "16:00",
     "16:30",
     "17:00",
-    "17:30",
-    "18:00",
   ];
 
   const handleEdit = (
@@ -350,7 +340,7 @@ const AppointmentManagement: React.FC = () => {
               <div>
                 <h3 className="time-slots-section-title">Morning Schedule</h3>
                 <div className="time-slots-section">
-                  {timeSlots.slice(0, 9).map((time) => {
+                  {timeSlots.slice(0, 8).map((time) => {
                     const matchingAppointment = appointments.find(
                       (app) =>
                         app.time === time &&
@@ -387,7 +377,7 @@ const AppointmentManagement: React.FC = () => {
               <div>
                 <h3 className="time-slots-section-title">Afternoon Schedule</h3>
                 <div className="time-slots-section">
-                  {timeSlots.slice(9).map((time) => {
+                  {timeSlots.slice(8).map((time) => {
                     const matchingAppointment = appointments.find(
                       (app) =>
                         app.time === time &&

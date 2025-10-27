@@ -1,6 +1,26 @@
-# Getting Started with Create React App
+# BookMyDoctor Frontend
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Environment Setup
+
+Before running the project, you need to set up your environment variables:
+
+1. Copy `.env.example` to `.env`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit the `.env` file and replace `your_api_url_here` with your actual API URL:
+
+   ```
+   REACT_APP_API_BASE_URL=http://your-api-server.com/api
+   ```
+
+3. **Important**: Never commit the `.env` file to Git as it contains sensitive information.
+
+## Getting Started
 
 ## Available Scripts
 
