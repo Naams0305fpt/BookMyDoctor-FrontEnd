@@ -29,14 +29,11 @@ const CreateDoctorModal: React.FC<CreateDoctorModalProps> = ({
   onClose,
   onSubmit,
 }) => {
-  // Hàm hiển thị thông báo (bạn có thể thay bằng context của mình)
-  const showNotification = (type: string, title: string, msg: string) => {
-    console.log(`${title}: ${msg}`);
-    if (type === "error") alert(`ERROR: ${msg}`);
-    else alert(`SUCCESS: ${msg}`);
-  };
-
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [notification, setNotification] = useState<string>("");
 
   // State khớp với CreateDoctorRequest
   const [formData, setFormData] = useState<CreateDoctorRequest>({
@@ -118,44 +115,88 @@ const CreateDoctorModal: React.FC<CreateDoctorModalProps> = ({
   };
 
   // Gọi API createDoctor
+  // Gọi API createDoctor
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
-      showNotification(
-        "error",
-        "Validation Failed",
-        "Please check all required fields."
-      );
+      setSubmitStatus("error");
+      setNotification("Please check all required fields.");
+      setTimeout(() => {
+        setSubmitStatus("idle");
+        setNotification("");
+      }, 3000);
       return;
     }
 
     setIsSubmitting(true);
+    setSubmitStatus("idle");
+    setNotification("");
 
     try {
-      // Chuẩn bị data, đảm bảo ExperienceYears là number
+      // Chuẩn bị data
       const dataToSend: CreateDoctorRequest = {
         ...formData,
-        ExperienceYears: Number(formData.ExperienceYears), // Convert sang number trước khi gửi
+        ExperienceYears: Number(formData.ExperienceYears),
       };
 
-      await api.createDoctor(dataToSend);
+      const response = await api.createDoctor(dataToSend);
 
-      showNotification(
-        "success",
-        "Account Created",
-        `Doctor account for ${formData.Name} has been created.`
+      // ✅ SỬA ĐỔI: Kiểm tra response đúng cách
+      // Chỉ throw error khi response.success === false
+      if (response && response.success === false) {
+        throw new Error(
+          response.message || response.error || "Failed to create doctor."
+        );
+      }
+
+      // Hiển thị thành công
+      setSubmitStatus("success");
+      setNotification(
+        response?.message ||
+          `Doctor account for ${formData.Name} has been created successfully!`
       );
 
-      onSubmit();
-      onClose();
+      // Đóng modal sau 2 giây
+      setTimeout(() => {
+        onSubmit();
+        onClose();
+      }, 2000);
     } catch (err: any) {
       console.error("Create doctor failed:", err);
-      showNotification(
-        "error",
-        "Creation Failed",
-        err.message || "Failed to create doctor account."
-      );
+
+      let detailedMessage = "Failed to create doctor account.";
+
+      // Kiểm tra lỗi validation từ .NET
+      if (err.response && err.response.data && err.response.data.errors) {
+        const validationErrors = err.response.data.errors;
+        const messages: string[] = [];
+
+        for (const field in validationErrors) {
+          if (validationErrors.hasOwnProperty(field)) {
+            messages.push(`${field}: ${validationErrors[field].join(", ")}`);
+          }
+        }
+
+        detailedMessage = messages.join(" | ");
+      } else if (
+        err.response &&
+        err.response.data &&
+        err.response.data.message
+      ) {
+        // Lỗi từ API (response có message)
+        detailedMessage = err.response.data.message;
+      } else if (err.message) {
+        detailedMessage = err.message;
+      }
+
+      setSubmitStatus("error");
+      setNotification(detailedMessage);
+
+      setTimeout(() => {
+        setSubmitStatus("idle");
+        setNotification("");
+      }, 5000);
     } finally {
       setIsSubmitting(false);
     }
@@ -215,7 +256,7 @@ const CreateDoctorModal: React.FC<CreateDoctorModalProps> = ({
                     name="Username"
                     value={formData.Username}
                     onChange={handleInputChange}
-                    placeholder="nguyenvana"
+                    placeholder="Username"
                     className={errors.Username ? "error" : ""}
                   />
                 </div>
@@ -436,6 +477,15 @@ const CreateDoctorModal: React.FC<CreateDoctorModalProps> = ({
             </button>
           </div>
         </form>
+
+        {/* Status Messages */}
+        {submitStatus === "success" && notification && (
+          <div className="status-message success">✅ {notification}</div>
+        )}
+
+        {submitStatus === "error" && notification && (
+          <div className="status-message error">❌ {notification}</div>
+        )}
       </div>
     </div>
   );
