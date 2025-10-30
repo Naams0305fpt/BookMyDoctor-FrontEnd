@@ -142,18 +142,12 @@ const CreateDoctorModal: React.FC<CreateDoctorModalProps> = ({
 
       const response = await api.createDoctor(dataToSend);
 
-      // ✅ SỬA ĐỔI: Kiểm tra response đúng cách
-      // Chỉ throw error khi response.success === false
-      if (response && response.success === false) {
-        throw new Error(
-          response.message || response.error || "Failed to create doctor."
-        );
-      }
-
-      // Hiển thị thành công
+      // ✅ Backend đã sửa: 200 = thành công, 400 = lỗi
+      // Nếu code chạy đến đây = API đã trả về 200 (thành công)
+      // Mọi lỗi 400 sẽ được interceptor bắt và throw vào catch block
       setSubmitStatus("success");
       setNotification(
-        response?.message ||
+        response?.Message ||
           `Doctor account for ${formData.Name} has been created successfully!`
       );
 
@@ -204,7 +198,7 @@ const CreateDoctorModal: React.FC<CreateDoctorModalProps> = ({
 
   // JSX Render
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay">
       <div
         className="modal-content create-doctor-modal"
         onClick={(e) => e.stopPropagation()}
