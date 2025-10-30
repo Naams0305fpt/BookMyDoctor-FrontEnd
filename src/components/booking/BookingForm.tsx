@@ -242,6 +242,7 @@ const BookingForm: React.FC = () => {
     setNotification("");
 
     try {
+      console.log("Dữ liệu gửi đi:", payload);
       await api.submitBooking(payload); // Gọi API thật
 
       setSubmitStatus("success");
@@ -277,8 +278,13 @@ const BookingForm: React.FC = () => {
   return (
     <section id="booking-section" className="booking-section">
       <div className="container">
-        {/* ... (Phần Section Title giữ nguyên) ... */}
-
+        {/* Section Title */}
+        <div className="section-header">
+          <div className="section-title">
+            <FontAwesomeIcon icon={faPlus} className="title-icon" />
+            <h2>Booking Here</h2>
+          </div>
+        </div>
         <div className="booking-card">
           <div className="booking-background">
             <div className="background-overlay"></div>
