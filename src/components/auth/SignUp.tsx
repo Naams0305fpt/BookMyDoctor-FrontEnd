@@ -86,6 +86,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
           3000
         );
         onClose();
+        openLogin();
       } else {
         setError(result.message || "Failed to create account");
       }
@@ -95,7 +96,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="login-overlay" onClick={onClose}>
+    <div className="login-overlay">
       <div className="login-modal" onClick={(e) => e.stopPropagation()}>
         <div className="login-header">
           {/* <img src="/images/logo.png" alt="logo" /> */}
