@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faUser,
+  faPhone,
+  faEnvelope,
+  faCalendarAlt,
+  faVenusMars,
+  faUserMd,
+  faClock,
+  faNotesMedical,
+} from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./BookingForm.css";
@@ -273,6 +283,42 @@ const BookingForm: React.FC = () => {
     return className;
   };
 
+  // --- THÊM HÀM MỚI ---
+  /**
+   * Kiểm tra xem một khung giờ (vd: "09:00") của một ngày
+   * đã trôi qua so với thời gian hiện tại hay chưa.
+   */
+  const isTimeSlotPassed = (time: string, date: Date | null): boolean => {
+    // Nếu không có ngày, hoặc ngày không phải là hôm nay, thì không phải "đã qua"
+    if (!date) return false;
+
+    const now = new Date();
+
+    // So sánh ngày (bỏ qua giờ)
+    const isToday =
+      date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear();
+
+    if (!isToday) {
+      return false; // Nếu là ngày mai hoặc ngày hôm qua, không áp dụng logic "đã qua"
+    }
+
+    // Nếu là hôm nay, kiểm tra giờ
+    try {
+      const [hours, minutes] = time.split(":").map(Number);
+      const slotTime = new Date(date);
+      slotTime.setHours(hours, minutes, 0, 0); // Đặt giờ của slot
+
+      // So sánh với thời gian hiện tại
+      // Nếu 9:01 > 9:00, thì slot "09:00" đã qua
+      return now.getTime() > slotTime.getTime();
+    } catch (e) {
+      console.error("Error parsing time slot:", e);
+      return false;
+    }
+  };
+  // --- KẾT THÚC HÀM MỚI ---
   // --- RENDER (JSX) ---
 
   return (
@@ -295,92 +341,129 @@ const BookingForm: React.FC = () => {
               {/* === CỘT BÊN TRÁI === */}
               <div className="form-column">
                 <div className="form-group">
-                  <label htmlFor="fullName">Full name</label>
-                  <input
-                    id="fullName"
-                    type="text"
-                    className={getInputClass("fullName")}
-                    onChange={(e) =>
-                      handleInputChange("fullName", e.target.value)
-                    }
-                    placeholder="Enter your full name"
-                    value={formData.fullName}
-                  />
+                  <label htmlFor="fullName">
+                    Full name <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FontAwesomeIcon icon={faUser} className="input-icon" />
+                    <input
+                      id="fullName"
+                      type="text"
+                      className={getInputClass("fullName")}
+                      onChange={(e) =>
+                        handleInputChange("fullName", e.target.value)
+                      }
+                      placeholder="Enter your full name"
+                      value={formData.fullName}
+                    />
+                  </div>
                   {errors.fullName && (
                     <span className="error-message">{errors.fullName}</span>
                   )}
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="phone">Phone number</label>
-                  <input
-                    id="phone"
-                    type="tel"
-                    className={getInputClass("phone")}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                    placeholder="Enter phone number"
-                    value={formData.phone}
-                  />
+                  <label htmlFor="phone">
+                    Phone number <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FontAwesomeIcon icon={faPhone} className="input-icon" />
+                    <input
+                      id="phone"
+                      type="tel"
+                      className={getInputClass("phone")}
+                      onChange={(e) =>
+                        handleInputChange("phone", e.target.value)
+                      }
+                      placeholder="Enter phone number"
+                      value={formData.phone}
+                    />
+                  </div>
                   {errors.phone && (
                     <span className="error-message">{errors.phone}</span>
                   )}
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="email">Email</label>
-                  <input
-                    id="email"
-                    type="email"
-                    className={getInputClass("email")}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    placeholder="Enter email"
-                    value={formData.email}
-                  />
+                  <label htmlFor="email">
+                    Email <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FontAwesomeIcon icon={faEnvelope} className="input-icon" />
+                    <input
+                      id="email"
+                      type="email"
+                      className={getInputClass("email")}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
+                      placeholder="Enter email"
+                      value={formData.email}
+                    />
+                  </div>
                   {errors.email && (
                     <span className="error-message">{errors.email}</span>
                   )}
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="dateOfBirth">Date of birth</label>
-                  <DatePicker
-                    id="dateOfBirth"
-                    selected={formData.dateOfBirth}
-                    onChange={(date) => handleInputChange("dateOfBirth", date)}
-                    className={getInputClass("dateOfBirth")}
-                    dateFormat="dd/MM/yyyy"
-                    maxDate={new Date()}
-                    placeholderText="Select date of birth"
-                    showYearDropdown
-                    yearDropdownItemNumber={50}
-                    value={
-                      formData.dateOfBirth
-                        ? formData.dateOfBirth.toLocaleDateString("vi-VN")
-                        : ""
-                    }
-                  />
+                  <label htmlFor="dateOfBirth">
+                    Date of birth <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FontAwesomeIcon
+                      icon={faCalendarAlt}
+                      className="input-icon"
+                    />
+                    <DatePicker
+                      id="dateOfBirth"
+                      selected={formData.dateOfBirth}
+                      onChange={(date) =>
+                        handleInputChange("dateOfBirth", date)
+                      }
+                      className={getInputClass("dateOfBirth")}
+                      dateFormat="dd/MM/yyyy"
+                      maxDate={new Date()}
+                      placeholderText="Select date of birth"
+                      showYearDropdown
+                      yearDropdownItemNumber={50}
+                      value={
+                        formData.dateOfBirth
+                          ? formData.dateOfBirth.toLocaleDateString("vi-VN")
+                          : ""
+                      }
+                    />
+                  </div>
                   {errors.dateOfBirth && (
                     <span className="error-message">{errors.dateOfBirth}</span>
                   )}
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="gender">Gender</label>
-                  <select
-                    id="gender"
-                    className={getInputClass("gender")}
-                    onChange={(e) =>
-                      handleInputChange("gender", e.target.value)
-                    }
-                    value={formData.gender}
-                  >
-                    <option value="">Select gender</option>
-                    {genders.map((gender) => (
-                      <option key={gender} value={gender}>
-                        {gender}
-                      </option>
-                    ))}
-                  </select>
+                  <label htmlFor="gender">
+                    Gender <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FontAwesomeIcon
+                      icon={faVenusMars}
+                      className="input-icon"
+                    />
+                    <select
+                      id="gender"
+                      className={getInputClass("gender")}
+                      onChange={(e) =>
+                        handleInputChange("gender", e.target.value)
+                      }
+                      value={formData.gender}
+                    >
+                      <option value="">Select gender</option>
+                      {genders.map((gender) => (
+                        <option key={gender} value={gender}>
+                          {gender}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   {errors.gender && (
                     <span className="error-message">{errors.gender}</span>
                   )}
@@ -390,48 +473,61 @@ const BookingForm: React.FC = () => {
               {/* === CỘT BÊN PHẢI === */}
               <div className="form-column">
                 <div className="form-group">
-                  <label htmlFor="date">Appointment date</label>
-                  <DatePicker
-                    id="date"
-                    selected={formData.date}
-                    onChange={(date) => handleInputChange("date", date)}
-                    className={getInputClass("date")}
-                    dateFormat="dd/MM/yyyy"
-                    minDate={new Date()}
-                    placeholderText="Select date"
-                  />
+                  <label htmlFor="date">
+                    Appointment date <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FontAwesomeIcon
+                      icon={faCalendarAlt}
+                      className="input-icon"
+                    />
+                    <DatePicker
+                      id="date"
+                      selected={formData.date}
+                      onChange={(date) => handleInputChange("date", date)}
+                      className={getInputClass("date")}
+                      dateFormat="dd/MM/yyyy"
+                      minDate={new Date()}
+                      placeholderText="Select date"
+                    />
+                  </div>
                   {errors.date && (
                     <span className="error-message">{errors.date}</span>
                   )}
                 </div>
                 <div className="form-group">
-                  <label htmlFor="doctor">Choose doctor</label>
-                  <select
-                    id="doctor"
-                    className={getInputClass("doctorId")}
-                    onChange={(e) => {
-                      // THAY ĐỔI: Giữ nguyên value là string
-                      handleInputChange("doctorId", e.target.value);
-                      handleInputChange("time", ""); // Reset time
-                    }}
-                    value={formData.doctorId} // state bây giờ là string
-                    disabled={isLoadingDoctors}
-                  >
-                    <option value="">
-                      {" "}
-                      {/* THAY ĐỔI: value mặc định là "" */}
-                      {isLoadingDoctors
-                        ? "Loading doctors..."
-                        : "Select doctor"}
-                    </option>
-
-                    {allDoctors.map((doctor) => (
-                      // THAY ĐỔI: value là ID (React sẽ tự chuyển sang string)
-                      <option key={doctor.DoctorId} value={doctor.DoctorId}>
-                        {doctor.Name} ({doctor.Department})
+                  <label htmlFor="doctor">
+                    Choose doctor <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FontAwesomeIcon icon={faUserMd} className="input-icon" />
+                    <select
+                      id="doctor"
+                      className={getInputClass("doctorId")}
+                      onChange={(e) => {
+                        // THAY ĐỔI: Giữ nguyên value là string
+                        handleInputChange("doctorId", e.target.value);
+                        handleInputChange("time", ""); // Reset time
+                      }}
+                      value={formData.doctorId} // state bây giờ là string
+                      disabled={isLoadingDoctors}
+                    >
+                      <option value="">
+                        {" "}
+                        {/* THAY ĐỔI: value mặc định là "" */}
+                        {isLoadingDoctors
+                          ? "Loading doctors..."
+                          : "Select doctor"}
                       </option>
-                    ))}
-                  </select>
+
+                      {allDoctors.map((doctor) => (
+                        // THAY ĐỔI: value là ID (React sẽ tự chuyển sang string)
+                        <option key={doctor.DoctorId} value={doctor.DoctorId}>
+                          {doctor.Name} ({doctor.Department})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   {errors.doctor && (
                     <span className="error-message">{errors.doctor}</span>
                   )}
@@ -440,7 +536,10 @@ const BookingForm: React.FC = () => {
                 {/* MỚI: Khối Lịch Bận (Time Slots) */}
                 {formData.doctorId && (
                   <div className="form-group">
-                    <label htmlFor="time">Available Hours</label>
+                    <label htmlFor="time">
+                      <FontAwesomeIcon icon={faClock} /> Available Hours{" "}
+                      <span className="required">*</span>
+                    </label>
                     {isLoadingSlots && <div>Loading available slots...</div>}
                     {slotsError && (
                       <div className="status-message error">{slotsError}</div>
@@ -449,14 +548,25 @@ const BookingForm: React.FC = () => {
                       <div className="time-slots-grid">
                         {timeSlots.map((time) => {
                           const isBusy = fetchedBusySlots.includes(time);
+                          // --- LOGIC MỚI ---
+                          const isPassed = isTimeSlotPassed(
+                            time,
+                            formData.date
+                          );
+                          // --- KẾT THÚC LOGIC MỚI ---
                           return (
                             <div
                               key={time}
                               className={`time-slot ${
-                                isBusy ? "busy" : "free"
+                                isPassed ? "passed" : isBusy ? "busy" : "free"
                               } ${formData.time === time ? "selected" : ""}`}
                               onClick={() => {
-                                if (isBusy) {
+                                if (isPassed) {
+                                  setNotification(
+                                    "This time slot has already passed."
+                                  );
+                                  setTimeout(() => setNotification(""), 3000);
+                                } else if (isBusy) {
                                   setNotification(
                                     "This time slot is already booked!"
                                   );
@@ -479,7 +589,9 @@ const BookingForm: React.FC = () => {
                 )}
 
                 <div className="form-group">
-                  <label htmlFor="symptom">Symptom (short)</label>
+                  <label htmlFor="symptom">
+                    <FontAwesomeIcon icon={faNotesMedical} /> Symptom (short)
+                  </label>
                   <textarea
                     id="symptom"
                     className={`${getInputClass("symptom")} symptom-textarea`}
