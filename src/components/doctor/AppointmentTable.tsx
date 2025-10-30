@@ -1,23 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react"; // <-- Thêm hook
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPencil,
   faTrash,
   faCheck,
   faTimes,
+  faChevronLeft, // <-- Thêm icon
+  faChevronRight, // <-- Thêm icon
 } from "@fortawesome/free-solid-svg-icons";
-import "./DoctorSchedule.css";
+import DatePicker from "react-datepicker"; // <-- Thêm DatePicker
+import "react-datepicker/dist/react-datepicker.css";
+// --- THAY ĐỔI: Import API, types, helpers ---
+import { api, Patient, formatDateForAPI } from "../../services/api"; // <-- Đường dẫn có thể cần sửa
+import "./DoctorSchedule.css"; // <-- Đổi tên CSS nếu cần
 
+// --- Interface Appointment và TableRowProps giữ nguyên ---
 interface Appointment {
-  id: number;
+  id: number; // Cần ID để sửa/xóa
   fullName: string;
-  dateOfBirth: Date;
+  dateOfBirth: Date; // TableRow dùng Date object
   gender: string;
   phone: string;
   symptom: string;
   prescription: string;
-  status: "pending" | "completed" | "cancelled";
-  time?: string;
+  status: "pending" | "completed" | "cancelled"; // Map từ API status
+  time?: string; // API getPatients chưa có time?
+  appointHour?: string; // Thêm trường giờ hẹn
 }
 
 interface TableRowProps {
@@ -31,6 +39,7 @@ interface TableRowProps {
   onStatusChange: (id: number, status: Appointment["status"]) => void;
 }
 
+// --- Component TableRow giữ nguyên ---
 const TableRow: React.FC<TableRowProps> = ({
   appointment,
   onEdit,
@@ -55,24 +64,23 @@ const TableRow: React.FC<TableRowProps> = ({
 
   return (
     <tr>
+      {/* --- SỬA: Hiển thị đúng dữ liệu từ props --- */}
       <td>{appointment.fullName}</td>
-      <td>{appointment.dateOfBirth.toLocaleDateString()}</td>
+      <td>{appointment.dateOfBirth.toLocaleDateString("en-GB")}</td>
       <td>{appointment.gender}</td>
       <td>{appointment.phone}</td>
       <td>
         <div className="editable-field">
           {isEditingSymptom ? (
-            <>
-              <input
-                type="text"
-                value={tempSymptom}
-                onChange={(e) => setTempSymptom(e.target.value)}
-                onBlur={() =>
-                  handleEditSave("symptom", tempSymptom, setIsEditingSymptom)
-                }
-                autoFocus
-              />
-            </>
+            <input
+              type="text"
+              value={tempSymptom}
+              onChange={(e) => setTempSymptom(e.target.value)}
+              onBlur={() =>
+                handleEditSave("symptom", tempSymptom, setIsEditingSymptom)
+              }
+              autoFocus
+            />
           ) : (
             <>
               {appointment.symptom}
@@ -88,21 +96,19 @@ const TableRow: React.FC<TableRowProps> = ({
       <td>
         <div className="editable-field">
           {isEditingPrescription ? (
-            <>
-              <input
-                type="text"
-                value={tempPrescription}
-                onChange={(e) => setTempPrescription(e.target.value)}
-                onBlur={() =>
-                  handleEditSave(
-                    "prescription",
-                    tempPrescription,
-                    setIsEditingPrescription
-                  )
-                }
-                autoFocus
-              />
-            </>
+            <input
+              type="text"
+              value={tempPrescription}
+              onChange={(e) => setTempPrescription(e.target.value)}
+              onBlur={() =>
+                handleEditSave(
+                  "prescription",
+                  tempPrescription,
+                  setIsEditingPrescription
+                )
+              }
+              autoFocus
+            />
           ) : (
             <>
               {appointment.prescription}
@@ -116,17 +122,26 @@ const TableRow: React.FC<TableRowProps> = ({
         </div>
       </td>
       <td>
+        {/* --- SỬA: Hiển thị icon dựa trên status đã map --- */}
         {appointment.status === "completed" && (
           <FontAwesomeIcon
             icon={faCheck}
-            className="status-icon status-completed"
+            className="status-icon status-completed" // CSS class này cần tồn tại
+            title="Completed"
           />
         )}
         {appointment.status === "cancelled" && (
           <FontAwesomeIcon
             icon={faTimes}
-            className="status-icon status-cancelled"
+            className="status-icon status-cancelled" // CSS class này cần tồn tại
+            title="Cancelled"
           />
+        )}
+        {appointment.status === "pending" && (
+          <span className="status-icon status-pending" title="Pending">
+            {" "}
+            {/* Có thể dùng icon khác */}⏳ {/* Hoặc dùng text */}
+          </span>
         )}
       </td>
       <td>
@@ -140,72 +155,122 @@ const TableRow: React.FC<TableRowProps> = ({
   );
 };
 
-// Mock Data
-const mockAppointments: Appointment[] = [
-  {
-    id: 1,
-    fullName: "John Doe",
-    dateOfBirth: new Date("1990-05-15"),
-    gender: "Male",
-    phone: "0123456789",
-    symptom: "Headache and fever",
-    prescription: "Paracetamol 500mg",
-    status: "completed",
-    time: "09:00",
-  },
-  {
-    id: 2,
-    fullName: "Jane Smith",
-    dateOfBirth: new Date("1985-08-22"),
-    gender: "Female",
-    phone: "0987654321",
-    symptom: "Sore throat",
-    prescription: "Amoxicillin 250mg",
-    status: "pending",
-    time: "10:30",
-  },
-  {
-    id: 3,
-    fullName: "Mike Johnson",
-    dateOfBirth: new Date("1978-12-03"),
-    gender: "Male",
-    phone: "0123498765",
-    symptom: "Back pain",
-    prescription: "Ibuprofen 400mg",
-    status: "cancelled",
-    time: "14:00",
-  },
-];
+// --- Bỏ mockAppointments ---
+// const mockAppointments: Appointment[] = [ ... ];
 
+// --- Component Chính: AppointmentTable ---
 const AppointmentTable: React.FC = () => {
-  const [appointments, setAppointments] =
-    useState<Appointment[]>(mockAppointments);
-  const [searchQuery, setSearchQuery] = useState("");
+  // --- THAY ĐỔI: State dùng Patient từ API ---
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
+  // State cho bộ lọc
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Bắt đầu là null (tất cả ngày)
+  const [selectedStatus, setSelectedStatus] = useState(""); // Bắt đầu là rỗng (tất cả status)
+
+  // Hàm fetch data
+  const fetchPatients = useCallback(
+    async (name: string, date: Date | null, status: string) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const formattedDate = date ? formatDateForAPI(date) : "";
+        const data = await api.getPatients(name, formattedDate, status);
+        setPatients(data);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch patients.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
+
+  // Gọi API khi component mount và khi bộ lọc thay đổi
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      fetchPatients(searchQuery, selectedDate, selectedStatus);
+    }, 500); // Debounce
+    return () => clearTimeout(timerId);
+  }, [searchQuery, selectedDate, selectedStatus, fetchPatients]); // <-- Thêm fetchPatients vào dependency array
+
+  // --- Cần API để sửa/xóa/đổi status ---
   const handleEdit = (
     id: number,
     field: "symptom" | "prescription",
     value: string
   ) => {
-    setAppointments((prev) =>
-      prev.map((app) => (app.id === id ? { ...app, [field]: value } : app))
+    console.log(
+      `TODO: Call API to update ${field} for ID ${id} with value "${value}"`
+    );
+    // Tạm thời cập nhật local state (không lý tưởng)
+    setPatients((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? { ...p, [field === "symptom" ? "Symptoms" : "Prescription"]: value }
+          : p
+      )
     );
   };
 
   const handleDelete = (id: number) => {
-    console.log("Delete triggered for", id);
-    setAppointments((prev) => prev.filter((app) => app.id !== id));
+    console.log(`TODO: Call API to delete appointment with ID ${id}`);
+    // Tạm thời cập nhật local state
+    // Nên có confirm modal ở đây
+    setPatients((prev) => prev.filter((p) => p.id !== id));
   };
 
   const handleStatusChange = (id: number, status: Appointment["status"]) => {
-    setAppointments((prev) =>
-      prev.map((app) => (app.id === id ? { ...app, status } : app))
+    console.log(`TODO: Call API to update status for ID ${id} to ${status}`);
+    // Tạm thời cập nhật local state (cần map ngược status lại?)
+    const apiStatus =
+      status === "pending"
+        ? "Scheduled"
+        : status === "completed"
+        ? "Completed"
+        : "Cancelled";
+    setPatients((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, Status: apiStatus } : p))
     );
+  };
+
+  // Hàm điều hướng ngày (giống PatientManagement)
+  const goToPreviousDay = () => {
+    const date = selectedDate || new Date();
+    const previousDay = new Date(date);
+    previousDay.setDate(previousDay.getDate() - 1);
+    setSelectedDate(previousDay);
+  };
+
+  const goToNextDay = () => {
+    const date = selectedDate || new Date();
+    const nextDay = new Date(date);
+    nextDay.setDate(nextDay.getDate() + 1);
+    setSelectedDate(nextDay);
+  };
+
+  // --- Hàm map Status từ API sang Status của component ---
+  const mapApiStatusToComponentStatus = (
+    apiStatus: Patient["Status"]
+  ): Appointment["status"] => {
+    switch (apiStatus) {
+      case "Completed":
+        return "completed";
+      case "Cancelled":
+        return "cancelled";
+      case "Scheduled": // Hoặc các trạng thái khác?
+      default:
+        return "pending";
+    }
   };
 
   return (
     <div className="appointment-table-container">
-      {/* Search Controls */}
+      {" "}
+      {/* Đổi class gốc nếu cần */}
+      {/* --- THÊM MỚI: Bộ lọc Controls --- */}
       <div className="appointment-controls">
         <div className="search-container">
           <div className="search-bar">
@@ -218,16 +283,63 @@ const AppointmentTable: React.FC = () => {
             />
           </div>
         </div>
-      </div>
 
-      {/* Appointments Table */}
+        {/* Date Navigation */}
+        <div className="date-navigation">
+          <button
+            className="date-nav-btn"
+            onClick={goToPreviousDay}
+            title="Previous Day"
+          >
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </button>
+          <div className="date-picker">
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              dateFormat="dd/MM/yyyy"
+              className="date-picker-input" // Sử dụng class từ CSS dùng chung
+              placeholderText="All Dates"
+              isClearable
+            />
+          </div>
+          <button
+            className="date-nav-btn"
+            onClick={goToNextDay}
+            title="Next Day"
+          >
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+        </div>
+
+        {/* Status Filter */}
+        <div className="status-filter">
+          {" "}
+          {/* Cần CSS cho class này */}
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="search-input" // Tạm dùng class này
+          >
+            <option value="">All Statuses</option>
+            <option value="Scheduled">Scheduled</option>{" "}
+            {/* Dùng value giống API */}
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+      {/* --- KẾT THÚC BỘ LỌC --- */}
+      {/* Bảng Dữ liệu */}
       <table className="appointments-table">
         <thead>
           <tr>
+            {/* --- SỬA: Bỏ cột No. và Username nếu không cần --- */}
             <th>Full Name</th>
             <th>Date of Birth</th>
             <th>Gender</th>
             <th>Phone</th>
+            <th>Slot</th>
             <th>Symptom</th>
             <th>Prescription</th>
             <th>Status</th>
@@ -235,23 +347,55 @@ const AppointmentTable: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {appointments
-            .filter(
-              (appointment) =>
-                appointment.fullName
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase()) ||
-                appointment.phone.includes(searchQuery)
-            )
-            .map((appointment) => (
-              <TableRow
-                key={appointment.id}
-                appointment={appointment}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onStatusChange={handleStatusChange}
-              />
-            ))}
+          {isLoading && (
+            <tr>
+              <td colSpan={8} style={{ textAlign: "center" }}>
+                Loading...
+              </td>
+            </tr>
+          )}
+          {error && (
+            <tr>
+              <td colSpan={8} style={{ textAlign: "center", color: "red" }}>
+                {error}
+              </td>
+            </tr>
+          )}
+          {!isLoading &&
+            !error &&
+            patients.length > 0 &&
+            patients.map((patient) => {
+              // --- ÁNH XẠ (MAP) TỪ Patient -> Appointment ---
+              const appointmentData: Appointment = {
+                // Giả sử API trả về 'id' trong object Patient, nếu không cần tìm cách tạo key/id duy nhất
+                id: patient.id || Date.now() + Math.random(), // <-- Cần ID duy nhất
+                fullName: patient.FullName,
+                dateOfBirth: new Date(patient.DateOfBirth), // Chuyển string -> Date
+                gender: patient.Gender,
+                phone: patient.PhoneNumber, // Đổi tên trường
+                appointHour: patient.AppointHour || "N/A", // Lấy giờ hẹn nếu có
+                symptom: patient.Symptoms, // Đổi tên trường
+                prescription: patient.Prescription,
+                status: mapApiStatusToComponentStatus(patient.Status), // Map status
+                // time: ??? // API getPatients hiện không có giờ hẹn
+              };
+              return (
+                <TableRow
+                  key={appointmentData.id} // <-- Dùng ID đã map
+                  appointment={appointmentData}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onStatusChange={handleStatusChange}
+                />
+              );
+            })}
+          {!isLoading && !error && patients.length === 0 && (
+            <tr>
+              <td colSpan={8} style={{ textAlign: "center" }}>
+                No patients found.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

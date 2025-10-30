@@ -72,6 +72,7 @@ export interface Patient {
   Status: "Completed" | "Scheduled" | "Cancelled";
   Symptoms: string;
   Prescription: string;
+  AppointHour?: string;
 }
 
 export interface Doctor {
@@ -100,26 +101,30 @@ export interface CreateDoctorRequest {
   DateOfBirth: string; // "YYYY-MM-DD"
   Identification: string;
   Department: string;
-  ExperienceYears: number; // <-- Lưu ý: API này dùng ExperienceYears (số nhiều, không gạch dưới)
+  ExperienceYears: number; 
 }
 
-// --- THÊM MỚI: INTERFACE CHO SCHEDULE (TỪ API MỚI) ---
+// --- THAY ĐỔI: INTERFACE CHO SCHEDULE (TỪ API MỚI) ---
 export interface Schedule {
-  ScheduleId?: number; // API gốc có vẻ không trả về, nhưng có thể hữu ích
-  DoctorId: number;
-  DoctorName: string; // <-- Quan trọng!
-  WorkDate: string; // "YYYY-MM-DD"
-  StartTime: string; // "HH:mm:ss"
-  EndTime: string; // "HH:mm:ss"
-  Status: string; // Ví dụ: "Scheduled", "Available"...
-  IsActive?: boolean; // API gốc có, thêm vào nếu cần
+  ScheduleId?: number; // API gốc có vẻ không trả về, nhưng có thể hữu ích
+  DoctorId: number;
+  DoctorName: string; // <-- Quan trọng!
+  WorkDate: string; // "YYYY-MM-DD"
+  StartTime: string; // "HH:mm:ss"
+  EndTime: string; // "HH:mm:ss"
+  Status: string; // Ví dụ: "Scheduled", "Available"...
+  IsActive?: boolean; // API gốc có, thêm vào nếu cần
 }
 // --- KẾT THÚC THÊM MỚI ---
 
+// --- SỬA LỖI TYPE: Thêm Name và Phone (dựa trên API 'info_slot_busy') ---
 export interface ScheduleResponseItem {
-  AppointHour: string; // "HH:mm:ss"
-  Status: string; // "Scheduled", "Cancelled", v.v...
+  AppointHour: string; // "HH:mm:ss"
+  Status: string; // "Scheduled", "Cancelled", v.v...
+  Name?: string; // <-- API có trả về
+  Phone?: string; // <-- API có trả về
 }
+// --- KẾT THÚC SỬA LỖI ---
 
 // --- HELPER FUNCTION (Giữ nguyên) ---
 export const formatDateForAPI = (date: Date | null): string => {
@@ -249,12 +254,7 @@ export const api = {
 
   // --- THÊM MỚI: HÀM TẠO BÁC SĨ ---
   createDoctor: async (data: CreateDoctorRequest): Promise<any> => { 
-    // Gọi đúng endpoint POST /api/Owner/create-doctor
-    // axios sẽ tự động gửi 'data' làm request body
     const response = await apiClient.post("/Owner/create-doctor", data);
-    
-    // API có thể trả về thông báo, hoặc đối tượng Doctor vừa tạo
-    // Trả về response.data để component tự xử lý
     return response.data;
   },
   // --- KẾT THÚC THÊM MỚI ---
@@ -273,16 +273,16 @@ export const api = {
   },
 
   getAllSchedules: async (
-    doctorName: string, // Giả định API hỗ trợ lọc theo tên
+    doctorSearch: string, // Giả định API hỗ trợ lọc theo tên
     date: string // Giả định API hỗ trợ lọc theo ngày "YYYY-MM-DD"
   ): Promise<Schedule[]> => {
     
     // Xây dựng params, chỉ gửi nếu có giá trị
     const params: any = {};
-    if (doctorName) params.doctorName = doctorName; // Hoặc tên param API dùng (vd: doctorSearch)
+    if (doctorSearch) params.doctorSearch = doctorSearch; // Hoặc tên param API dùng (vd: doctorSearch)
     if (date) params.date = date;
 
-    const response = await apiClient.get("/Schedule/List_All_Schedules_Doctors", {
+    const response = await apiClient.get("/Schedule/List_Schedules_1_Doctor", {
       params: params,
     });
     return response.data as Schedule[];
