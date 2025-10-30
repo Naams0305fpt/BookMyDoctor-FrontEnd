@@ -109,6 +109,7 @@
   margin-bottom: var(--spacing-3);
   display: flex;
   justify-content: center;
+  min-height: 220px;
 }
 
 .doctor-avatar {
@@ -119,6 +120,8 @@
   background: var(--secondary-blue);
   box-shadow: var(--shadow-card);
   transition: all 0.25s ease;
+  /* --- THÊM DÒNG NÀY --- */
+  aspect-ratio: 1 / 1; /* Giữ tỉ lệ 1:1 (vuông) */
 }
 
 .doctor-card:hover .doctor-avatar {

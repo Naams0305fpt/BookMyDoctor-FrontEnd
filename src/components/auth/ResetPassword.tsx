@@ -159,7 +159,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
 
   return (
     // Modal container
-    <div className="login-overlay" onClick={onClose}>
+    <div className="login-overlay">
       <div
         className="reset-password-modal login-modal"
         onClick={(e) => e.stopPropagation()}

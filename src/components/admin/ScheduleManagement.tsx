@@ -193,33 +193,35 @@ const ScheduleManagement = () => {
             {!isLoading &&
               !error &&
               schedules.length > 0 &&
-              schedules.map((schedule, index) => (
-                <tr
-                  key={`${schedule.DoctorId}-${schedule.WorkDate}-${schedule.StartTime}`}
-                >
-                  <td>{index + 1}</td>
-                  {/* Dùng đúng tên trường từ API */}
-                  <td>{schedule.DoctorName}</td>
-                  <td>
-                    {new Date(schedule.WorkDate).toLocaleDateString("en-GB")}
-                  </td>
-                  <td>{formatTime(schedule.StartTime)}</td>
-                  <td>{formatTime(schedule.EndTime)}</td>
-                  <td>
-                    {/* Hiển thị status từ API, có thể thêm class CSS */}
-                    <span
-                      className={`status-${schedule.Status?.toLowerCase()}`}
-                    >
-                      {schedule.Status}
-                    </span>
-                  </td>
-                  {/*
+              schedules
+                .filter((schedule) => schedule.IsActive === true)
+                .map((schedule, index) => (
+                  <tr
+                    key={`${schedule.DoctorId}-${schedule.WorkDate}-${schedule.StartTime}`}
+                  >
+                    <td>{index + 1}</td>
+                    {/* Dùng đúng tên trường từ API */}
+                    <td>{schedule.DoctorName}</td>
+                    <td>
+                      {new Date(schedule.WorkDate).toLocaleDateString("en-GB")}
+                    </td>
+                    <td>{formatTime(schedule.StartTime)}</td>
+                    <td>{formatTime(schedule.EndTime)}</td>
+                    <td>
+                      {/* Hiển thị status từ API, có thể thêm class CSS */}
+                      <span
+                        className={`status-${schedule.Status?.toLowerCase()}`}
+                      >
+                        {schedule.Status}
+                      </span>
+                    </td>
+                    {/*
                 <td className="action-buttons">
                    <FontAwesomeIcon icon={faTrash} className="delete-icon" onClick={() => handleDelete(schedule.ScheduleId)} />
                 </td>
                 */}
-                </tr>
-              ))}
+                  </tr>
+                ))}
             {/* Hiển thị khi không có dữ liệu */}
             {/* {!isLoading && !error && schedules.length === 0 && (
               <tr>

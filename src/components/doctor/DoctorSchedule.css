@@ -99,11 +99,11 @@
   font-size: 1.2rem;
 }
 
-.status-completed {
-  color: #28a745;
+.status-cancelled {
+  color: #f3f4f6;
 }
 
-.status-cancelled {
+.status-completed {
   color: #dc3545;
 }
 
@@ -207,17 +207,15 @@
 }
 
 .time-slot {
-  padding: 1rem;
-  text-align: center;
-  border-radius: 8px;
-  font-size: 14px;
+  border: 2px solid #0000;
+  border-radius: var(--radius-card);
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  min-height: 80px;
+  padding: 8px;
+  text-align: center;
   transition: all 0.2s ease;
-  border: 2px solid transparent;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
 }
 
 .time-slot .time {
@@ -261,6 +259,12 @@
   background-color: #fee2e2;
   color: #991b1b;
   border-color: #fca5a5;
+}
+
+.time-slot.cancelled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-color: #d1d5db;
 }
 
 /* Date Navigation Styles */

@@ -159,7 +159,7 @@
 .form-group select {
   width: 100%;
   padding: 14px 20px 14px 50px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid #10b981;
   border-radius: 12px;
   font-size: 15px;
   font-family: var(
@@ -490,5 +490,50 @@
     width: 100%;
     padding: 14px 24px;
     font-size: 15px;
+  }
+}
+
+/* Status Messages */
+.status-message {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  z-index: 1001;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease;
+}
+
+.status-message.success {
+  background: #10b981;
+  color: white;
+}
+
+.status-message.error {
+  background: #ef4444;
+  color: white;
+  max-width: 400px;
+  word-wrap: break-word;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-message {
+    max-width: 300px;
+    font-size: 14px;
+    right: 10px;
+    top: 80px;
   }
 }
