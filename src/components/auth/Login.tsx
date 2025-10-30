@@ -52,7 +52,7 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="login-overlay" onClick={onClose}>
+    <div className="login-overlay">
       {!showResetPassword ? (
         <div className="login-modal" onClick={(e) => e.stopPropagation()}>
           <div className="login-header">
