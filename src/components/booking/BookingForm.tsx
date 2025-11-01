@@ -14,7 +14,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./BookingForm.css";
-
+import { useAuth } from "../../contexts/AuthContext";
 // MỚI: Import API, interfaces, và helper
 import { api, formatDateForAPI } from "../../services/api"; // !! Đảm bảo đường dẫn này đúng
 import type {
@@ -57,6 +57,8 @@ const initialFormData: FormData = {
 const BookingForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
+
+  const { user } = useAuth(); // Lấy user từ context
 
   // State cho việc Gửi Form
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -162,6 +164,34 @@ const BookingForm: React.FC = () => {
       fetchSchedule();
     }
   }, [formData.doctorId, formData.date]); // Chạy lại khi 2 giá trị này thay đổi
+
+  // --- THÊM EFFECT 3 VÀO ĐÂY ---
+  useEffect(() => {
+    // Chỉ chạy nếu user đã đăng nhập
+    if (user) {
+      console.log("AuthProvider: Auto-filling form with user data", user);
+
+      setFormData((prevData) => ({
+        ...prevData,
+        // Chỉ điền nếu trường đó đang rỗng (để không ghi đè nếu user tự nhập)
+        fullName: prevData.fullName || user.name || "",
+        phone: prevData.phone || user.phone || "",
+        email: prevData.email || user.email || "",
+
+        // Thử điền các trường khác nếu user object có (ví dụ: DoctorUser)
+        // Dùng 'as any' để TypeScript không báo lỗi (hoặc kiểm tra user.userType)
+        gender: prevData.gender || (user as any).gender || "",
+
+        // Chuyển đổi string ngày sinh từ 'user' (nếu có) sang đối tượng Date
+        dateOfBirth:
+          prevData.dateOfBirth ||
+          ((user as any).dateOfBirth
+            ? new Date((user as any).dateOfBirth)
+            : null),
+      }));
+    }
+  }, [user]); // <-- Dependency: Chạy lại khi 'user' thay đổi
+  // --- KẾT THÚC EFFECT 3 ---
 
   // --- CÁC HÀM XỬ LÝ (HANDLERS) ---
 
