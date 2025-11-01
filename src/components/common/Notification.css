@@ -13,7 +13,7 @@
   align-items: flex-start;
   gap: var(--spacing-3);
   padding: var(--spacing-4);
-  z-index: 3000;
+  z-index: 9999;
   transform: translateX(420px);
   opacity: 0;
   transition: all 0.3s ease;
@@ -119,11 +119,11 @@
     max-width: none;
     transform: translateY(-100px);
   }
-  
+
   .notification.visible {
     transform: translateY(0);
   }
-  
+
   .notification.hidden {
     transform: translateY(-100px);
   }
