@@ -1,6 +1,7 @@
 /* User Menu Styles */
 .user-menu {
   position: relative;
+  width: 100%;
 }
 
 .user-menu-trigger {
@@ -15,7 +16,7 @@
   transition: all 0.2s ease;
   backdrop-filter: blur(10px);
   font-family: var(--font-ui);
-  width: 360px;
+  width: 100%;
 }
 
 .user-menu-trigger:hover {

@@ -36,9 +36,8 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
       setError("Please fill in all fields");
       return;
     }
-
-    const success = await login(identifier, password);
-    if (success) {
+    try {
+      await login(identifier, password);
       showNotification(
         "success",
         "Welcome Back!",
@@ -46,8 +45,8 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
         3000
       );
       onClose();
-    } else {
-      setError("Invalid identifier or password");
+    } catch (err: any) {
+      setError(err.message || "Login failed. Please try again.");
     }
   };
 

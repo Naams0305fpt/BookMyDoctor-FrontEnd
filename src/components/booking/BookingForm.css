@@ -156,6 +156,18 @@
   transform: translateY(-2px);
 }
 
+.time-slot.passed {
+  background-color: #e0e0e0;
+  color: #a0a0a0;
+  border-color: #d1d1d1;
+  cursor: not-allowed;
+}
+
+.time-slot.passed:hover {
+  cursor: not-allowed;
+  transform: none;
+}
+
 .status-message.warning {
   background: #fbbf24;
   color: white;
@@ -167,6 +179,34 @@
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.form-group label .required {
+  color: #dc2626;
+  margin-left: 4px;
+  font-weight: 700;
+}
+
+/* Input Wrapper with Icon */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px;
+  color: var(--primary-teal);
+  font-size: 16px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.input-wrapper .input,
+.input-wrapper select,
+.input-wrapper .react-datepicker-wrapper input {
+  padding-left: 48px !important;
 }
 
 /* Input Styles */

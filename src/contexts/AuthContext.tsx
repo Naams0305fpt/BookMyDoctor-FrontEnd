@@ -23,7 +23,7 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (identifier: string, password: string) => Promise<boolean>;
+  login: (identifier: string, password: string) => Promise<void>;
   register: (
     data: RegisterRequest
   ) => Promise<{ success: boolean; message?: string }>;
@@ -61,10 +61,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = async (
-    identifier: string,
-    password: string
-  ): Promise<boolean> => {
+  const login = async (identifier: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
       // Bước 1: Gọi API login. Nó chỉ set cookie và trả về { message: "..." }
@@ -81,12 +78,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
       setIsLoading(false);
-      return true;
     } catch (err) {
       // Bất kỳ lỗi nào (login sai, checkAuth lỗi) đều sẽ nhảy vào đây
       console.error("Login failed:", err);
       setIsLoading(false);
-      return false;
+      throw err;
     }
   };
 
@@ -110,16 +106,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const result = await api.register(data);
 
       // Bước 2: Nếu register thành công, GỌI checkAuthStatus
-      const currentUser = await api.checkAuthStatus();
+      // const currentUser = await api.checkAuthStatus();
 
       // Bước 3: Set user
-      setUser(currentUser);
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      // setUser(currentUser);
+      // localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
       setIsLoading(false);
       return {
         success: true,
-        message: result.message || "Registration successful",
+        message: result.message || "Registration successful. Please log in.",
       };
     } catch (err: any) {
       console.error("Register failed:", err);
