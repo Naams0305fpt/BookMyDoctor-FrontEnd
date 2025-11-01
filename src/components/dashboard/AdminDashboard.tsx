@@ -9,7 +9,7 @@ const AdminDashboard = () => {
 
   return (
     <section className="appointment-management">
-      <h1 className="admin-title">Admin Dashboard</h1>
+      <h1 className="admin-title">Owner Dashboard</h1>
 
       <div className="view-toggles">
         <button
