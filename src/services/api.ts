@@ -22,9 +22,20 @@ export interface SendVerificationCodeRequest {
   email: string;
 }
 
-export interface VerifyCodeRequest {
-  email: string;
-  code: string;
+// export interface VerifyCodeRequest {
+//   email: string;
+//   code: string;
+// }
+export interface VerifyOtpRequest {
+  Destination: string; // Email
+  Purpose: string;     // "ResetPassword"
+  OtpCode: string;
+  Channel: string;     // "email"
+}
+
+export interface ChangePasswordOtpRequest {
+  NewPassword: string;
+  ConfirmNewPassword: string;
 }
 
 export interface SetNewPasswordRequest {
@@ -74,7 +85,21 @@ export interface Patient {
   Prescription: string;
   AppointHour?: string;
 }
-
+// --- THÊM MỚI: Interface cho API History (dựa trên ảnh) ---
+export interface MyHistoryResponse {
+  NamePatient: string;
+  NameDoctor: string;
+  PhoneDoctor: string;
+  Department: string;
+  AppointHour: string; // "HH:mm:ss"
+  AppointDate: string; // "YYYY-MM-DD"
+  Status: string; // "Scheduled", "Completed", "Cancelled"
+  Symptoms: string;
+  Prescription: string;
+  // QUAN TRỌNG: API cần trả về một ID duy nhất
+  BookingId?: number; 
+}
+// --- KẾT THÚC THÊM MỚI ---
 export interface Doctor {
   DoctorId: number;
   UserId: number;
@@ -207,12 +232,28 @@ export const api = {
     return response.data;
   },
 
-  resetPasswordWithOtp: async (data: ResetPasswordOtpRequest): Promise<any> => {
-    const response = await apiClient.post('/Auth/reset-password-otp', data);
+  verifyOtp: async (data: VerifyOtpRequest): Promise<{ message: string }> => {
+    // API này sẽ set cookie và trả về message
+    const response = await apiClient.post<{ message: string }>("/Auth/verify-otp", data);
+    return response.data;
+  },
 
-    // Xử lý trường hợp 204 No Content hoặc data rỗng
+  // resetPasswordWithOtp: async (data: ResetPasswordOtpRequest): Promise<any> => {
+  //   const response = await apiClient.post('/Auth/reset-password-otp', data);
+
+  //   // Xử lý trường hợp 204 No Content hoặc data rỗng
+  //   if (response.status === 204 || !response.data) {
+  //     console.log("Password reset successful, empty response received.");
+  //     return { success: true };
+  //   }
+  //   return response.data;
+  // },
+
+  changePasswordWithOtp: async (data: ChangePasswordOtpRequest): Promise<any> => {
+    // API này đọc cookie, chỉ cần gửi mật khẩu mới
+    const response = await apiClient.post("/Auth/change-password-otp", data);
+    
     if (response.status === 204 || !response.data) {
-      console.log("Password reset successful, empty response received.");
       return { success: true };
     }
     return response.data;
@@ -246,10 +287,16 @@ export const api = {
     if (appointDate) params.appointDate = appointDate;
     if (status) params.status = status;
 
-    const response = await apiClient.get("/Patients/AllPatientsAndSearch", {
+    const response = await apiClient.get("/patients/AllPatientsAndSearch", {
       params: params,
     });
     return response.data as Patient[];
+  },
+
+  // --- THÊM MỚI: LẤY LỊCH SỬ CỦA BỆNH NHÂN ---
+  getMyHistory: async (): Promise<MyHistoryResponse[]> => {
+    const response = await apiClient.get(`/Patients/MyHistoryAppoint`);
+    return response.data;
   },
 
   // --- THÊM MỚI: HÀM TẠO BÁC SĨ ---
