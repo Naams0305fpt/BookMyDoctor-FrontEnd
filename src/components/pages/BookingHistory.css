@@ -200,6 +200,11 @@
   color: #856404;
 }
 
+.status-badge.scheduled {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
 .status-badge.unverified {
   background-color: #f8d7da;
   color: #721c24;
@@ -276,5 +281,38 @@
 
   .stat-info h3 {
     font-size: 1.5rem;
+  }
+}
+
+/* Loading and Error States */
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: var(--radius-lg, 12px);
+  margin: 2rem;
+  box-shadow: var(--shadow-md, 0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.loading-state p {
+  font-size: 1.1rem;
+  color: #6c757d;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.error-state p {
+  font-size: 1.1rem;
+  color: #dc3545;
+  font-weight: 600;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
   }
 }

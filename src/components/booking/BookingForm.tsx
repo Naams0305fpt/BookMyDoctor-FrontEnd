@@ -457,11 +457,6 @@ const BookingForm: React.FC = () => {
                       placeholderText="Select date of birth"
                       showYearDropdown
                       yearDropdownItemNumber={50}
-                      value={
-                        formData.dateOfBirth
-                          ? formData.dateOfBirth.toLocaleDateString("vi-VN")
-                          : ""
-                      }
                     />
                   </div>
                   {errors.dateOfBirth && (

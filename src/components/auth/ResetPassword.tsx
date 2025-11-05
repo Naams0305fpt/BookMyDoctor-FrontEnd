@@ -26,6 +26,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
   const [otpCode, setOtpCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [otpToken, setOtpToken] = useState<string>("");
 
   // States cho UI control
   const [step, setStep] = useState<"email" | "password">("email"); // Step 1: email/code, Step 2: password
@@ -74,66 +75,69 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
   };
 
   // --- HÀM XÁC THỰC CODE VÀ CHUYỂN SANG BƯỚC 2 ---
-  const handleVerifyCode = (e: React.FormEvent) => {
+  const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (!email || !otpCode) {
-      setError("Please enter email and verification code.");
+    if (!email || !otpCode || otpCode.length !== 6) {
+      setError("Please enter a valid email and 6-digit OTP code.");
       return;
     }
 
-    if (otpCode.length !== 6) {
-      setError("Please enter a valid 6-digit OTP code.");
-      return;
-    }
+    setVerifyingCode(true); // Bắt đầu loading nút "Continue"
+    try {
+      // Gọi API /verify-otp
+      const result = await api.verifyOtp({
+        Destination: email,
+        Purpose: "ResetPassword",
+        OtpCode: otpCode,
+        Channel: "email",
+      });
 
-    // Move to password step (actual verification happens when submitting new password)
-    setStep("password");
-    showNotification(
-      "success",
-      "Code Accepted",
-      "Please enter your new password",
-      3000
-    );
+      // Nếu thành công, lưu OtpToken và chuyển bước
+      if (result && result.message === "Xác thực OTP thành công.") {
+        setStep("password"); // <-- Chuyển sang bước 2
+        setError(""); // Xóa lỗi cũ
+        showNotification(
+          "success",
+          "Code Verified",
+          "Please enter your new password",
+          3000
+        );
+      } else {
+        // Nếu API không trả về token như mong đợi
+        throw new Error("Verification failed: Invalid response from server.");
+      }
+    } catch (err: any) {
+      // Nếu code sai, API (interceptor) sẽ ném lỗi
+      setError(err.message || "Invalid or expired verification code.");
+    } finally {
+      setVerifyingCode(false); // Dừng loading nút "Continue"
+    }
   };
-
   // --- HÀM SUBMIT FORM RESET CUỐI CÙNG ---
   const handleResetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    // --- Validation (cho tất cả các trường) ---
-    if (!email || !otpCode || !newPassword || !confirmPassword) {
-      setError("Please fill in all required fields.");
-      return;
-    }
-    if (otpCode.length !== 6) {
-      // Giả sử OTP 6 số
-      setError("Please enter a valid 6-digit OTP code.");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-    // Validation mật khẩu chi tiết (đã có từ code cũ của bạn)
-    const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-    if (!passRegex.test(newPassword)) {
-      setError(
-        "Password must contain at least 8 characters, one uppercase, one lowercase, and one number."
-      );
-      return;
-    }
-    // --- Kết thúc Validation ---
+    // // Validation mật khẩu (code này của bạn đã đúng)
+    // if (newPassword !== confirmPassword) {
+    //   setError("Passwords do not match.");
+    //   return;
+    // }
+    // const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    // if (!passRegex.test(newPassword)) {
+    //   setError(
+    //     "Password must contain at least 8 characters, one uppercase, one lowercase, and one number."
+    //   );
+    //   return;
+    // }
+    // // --- Kết thúc Validation ---
 
-    setIsLoading(true); // Bắt đầu loading cho nút Reset
+    setIsLoading(true); // Bắt đầu loading nút "Reset Password"
     try {
-      // Gọi API reset-password-otp
-      await api.resetPasswordWithOtp({
-        Destination: email,
-        Purpose: "ResetPassword", // Dùng cùng purpose
-        OtpCode: otpCode,
+      // Gọi API /change-password-otp
+      await api.changePasswordWithOtp({
         NewPassword: newPassword,
         ConfirmNewPassword: confirmPassword,
       });
@@ -145,15 +149,21 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
         4000
       );
       setTimeout(() => {
-        onBack(); // Gọi onBack() sau 1 giây (1000ms)
+        onBack(); // Quay lại Login
       }, 1000);
     } catch (err: any) {
-      setError(
-        err.message ||
-          "Failed to reset password. Please check your OTP and try again."
-      );
+      // Lỗi (vd: OtpToken hết hạn, mật khẩu không hợp lệ...)
+      setError(err.message || "Failed to reset password. Please try again.");
+      // Có thể quay lại Bước 1 nếu OtpToken hết hạn
+      if (err.message.includes("token")) {
+        setStep("email");
+        setOtpToken("");
+        setError(
+          "Your verification token has expired. Please verify your email again."
+        );
+      }
     } finally {
-      setIsLoading(false); // Kết thúc loading
+      setIsLoading(false);
     }
   };
 
@@ -191,7 +201,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
             onSubmit={handleVerifyCode}
           >
             {/* Email Input */}
-            <div className="form-group">
+            <div className="form-group reset-group">
               <label htmlFor="reset-email">EMAIL ADDRESS</label>
               <div className="input-wrapper">
                 <FontAwesomeIcon icon={faEnvelope} className="input-icon" />
@@ -208,12 +218,11 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
             </div>
 
             {/* OTP Section */}
-            <div className="form-group">
-              <label htmlFor="otpCode">
-                <FontAwesomeIcon icon={faShieldAlt} /> VERIFICATION CODE
-              </label>
+            <div className="form-group reset-group">
+              <label htmlFor="otpCode">VERIFICATION CODE</label>
               <div className="verification-input-group">
                 <div className="input-wrapper">
+                  <FontAwesomeIcon icon={faShieldAlt} className="input-icon" />
                   <input
                     type="text"
                     id="otpCode"
@@ -245,17 +254,17 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
                   </button>
                 </div>
               </div>
-              {!codeSent && (
-                <small className="verification-info">
-                  Click 'Send Code' to receive OTP via email
-                </small>
-              )}
             </div>
 
             {/* Hiển thị lỗi */}
             {error && <div className="error-message">{error}</div>}
 
             {/* Nút Continue */}
+            {!codeSent && (
+              <small className="verification-info">
+                Click 'Send Code' to receive OTP via email
+              </small>
+            )}
             <button
               type="submit"
               className="reset-btn login-btn"
@@ -279,7 +288,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
             onSubmit={handleResetSubmit}
           >
             {/* New Password */}
-            <div className="form-group">
+            <div className="form-group reset-group">
               <label htmlFor="newPassword">NEW PASSWORD</label>
               <div className="input-wrapper">
                 <FontAwesomeIcon icon={faLock} className="input-icon" />
@@ -302,7 +311,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
             </div>
 
             {/* Confirm Password */}
-            <div className="form-group">
+            <div className="form-group reset-group">
               <label htmlFor="confirmPassword">CONFIRM NEW PASSWORD</label>
               <div className="input-wrapper">
                 <FontAwesomeIcon icon={faLock} className="input-icon" />
@@ -324,7 +333,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
               </div>
             </div>
 
-            {/* Password Requirements */}
+            {/* Password Requirements *
             <div className="password-requirements">
               <p>Password must contain:</p>
               <ul>
@@ -350,7 +359,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
                   Passwords match
                 </li>
               </ul>
-            </div>
+            </div> */}
 
             {/* Hiển thị lỗi */}
             {error && <div className="error-message">{error}</div>}
