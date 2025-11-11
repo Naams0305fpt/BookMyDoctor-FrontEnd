@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -9,25 +9,42 @@ import {
   faPhone,
   faEnvelope,
   faCalendarAlt,
-  faStethoscope,
-  faCrown,
   faHospital,
   faGraduationCap,
   faClock,
+  faVenusMars,
+  faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
+import { api } from "../../services/api";
 import "../pages/Profile.css";
+
+interface ProfileData {
+  UserId: number;
+  Username: string;
+  RoleId: string;
+  Name: string;
+  Gender: string;
+  DateOfBirth: string;
+  Phone: string;
+  Email: string;
+  Address: string | null;
+}
 
 const DoctorProfile: React.FC = () => {
   const { user } = useAuth();
   const { showNotification } = useNotification();
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-    specialization: user?.specialization || "General Medicine",
+    name: "",
+    email: "",
+    phone: "",
+    gender: "",
+    dateOfBirth: "",
+    address: "",
     licenseNumber: "MD-2023-5678",
     hospital: "BookMyDoctor Medical Center",
     education: "Harvard Medical School",
@@ -36,8 +53,48 @@ const DoctorProfile: React.FC = () => {
     bio: "Experienced medical professional dedicated to providing excellent patient care with a focus on preventive medicine and patient education.",
   });
 
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      setIsLoading(true);
+      const data = await api.getProfileMe();
+      setProfileData(data);
+
+      // Cập nhật formData với dữ liệu từ API
+      setFormData({
+        name: data.Name || "",
+        email: data.Email || "",
+        phone: data.Phone || "",
+        gender: data.Gender || "",
+        dateOfBirth: data.DateOfBirth || "",
+        address: data.Address || "",
+        licenseNumber: "MD-2023-5678",
+        hospital: "BookMyDoctor Medical Center",
+        education: "Harvard Medical School",
+        experience: "8 years",
+        consultationFee: "$50",
+        bio: "Experienced medical professional dedicated to providing excellent patient care with a focus on preventive medicine and patient education.",
+      });
+    } catch (error: any) {
+      console.error("Error fetching profile:", error);
+      showNotification(
+        "error",
+        "Error",
+        error.message || "Failed to load profile data",
+        3000
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -59,21 +116,51 @@ const DoctorProfile: React.FC = () => {
   };
 
   const handleCancel = () => {
-    // Reset form data to original values
-    setFormData({
-      name: user?.name || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
-      specialization: user?.specialization || "General Medicine",
-      licenseNumber: "MD-2023-5678",
-      hospital: "BookMyDoctor Medical Center",
-      education: "Harvard Medical School",
-      experience: "8 years",
-      consultationFee: "$50",
-      bio: "Experienced medical professional dedicated to providing excellent patient care with a focus on preventive medicine and patient education.",
-    });
+    // Reset form data to original values from profileData
+    if (profileData) {
+      setFormData({
+        name: profileData.Name || "",
+        email: profileData.Email || "",
+        phone: profileData.Phone || "",
+        gender: profileData.Gender || "",
+        dateOfBirth: profileData.DateOfBirth || "",
+        address: profileData.Address || "",
+        licenseNumber: "MD-2023-5678",
+        hospital: "BookMyDoctor Medical Center",
+        education: "Harvard Medical School",
+        experience: "8 years",
+        consultationFee: "$50",
+        bio: "Experienced medical professional dedicated to providing excellent patient care with a focus on preventive medicine and patient education.",
+      });
+    }
     setIsEditing(false);
   };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("vi-VN");
+  };
+
+  if (isLoading) {
+    return (
+      <div className="profile-container">
+        <div style={{ textAlign: "center", padding: "50px" }}>
+          Loading profile...
+        </div>
+      </div>
+    );
+  }
+
+  if (!profileData) {
+    return (
+      <div className="profile-container">
+        <div style={{ textAlign: "center", padding: "50px" }}>
+          Failed to load profile data
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-container">
@@ -82,17 +169,8 @@ const DoctorProfile: React.FC = () => {
           <FontAwesomeIcon icon={faUserMd} />
         </div>
         <div className="profile-info">
-          <h1>{user?.name}</h1>
-          <p className="profile-type doctor">
-            {user?.isVerified && (
-              <FontAwesomeIcon icon={faCrown} className="verified-icon" />
-            )}
-            Verified Doctor
-          </p>
-          <span className="profile-status">
-            <FontAwesomeIcon icon={faStethoscope} />
-            {formData.specialization}
-          </span>
+          <h1>{profileData.Name}</h1>
+          <p className="profile-type doctor">Verified Doctor</p>
         </div>
         <div className="profile-actions">
           {!isEditing ? (
@@ -122,6 +200,14 @@ const DoctorProfile: React.FC = () => {
             <div className="profile-field">
               <label>
                 <FontAwesomeIcon icon={faUser} />
+                Username
+              </label>
+              <span>{profileData.Username}</span>
+            </div>
+
+            <div className="profile-field">
+              <label>
+                <FontAwesomeIcon icon={faUser} />
                 Full Name
               </label>
               {isEditing ? (
@@ -135,6 +221,43 @@ const DoctorProfile: React.FC = () => {
                 <span>{formData.name}</span>
               )}
             </div>
+
+            <div className="profile-field">
+              <label>
+                <FontAwesomeIcon icon={faVenusMars} />
+                Gender
+              </label>
+              {isEditing ? (
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              ) : (
+                <span>{formData.gender}</span>
+              )}
+            </div>
+
+            <div className="profile-field">
+              <label>
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                Date of Birth
+              </label>
+              {isEditing ? (
+                <input
+                  type="date"
+                  name="dateOfBirth"
+                  value={formData.dateOfBirth}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <span>{formatDate(formData.dateOfBirth)}</span>
+              )}
+            </div>|
 
             <div className="profile-field">
               <label>
@@ -170,20 +293,21 @@ const DoctorProfile: React.FC = () => {
               )}
             </div>
 
-            <div className="profile-field">
+            <div className="profile-field full-width">
               <label>
-                <FontAwesomeIcon icon={faStethoscope} />
-                Specialization
+                <FontAwesomeIcon icon={faMapMarkerAlt} />
+                Address
               </label>
               {isEditing ? (
                 <input
                   type="text"
-                  name="specialization"
-                  value={formData.specialization}
+                  name="address"
+                  value={formData.address}
                   onChange={handleInputChange}
+                  placeholder="Enter your address"
                 />
               ) : (
-                <span>{formData.specialization}</span>
+                <span>{formData.address || "Not provided"}</span>
               )}
             </div>
           </div>
