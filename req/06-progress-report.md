@@ -1,10 +1,11 @@
-# Báo Cáo Tiến Độ Dự Án (Progress Report)
+﻿# Báo Cáo Tiến Độ Dự Án (Progress Report)
 
 **Ngày cập nhật**: 11/11/2025 (Updated with Schedule API Integration + Change Password Feature)  
 **Dự án**: BookMyDoctor - Frontend  
 **Branch**: API_Web  
 **API Documentation**: ✅ Verified - 31 endpoints documented  
 **Major Updates**:
+
 - ✅ Schedule API Integration: 5/7 endpoints implemented (CRUD complete)
 - ✅ Change Password Feature: Complete with OTP flow
 - ✅ Admin Schedule Management: View + Delete functionality
@@ -41,31 +42,31 @@ Tài liệu này so sánh các yêu cầu trong folder `req` với code hiện t
 
 ### ✅ API Calls Đã Implement Chính Xác (23 endpoints)
 
-| API Endpoint                                  | Mục đích                      | File sử dụng                             | Status     |
-| --------------------------------------------- | ----------------------------- | ---------------------------------------- | ---------- |
-| `POST /api/Auth/login`                        | Đăng nhập                     | `Login.tsx`, `api.ts`                    | ✅ Perfect |
-| `POST /api/Auth/logout`                       | Đăng xuất                     | `api.ts`, `AuthContext.tsx`              | ✅ Perfect |
-| `POST /api/Auth/request-otp`                  | Gửi OTP reset password        | `ResetPassword.tsx`, `api.ts`            | ✅ Perfect |
-| `POST /api/Auth/verify-otp`                   | Xác thực OTP                  | `ResetPassword.tsx`, `api.ts`            | ✅ Perfect |
-| `POST /api/Auth/change-password-otp`          | Đổi password bằng OTP         | `ResetPassword.tsx`, `api.ts`            | ✅ Perfect |
-| `POST /api/Auth/change-password-after-login`  | Đổi password khi đã login     | `Settings.tsx`, `api.ts`                 | ✅ Perfect |
-| `GET /api/Auth/check-role`                    | Kiểm tra role user            | `api.ts`, `AuthContext.tsx`              | ✅ Perfect |
-| `POST /api/Register/user`                     | Đăng ký tài khoản             | `SignUp.tsx`, `api.ts`                   | ✅ Perfect |
-| `GET /api/Profile/profile-me`                 | Lấy thông tin profile         | `PatientProfile.tsx`, `api.ts`           | ✅ Perfect |
-| `POST /api/Booking/public`                    | Đặt lịch không cần login      | `BookingForm.tsx`, `api.ts`              | ✅ Perfect |
-| `GET /api/Booking/info_slot_busy`             | Lấy giờ đã đặt                | `BookingForm.tsx`, `api.ts`              | ✅ Perfect |
-| `DELETE /api/Booking/cancel/{id}`             | Hủy lịch khám                 | `BookingHistory.tsx`                     | ⚠️ 80%     |
-| `POST /api/Owner/create-doctor`               | Tạo bác sĩ (Admin)            | `CreateDoctorModal.tsx`, `api.ts`        | ✅ Perfect |
-| `GET /api/Doctors/All-Doctors`                | Lấy danh sách bác sĩ          | `BookingForm.tsx`, `api.ts`              | ✅ Perfect |
-| `DELETE /api/Doctors/DeleteDoctor`            | Xóa bác sĩ                    | `DoctorManagement.tsx`, `api.ts`         | ✅ Perfect |
-| `GET /api/Patients/AllPatientsAndSearch`      | Lấy danh sách bệnh nhân       | `PatientManagement.tsx`, `api.ts`        | ✅ Perfect |
-| `PUT /api/Patients/UpdatePatient`             | Cập nhật bệnh nhân            | `AppointmentTable.tsx`, `api.ts`         | ✅ Perfect |
-| `GET /api/Patients/MyHistoryAppoint`          | Lịch sử khám                  | `BookingHistory.tsx`, `api.ts`           | ✅ Perfect |
-| `GET /api/Schedule/List_All_Schedules_Doctor` | Lấy tất cả lịch (Admin)       | `admin/ScheduleManagement.tsx`, `api.ts` | ✅ Perfect |
-| `GET /api/Schedule/detail/{scheduleId}`       | Lấy chi tiết lịch             | `api.ts`                                 | ✅ Perfect |
-| `POST /api/Schedule/Add_Schedule_Doctor`      | Tạo lịch làm việc             | `ScheduleFormModal.tsx`, `api.ts`        | ✅ Perfect |
-| `PUT /api/Schedule/Update_Schedule_Doctor`    | Cập nhật lịch làm việc        | `ScheduleFormModal.tsx`, `api.ts`        | ✅ Perfect |
-| `DELETE /api/Schedule/Delete_Schedule_Doctor` | Xóa lịch làm việc             | `admin/ScheduleManagement.tsx`, `api.ts` | ✅ Perfect |
+| API Endpoint                                  | Mục đích                  | File sử dụng                             | Status     |
+| --------------------------------------------- | ------------------------- | ---------------------------------------- | ---------- |
+| `POST /api/Auth/login`                        | Đăng nhập                 | `Login.tsx`, `api.ts`                    | ✅ Perfect |
+| `POST /api/Auth/logout`                       | Đăng xuất                 | `api.ts`, `AuthContext.tsx`              | ✅ Perfect |
+| `POST /api/Auth/request-otp`                  | Gửi OTP reset password    | `ResetPassword.tsx`, `api.ts`            | ✅ Perfect |
+| `POST /api/Auth/verify-otp`                   | Xác thực OTP              | `ResetPassword.tsx`, `api.ts`            | ✅ Perfect |
+| `POST /api/Auth/change-password-otp`          | Đổi password bằng OTP     | `ResetPassword.tsx`, `api.ts`            | ✅ Perfect |
+| `POST /api/Auth/change-password-after-login`  | Đổi password khi đã login | `Settings.tsx`, `api.ts`                 | ✅ Perfect |
+| `GET /api/Auth/check-role`                    | Kiểm tra role user        | `api.ts`, `AuthContext.tsx`              | ✅ Perfect |
+| `POST /api/Register/user`                     | Đăng ký tài khoản         | `SignUp.tsx`, `api.ts`                   | ✅ Perfect |
+| `GET /api/Profile/profile-me`                 | Lấy thông tin profile     | `PatientProfile.tsx`, `api.ts`           | ✅ Perfect |
+| `POST /api/Booking/public`                    | Đặt lịch không cần login  | `BookingForm.tsx`, `api.ts`              | ✅ Perfect |
+| `GET /api/Booking/info_slot_busy`             | Lấy giờ đã đặt            | `BookingForm.tsx`, `api.ts`              | ✅ Perfect |
+| `DELETE /api/Booking/cancel/{id}`             | Hủy lịch khám             | `BookingHistory.tsx`                     | ⚠️ 80%     |
+| `POST /api/Owner/create-doctor`               | Tạo bác sĩ (Admin)        | `CreateDoctorModal.tsx`, `api.ts`        | ✅ Perfect |
+| `GET /api/Doctors/All-Doctors`                | Lấy danh sách bác sĩ      | `BookingForm.tsx`, `api.ts`              | ✅ Perfect |
+| `DELETE /api/Doctors/DeleteDoctor`            | Xóa bác sĩ                | `DoctorManagement.tsx`, `api.ts`         | ✅ Perfect |
+| `GET /api/Patients/AllPatientsAndSearch`      | Lấy danh sách bệnh nhân   | `PatientManagement.tsx`, `api.ts`        | ✅ Perfect |
+| `PUT /api/Patients/UpdatePatient`             | Cập nhật bệnh nhân        | `AppointmentTable.tsx`, `api.ts`         | ✅ Perfect |
+| `GET /api/Patients/MyHistoryAppoint`          | Lịch sử khám              | `BookingHistory.tsx`, `api.ts`           | ✅ Perfect |
+| `GET /api/Schedule/List_All_Schedules_Doctor` | Lấy tất cả lịch (Admin)   | `admin/ScheduleManagement.tsx`, `api.ts` | ✅ Perfect |
+| `GET /api/Schedule/detail/{scheduleId}`       | Lấy chi tiết lịch         | `api.ts`                                 | ✅ Perfect |
+| `POST /api/Schedule/Add_Schedule_Doctor`      | Tạo lịch làm việc         | `ScheduleFormModal.tsx`, `api.ts`        | ✅ Perfect |
+| `PUT /api/Schedule/Update_Schedule_Doctor`    | Cập nhật lịch làm việc    | `ScheduleFormModal.tsx`, `api.ts`        | ✅ Perfect |
+| `DELETE /api/Schedule/Delete_Schedule_Doctor` | Xóa lịch làm việc         | `admin/ScheduleManagement.tsx`, `api.ts` | ✅ Perfect |
 
 ### ✅ RESOLVED Issues
 
@@ -99,11 +100,13 @@ Tài liệu này so sánh các yêu cầu trong folder `req` với code hiện t
 - `GET /api/Schedule/List_Schedules_1_Doctor` - Get schedules for specific doctor (có thể thay bằng getAllSchedules + filter)
 - `GET /api/Schedule/available-slots` - Get available time slots (đang dùng info_slot_busy)
 
-**Chat Controller** (2/2 unused - 🔥 CRITICAL MISSING FEATURE):
+**Chat Controller** (2/2 unused - ⏳ IN DEVELOPMENT):
 
 - `POST /api/Chat/send-message` - Send message to AI chatbot
-  - ⚠️ **Response field is `Reply` not `response`** (confirmed from API docs)
+  - ⏳ **Backend đang trong giai đoạn phát triển, chưa sẵn sàng triển khai**
+  - Note: Response field is `Reply` not `response` (khi ready)
 - `GET /api/Chat/conversation/{userId}` - Get chat history
+  - ⏳ **Backend đang phát triển**
 
 ### 📊 API Coverage by Module
 
@@ -117,18 +120,18 @@ Tài liệu này so sánh các yêu cầu trong folder `req` với code hiện t
 | Patients          | 4               | 3      | 1      | 75%      | Low             |
 | **Schedule**      | **7**           | **5**  | **2**  | **71%**  | **Medium**      |
 | Owner             | 1               | 1      | 0      | 100% ✅  | Complete        |
-| **Chat (Gemini)** | **2**           | **0**  | **2**  | **0%**   | **🔥 CRITICAL** |
+| **Chat (Gemini)** | **2**           | **0**  | **2**  | **0%**   | **⏳ IN DEV**   |
 | **TOTAL**         | **31**          | **23** | **8**  | **74%**  | **Target: 80%** |
 
 **Note**: Compliance score is 97% when considering only features that are supposed to be implemented. The 74% overall usage reflects planned future features.
 
-| API Endpoint                           | Chức năng                 | Frontend cần             | Ưu tiên                                     |
-| -------------------------------------- | ------------------------- | ------------------------ | ------------------------------------------- |
-| `GET /api/Doctors/Search-Doctors`      | Tìm kiếm bác sĩ nâng cao  | `BookingForm.tsx`        | 🟡 Trung bình (hiện tại filter client-side) |
-| `POST /api/Chat`                       | Chatbot AI                | Chưa có UI chatbot       | 🔴 Cao (feature mới)                        |
-| `PUT /api/Doctors/UpdateDoctor`        | Cập nhật thông tin bác sĩ | `DoctorManagement.tsx`   | 🟢 Thấp (Admin feature)                     |
-| `DELETE /api/Patients/DeletePatient`   | Xóa bệnh nhân             | `PatientManagement.tsx`  | � Thấp (Admin feature)                     |
-| `PUT /api/Profile/update-me`           | Cập nhật profile          | `Profile.tsx`            | 🟡 Trung bình                               |
+| API Endpoint                         | Chức năng                 | Frontend cần            | Ưu tiên                                     |
+| ------------------------------------ | ------------------------- | ----------------------- | ------------------------------------------- |
+| `GET /api/Doctors/Search-Doctors`    | Tìm kiếm bác sĩ nâng cao  | `BookingForm.tsx`       | 🟡 Trung bình (hiện tại filter client-side) |
+| `POST /api/Chat`                     | Chatbot AI                | Chưa có UI chatbot      | ⏳ Backend đang phát triển                        |
+| `PUT /api/Doctors/UpdateDoctor`      | Cập nhật thông tin bác sĩ | `DoctorManagement.tsx`  | 🟢 Thấp (Admin feature)                     |
+| `DELETE /api/Patients/DeletePatient` | Xóa bệnh nhân             | `PatientManagement.tsx` | � Thấp (Admin feature)                      |
+| `PUT /api/Profile/update-me`         | Cập nhật profile          | `Profile.tsx`           | 🟡 Trung bình                               |
 
 ### 🔧 API Request/Response Format Compliance
 
@@ -195,61 +198,61 @@ await api.getProfileMe();
 
 ### ✅ Đã hoàn thành (Implemented) - So với API Documentation
 
-| Module                           | Chức năng                                       | File liên quan                                               | API Endpoint                                                         | Status                |
-| -------------------------------- | ----------------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------- | --------------------- |
-| **Authentication**               | Đăng nhập/đăng xuất                             | `Login.tsx`, `AuthContext.tsx`                               | `/Auth/login`, `/Auth/logout`                                        | ✅ 100% Match         |
-| **Password Reset**               | Reset password bằng OTP (3 bước)                | `ResetPassword.tsx`                                          | `/Auth/request-otp`, `/Auth/verify-otp`, `/Auth/change-password-otp` | ✅ 100% Match         |
-| **Change Password**              | Đổi password khi đã login (OTP flow)            | `Settings.tsx`                                               | `/Auth/change-password-after-login`                                  | ✅ 100% Match         |
-| **Patient - Đặt lịch công khai** | Xem bác sĩ, giờ trống, đặt lịch không cần login | `BookingForm.tsx`                                            | `/Booking/public`, `/Booking/info_slot_busy`                         | ✅ 100% Match         |
-| **Patient - Lịch sử**            | Xem lịch sử đặt khám                            | `BookingHistory.tsx`                                         | `/Patients/history/{userId}`                                         | ✅ 100% Match         |
-| **Patient - Hủy lịch**           | Hủy appointment                                 | `BookingHistory.tsx`                                         | `/Booking/cancel/{id}`                                               | ⚠️ 80% (thiếu policy) |
-| **Doctor - Lịch bệnh nhân**      | Xem danh sách bệnh nhân với filters             | `AppointmentTable.tsx`                                       | `/Patients` (with query params)                                      | ✅ 100% Match         |
-| **Doctor - Ghi chú khám**        | Cập nhật triệu chứng, đơn thuốc                 | `AppointmentTable.tsx`                                       | `/Patients/{id}` (PUT)                                               | ✅ 100% Match         |
-| **Doctor - Quản lý lịch làm**    | Xem, tạo, sửa, xóa lịch làm việc                | `doctor/ScheduleManagement.tsx`, `ScheduleFormModal.tsx`     | `/Schedule/List_All_Schedules_Doctor`, CRUD endpoints                | ✅ 100% Match         |
-| **Admin - Tạo bác sĩ**           | Tạo tài khoản + lịch mặc định                   | `CreateDoctorModal.tsx`                                      | `/Owner/create-doctor`                                               | ✅ 100% Match         |
-| **Admin - Xóa bác sĩ**           | Xóa bác sĩ (có check constraint)                | `DoctorManagement.tsx`                                       | `/Doctors/{id}` (DELETE)                                             | ✅ 100% Match         |
-| **Admin - Quản lý bệnh nhân**    | Xem, tìm kiếm bệnh nhân                         | `PatientManagement.tsx`                                      | `/Patients` (with filters)                                           | ✅ 100% Match         |
-| **Admin - Quản lý lịch**         | Xem và xóa lịch của tất cả bác sĩ               | `admin/ScheduleManagement.tsx`                               | `/Schedule/List_All_Schedules_Doctor`, DELETE endpoint               | ✅ 100% Match         |
-| **UI/UX**                        | Responsive, hero, footer, carousel              | `Hero.tsx`, `Footer.tsx`, `DoctorsCarousel.tsx`              | N/A (Frontend only)                                                  | ✅ Hoàn chỉnh         |
-| **Cookie Authentication**        | HttpOnly cookie với auto-refresh                | `api.ts` (`withCredentials: true`)                           | Set by backend                                                       | ✅ Config đúng        |
+| Module                           | Chức năng                                       | File liên quan                                           | API Endpoint                                                         | Status                |
+| -------------------------------- | ----------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------- | --------------------- |
+| **Authentication**               | Đăng nhập/đăng xuất                             | `Login.tsx`, `AuthContext.tsx`                           | `/Auth/login`, `/Auth/logout`                                        | ✅ 100% Match         |
+| **Password Reset**               | Reset password bằng OTP (3 bước)                | `ResetPassword.tsx`                                      | `/Auth/request-otp`, `/Auth/verify-otp`, `/Auth/change-password-otp` | ✅ 100% Match         |
+| **Change Password**              | Đổi password khi đã login (OTP flow)            | `Settings.tsx`                                           | `/Auth/change-password-after-login`                                  | ✅ 100% Match         |
+| **Patient - Đặt lịch công khai** | Xem bác sĩ, giờ trống, đặt lịch không cần login | `BookingForm.tsx`                                        | `/Booking/public`, `/Booking/info_slot_busy`                         | ✅ 100% Match         |
+| **Patient - Lịch sử**            | Xem lịch sử đặt khám                            | `BookingHistory.tsx`                                     | `/Patients/history/{userId}`                                         | ✅ 100% Match         |
+| **Patient - Hủy lịch**           | Hủy appointment                                 | `BookingHistory.tsx`                                     | `/Booking/cancel/{id}`                                               | ⚠️ 80% (thiếu policy) |
+| **Doctor - Lịch bệnh nhân**      | Xem danh sách bệnh nhân với filters             | `AppointmentTable.tsx`                                   | `/Patients` (with query params)                                      | ✅ 100% Match         |
+| **Doctor - Ghi chú khám**        | Cập nhật triệu chứng, đơn thuốc                 | `AppointmentTable.tsx`                                   | `/Patients/{id}` (PUT)                                               | ✅ 100% Match         |
+| **Doctor - Quản lý lịch làm**    | Xem, tạo, sửa, xóa lịch làm việc                | `doctor/ScheduleManagement.tsx`, `ScheduleFormModal.tsx` | `/Schedule/List_All_Schedules_Doctor`, CRUD endpoints                | ✅ 100% Match         |
+| **Admin - Tạo bác sĩ**           | Tạo tài khoản + lịch mặc định                   | `CreateDoctorModal.tsx`                                  | `/Owner/create-doctor`                                               | ✅ 100% Match         |
+| **Admin - Xóa bác sĩ**           | Xóa bác sĩ (có check constraint)                | `DoctorManagement.tsx`                                   | `/Doctors/{id}` (DELETE)                                             | ✅ 100% Match         |
+| **Admin - Quản lý bệnh nhân**    | Xem, tìm kiếm bệnh nhân                         | `PatientManagement.tsx`                                  | `/Patients` (with filters)                                           | ✅ 100% Match         |
+| **Admin - Quản lý lịch**         | Xem và xóa lịch của tất cả bác sĩ               | `admin/ScheduleManagement.tsx`                           | `/Schedule/List_All_Schedules_Doctor`, DELETE endpoint               | ✅ 100% Match         |
+| **UI/UX**                        | Responsive, hero, footer, carousel              | `Hero.tsx`, `Footer.tsx`, `DoctorsCarousel.tsx`          | N/A (Frontend only)                                                  | ✅ Hoàn chỉnh         |
+| **Cookie Authentication**        | HttpOnly cookie với auto-refresh                | `api.ts` (`withCredentials: true`)                       | Set by backend                                                       | ✅ Config đúng        |
 
 ### ⚠️ Đã có nhưng chưa đầy đủ (Partial) - API Perspective
 
-| Chức năng                  | Tình trạng              | File liên quan                                           | Vấn đề với API                                                              | Cần bổ sung                           |
-| -------------------------- | ----------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------- |
-| **Hủy lịch khám**          | UI có nút Cancel        | `BookingHistory.tsx`                                     | ⚠️ API có policy (không cho hủy < 24h) nhưng frontend chưa hiển thị message | Hiển thị cảnh báo policy trước khi hủy |
-| **Thống kê cơ bản**        | Hiển thị một số số liệu | `BookingHistory.tsx`                                     | ❌ Không có API endpoint cho statistics                                     | Backend cần API `/Statistics`         |
-| **Search bác sĩ nâng cao** | Filter client-side      | `BookingForm.tsx`                                        | ⚠️ API có `/Doctors/Search-Doctors` nhưng frontend chưa dùng                | Migrate sang server-side search       |
-| **Update Doctor Info**     | Chưa có UI              | Chưa có                                                  | ⚠️ API có `/Doctors/UpdateDoctor` nhưng frontend chưa có UI                 | Admin feature - UI để sửa bác sĩ      |
-| **Schedule Management**    | Đã có CRUD đầy đủ       | `admin/ScheduleManagement.tsx`, `doctor/ScheduleManagement.tsx` | ✅ Đã implement đầy đủ 5 endpoints                                          | ✅ Hoàn tất                           |
+| Chức năng                  | Tình trạng              | File liên quan                                                  | Vấn đề với API                                                              | Cần bổ sung                            |
+| -------------------------- | ----------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- | -------------------------------------- |
+| **Hủy lịch khám**          | UI có nút Cancel        | `BookingHistory.tsx`                                            | ⚠️ API có policy (không cho hủy < 24h) nhưng frontend chưa hiển thị message | Hiển thị cảnh báo policy trước khi hủy |
+| **Thống kê cơ bản**        | Hiển thị một số số liệu | `BookingHistory.tsx`                                            | ❌ Không có API endpoint cho statistics                                     | Backend cần API `/Statistics`          |
+| **Search bác sĩ nâng cao** | Filter client-side      | `BookingForm.tsx`                                               | ⚠️ API có `/Doctors/Search-Doctors` nhưng frontend chưa dùng                | Migrate sang server-side search        |
+| **Update Doctor Info**     | Chưa có UI              | Chưa có                                                         | ⚠️ API có `/Doctors/UpdateDoctor` nhưng frontend chưa có UI                 | Admin feature - UI để sửa bác sĩ       |
+| **Schedule Management**    | Đã có CRUD đầy đủ       | `admin/ScheduleManagement.tsx`, `doctor/ScheduleManagement.tsx` | ✅ Đã implement đầy đủ 5 endpoints                                          | ✅ Hoàn tất                            |
 
 ### 🔴 Critical Issues - API Integration (2 Active)
 
-| Issue ID         | Vấn đề                        | Impact                              | Giải pháp                                                    |
-| ---------------- | ----------------------------- | ----------------------------------- | ------------------------------------------------------------ |
-| ~~CRIT-01~~      | ~~Endpoint mismatch: Register~~ | ~~User không đăng ký được~~         | ✅ RESOLVED: API docs v1.0 confirmed `/Register/user` exists |
-| ~~CRIT-02~~      | ~~Missing Profile API~~       | ~~Profile page fail~~               | ✅ RESOLVED: API docs v1.0 confirmed `/Profile/profile-me` exists |
-| ~~CRIT-03~~      | ~~Client-side doctor filter~~ | ~~Slow khi có nhiều bác sĩ~~        | ⚠️ LOW PRIORITY: Có thể dùng `/Doctors/Search-Doctors`      |
-| CRIT-04          | **No validation feedback**    | User không biết lỗi cụ thể          | API trả về field-level errors, frontend cần parse           |
-| **NEW: CRIT-05** | **Chat Response Field**       | ⚠️ Chatbot sẽ fail nếu dùng sai field | API returns `{ Reply: "..." }` NOT `{ response: "..." }`    |
+| Issue ID         | Vấn đề                          | Impact                                | Giải pháp                                                         |
+| ---------------- | ------------------------------- | ------------------------------------- | ----------------------------------------------------------------- |
+| ~~CRIT-01~~      | ~~Endpoint mismatch: Register~~ | ~~User không đăng ký được~~           | ✅ RESOLVED: API docs v1.0 confirmed `/Register/user` exists      |
+| ~~CRIT-02~~      | ~~Missing Profile API~~         | ~~Profile page fail~~                 | ✅ RESOLVED: API docs v1.0 confirmed `/Profile/profile-me` exists |
+| ~~CRIT-03~~      | ~~Client-side doctor filter~~   | ~~Slow khi có nhiều bác sĩ~~          | ⚠️ LOW PRIORITY: Có thể dùng `/Doctors/Search-Doctors`            |
+| CRIT-04          | **No validation feedback**      | User không biết lỗi cụ thể            | API trả về field-level errors, frontend cần parse                 |
+| **NEW: CRIT-05** | **Chat Response Field**         | ⚠️ Chatbot sẽ fail nếu dùng sai field | API returns `{ Reply: "..." }` NOT `{ response: "..." }`          |
 
 ### ❌ Chưa triển khai (Missing) - Theo API Documentation
 
-| Yêu cầu                                   | API Endpoint có sẵn?                                        | Mức độ ưu tiên | Frontend cần         | Backend cần                       | Lý do quan trọng                  |
-| ----------------------------------------- | ----------------------------------------------------------- | -------------- | -------------------- | --------------------------------- | --------------------------------- |
-| **AI Chatbot**                            | ✅ `/api/Chat/send-message`                                 | 🔥🔥🔥 URGENT  | Chatbot UI component | ✅ Đã có (Gemini AI)              | Feature highlight của app         |
-| **FR-A-005: Xuất Excel/CSV**              | ❌ Không cần backend                                        | 🔴 Cao         | Export button        | ❌ Không cần (client-side export) | Admin cần báo cáo                 |
-| **FR-N-001: Email xác nhận booking**      | ❌ Không                                                    | 🔴 Cao         | Toast UI             | Email service (MailKit)           | Bệnh nhân cần xác nhận đặt lịch   |
-| **FR-D-006: Giới hạn số lượt khám/ngày**  | ❌ Không                                                    | 🔴 Cao         | Settings UI          | Backend logic + DB field          | Tránh bác sĩ bị quá tải           |
-| **FR-N-002: Nhắc nhở 24h trước**          | ❌ Không                                                    | 🟡 Trung bình  | ❌ Không cần         | Hangfire job + Email              | Giảm no-show                      |
-| **FR-A-004: Dashboard thống kê nâng cao** | ❌ Không `/Statistics`                                      | 🟡 Trung bình  | Chart components     | API endpoint mới                  | Admin cần insights                |
-| **FR-P-007: Email/SMS notification**      | ❌ Không                                                    | 🟡 Trung bình  | ❌ Không cần         | Backend notification service      | Real-time updates                 |
-| **Update Doctor Info**                    | ✅ `/Doctors/UpdateDoctor`                                  | 🟡 Trung bình  | Admin UI form        | ✅ Đã có                          | Admin flexibility                 |
-| **Update Profile**                        | ✅ `/Profile/update-me`                                     | 🟡 Trung bình  | Profile edit form    | ✅ Đã có                          | User self-service                 |
-| **NFR-U-002: Đa ngôn ngữ (i18n)**         | N/A                                                         | 🟡 Trung bình  | react-i18next        | ❌ Không cần                      | Hỗ trợ Tiếng Việt + English       |
-| **NFR-M-003: Unit Tests**                 | N/A                                                         | 🔴 Cao         | `*.test.tsx`         | ❌ Không cần                      | Đảm bảo chất lượng code           |
-| **NFR-L-001: Error Tracking (Sentry)**    | N/A                                                         | 🟡 Trung bình  | Sentry setup         | ❌ Không cần                      | Giám sát lỗi production           |
-| **NFR-M-004: CI/CD Pipeline**             | N/A                                                         | 🟡 Trung bình  | `.github/workflows/` | ❌ Không cần                      | Tự động hóa build/test/deploy     |
+| Yêu cầu                                   | API Endpoint có sẵn?        | Mức độ ưu tiên         | Frontend cần         | Backend cần                       | Lý do quan trọng                |
+| ----------------------------------------- | --------------------------- | ---------------------- | -------------------- | --------------------------------- | ------------------------------- |
+| **AI Chatbot**                            | ⏳ `/api/Chat/send-message` | ⏳ Backend đang phát triển | Chatbot UI component | ⏳ Backend đang phát triển       | Feature highlight của app (khi ready) |
+| **FR-A-005: Xuất Excel/CSV**              | ❌ Không cần backend        | 🔴 Cao         | Export button        | ❌ Không cần (client-side export) | Admin cần báo cáo               |
+| **FR-N-001: Email xác nhận booking**      | ❌ Không                    | 🔴 Cao         | Toast UI             | Email service (MailKit)           | Bệnh nhân cần xác nhận đặt lịch |
+| **FR-D-006: Giới hạn số lượt khám/ngày**  | ❌ Không                    | 🔴 Cao         | Settings UI          | Backend logic + DB field          | Tránh bác sĩ bị quá tải         |
+| **FR-N-002: Nhắc nhở 24h trước**          | ❌ Không                    | 🟡 Trung bình  | ❌ Không cần         | Hangfire job + Email              | Giảm no-show                    |
+| **FR-A-004: Dashboard thống kê nâng cao** | ❌ Không `/Statistics`      | 🟡 Trung bình  | Chart components     | API endpoint mới                  | Admin cần insights              |
+| **FR-P-007: Email/SMS notification**      | ❌ Không                    | 🟡 Trung bình  | ❌ Không cần         | Backend notification service      | Real-time updates               |
+| **Update Doctor Info**                    | ✅ `/Doctors/UpdateDoctor`  | 🟡 Trung bình  | Admin UI form        | ✅ Đã có                          | Admin flexibility               |
+| **Update Profile**                        | ✅ `/Profile/update-me`     | 🟡 Trung bình  | Profile edit form    | ✅ Đã có                          | User self-service               |
+| **NFR-U-002: Đa ngôn ngữ (i18n)**         | N/A                         | 🟡 Trung bình  | react-i18next        | ❌ Không cần                      | Hỗ trợ Tiếng Việt + English     |
+| **NFR-M-003: Unit Tests**                 | N/A                         | 🔴 Cao         | `*.test.tsx`         | ❌ Không cần                      | Đảm bảo chất lượng code         |
+| **NFR-L-001: Error Tracking (Sentry)**    | N/A                         | 🟡 Trung bình  | Sentry setup         | ❌ Không cần                      | Giám sát lỗi production         |
+| **NFR-M-004: CI/CD Pipeline**             | N/A                         | 🟡 Trung bình  | `.github/workflows/` | ❌ Không cần                      | Tự động hóa build/test/deploy   |
 
 ### 🎯 Priority Matrix - API vs Frontend (Updated with 31 endpoints)
 
@@ -526,7 +529,8 @@ await api.getProfileMe();
   const itemsPerPage = 10;
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
-  const [editingSchedule, setEditingSchedule] = useState<UpdateScheduleRequest>();
+  const [editingSchedule, setEditingSchedule] =
+    useState<UpdateScheduleRequest>();
   const [currentDoctorId, setCurrentDoctorId] = useState<number | null>(null);
   ```
 - Status: ✅ **100% Complete**
@@ -1202,19 +1206,19 @@ await api.getProfileMe();
 
 ## 📊 API Compliance Score
 
-| Category               | Score   | Details                                                                             |
-| ---------------------- | ------- | ----------------------------------------------------------------------------------- |
-| **Authentication**     | 100%    | ✅ Login, Logout, OTP flow, Change Password - All perfect                           |
-| **Booking**            | 90%     | ✅ Public booking, slots check. ⚠️ Cancel policy UX missing                         |
-| **Doctor Management**  | 95%     | ✅ Create, delete, view, Schedule CRUD. ⚠️ Update Doctor UI missing                 |
-| **Patient Management** | 100%    | ✅ All endpoints used correctly                                                     |
-| **Admin Features**     | 90%     | ✅ CRUD doctors/patients, Schedule view/delete. ❌ Export, Statistics missing       |
-| **Schedule API**       | 100%    | ✅ Full CRUD implementation (admin + doctor views)                                  |
-| **Settings/Profile**   | 100%    | ✅ Change Password complete. ⚠️ Profile Update UI missing (API available)           |
-| **AI Chatbot**         | 0%      | ❌ API exists, no UI                                                                |
-| **Error Handling**     | 95%     | ✅ Interceptor handles all cases                                                    |
-| **Cookie Auth**        | 100%    | ✅ Perfect implementation                                                           |
-| **Overall**            | **90%** | **Excellent foundation, only Chatbot UI + minor features missing**                  |
+| Category               | Score   | Details                                                                       |
+| ---------------------- | ------- | ----------------------------------------------------------------------------- |
+| **Authentication**     | 100%    | ✅ Login, Logout, OTP flow, Change Password - All perfect                     |
+| **Booking**            | 90%     | ✅ Public booking, slots check. ⚠️ Cancel policy UX missing                   |
+| **Doctor Management**  | 95%     | ✅ Create, delete, view, Schedule CRUD. ⚠️ Update Doctor UI missing           |
+| **Patient Management** | 100%    | ✅ All endpoints used correctly                                               |
+| **Admin Features**     | 90%     | ✅ CRUD doctors/patients, Schedule view/delete. ❌ Export, Statistics missing |
+| **Schedule API**       | 100%    | ✅ Full CRUD implementation (admin + doctor views)                            |
+| **Settings/Profile**   | 100%    | ✅ Change Password complete. ⚠️ Profile Update UI missing (API available)     |
+| **AI Chatbot**         | 0%      | ❌ API exists, no UI                                                          |
+| **Error Handling**     | 95%     | ✅ Interceptor handles all cases                                              |
+| **Cookie Auth**        | 100%    | ✅ Perfect implementation                                                     |
+| **Overall**            | **90%** | **Excellent foundation, only Chatbot UI + minor features missing**            |
 
 ### Improvement Path to 100%
 
@@ -1239,14 +1243,13 @@ Current: 90% ────> Target: 100%
    - ~~Sync with backend team~~
    - **Status**: ✅ All endpoints verified and working
 
-2. **Implement Chatbot UI** 🔥 **TOP PRIORITY**
+2. **Fix Critical UX Issues**
+   - Cancel policy warning (24h rule)
+   - Field-level error display (parse API errors)
 
-   - **Highest ROI**: API ready, just need UI
-   - **Impact**: Tính năng nổi bật, differentiate from competitors
-   - **Effort**: Low (2-3 days)
-   - **Remember**: Response field là `Reply` chứ không phải `response`
+**Note**: AI Chatbot UI implementation đã được chuyển xuống ưu tiên thấp vì **backend API đang trong giai đoạn phát triển, chưa sẵn sàng triển khai**. Khi backend team hoàn thành Chatbot API, sẽ thực hiện UI integration (estimated 2-3 days effort).
 
-3. **Fix Critical UX Issues**
+3. **Implement Excel Export**
    - Cancel policy warning (24h rule)
    - Field-level error display (parse API errors)
 
