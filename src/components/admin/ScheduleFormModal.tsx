@@ -25,6 +25,7 @@ interface ScheduleFormModalProps {
   onSubmit: () => void;
   mode: "create" | "edit";
   initialData?: UpdateScheduleRequest; // Chỉ có khi edit
+  currentDoctorId?: number; // ID của doctor hiện tại (nếu doctor tự tạo lịch)
 }
 
 const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
@@ -32,6 +33,7 @@ const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
   onSubmit,
   mode,
   initialData,
+  currentDoctorId, // Nếu có = doctor tự tạo lịch cho mình
 }) => {
   const { user } = useAuth(); // Get current user
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,6 +47,9 @@ const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
   // Check if user is Doctor (R02) - only doctors can create/edit schedules
   const isDoctorRole = user?.userType === "doctor";
 
+  // Nếu có currentDoctorId = doctor tự tạo cho mình, không cần dropdown
+  const isSelfSchedule = !!currentDoctorId;
+
   // Form state
   const [formData, setFormData] = useState<{
     DoctorId: string;
@@ -53,7 +58,8 @@ const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
     EndTime: string;
     Status: string;
   }>({
-    DoctorId: initialData?.DoctorId.toString() || "",
+    DoctorId:
+      initialData?.DoctorId.toString() || currentDoctorId?.toString() || "",
     WorkDate: initialData?.WorkDate || "",
     StartTime: initialData?.StartTime || "08:00",
     EndTime: initialData?.EndTime || "17:00",
@@ -65,8 +71,10 @@ const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Load doctors list
+  // Load doctors list (chỉ cần khi không phải self-schedule)
   useEffect(() => {
+    if (isSelfSchedule) return; // Không cần load doctors nếu tự tạo cho mình
+
     const loadDoctors = async () => {
       setIsLoadingDoctors(true);
       try {
@@ -81,7 +89,7 @@ const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
       }
     };
     loadDoctors();
-  }, []);
+  }, [isSelfSchedule]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -227,33 +235,35 @@ const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
             </div>
           )}
 
-          {/* Doctor Selection */}
-          <div className="form-row">
-            <div className="form-group">
-              <label>
-                <FontAwesomeIcon icon={faUserMd} /> Doctor *
-              </label>
-              <select
-                name="DoctorId"
-                value={formData.DoctorId}
-                onChange={handleInputChange}
-                className={errors.DoctorId ? "error" : ""}
-                disabled={isLoadingDoctors}
-              >
-                <option value="">
-                  {isLoadingDoctors ? "Loading..." : "Select Doctor"}
-                </option>
-                {allDoctors.map((doctor) => (
-                  <option key={doctor.DoctorId} value={doctor.DoctorId}>
-                    {doctor.Name} - {doctor.Department}
+          {/* Doctor Selection - Chỉ hiện khi KHÔNG phải self-schedule */}
+          {!isSelfSchedule && (
+            <div className="form-row">
+              <div className="form-group">
+                <label>
+                  <FontAwesomeIcon icon={faUserMd} /> Doctor *
+                </label>
+                <select
+                  name="DoctorId"
+                  value={formData.DoctorId}
+                  onChange={handleInputChange}
+                  className={errors.DoctorId ? "error" : ""}
+                  disabled={isLoadingDoctors || mode === "edit"}
+                >
+                  <option value="">
+                    {isLoadingDoctors ? "Loading..." : "Select Doctor"}
                   </option>
-                ))}
-              </select>
-              {errors.DoctorId && (
-                <span className="error-message">{errors.DoctorId}</span>
-              )}
+                  {allDoctors.map((doctor) => (
+                    <option key={doctor.DoctorId} value={doctor.DoctorId}>
+                      {doctor.Name} - {doctor.Department}
+                    </option>
+                  ))}
+                </select>
+                {errors.DoctorId && (
+                  <span className="error-message">{errors.DoctorId}</span>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Work Date */}
           <div className="form-row">
