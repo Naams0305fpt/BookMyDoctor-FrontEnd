@@ -369,3 +369,127 @@
 .create-doctor-btn svg {
   font-size: 1.1rem;
 }
+
+/* ===== EDIT MODE STYLES ===== */
+
+/* Edit mode row highlight */
+tr.edit-mode {
+  background-color: #fff8e1 !important;
+  box-shadow: inset 0 0 0 2px #ffc107;
+}
+
+/* Edit inputs and select */
+.edit-input,
+.edit-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #13b6c6;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.edit-input:focus,
+.edit-select:focus {
+  outline: none;
+  border-color: #0fa0af;
+  box-shadow: 0 0 0 3px rgba(19, 182, 198, 0.1);
+}
+
+.edit-select {
+  cursor: pointer;
+  background-color: white;
+}
+
+/* Action buttons container */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Base button style */
+.action-buttons button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 36px;
+  min-height: 36px;
+}
+
+/* Edit button */
+.btn-edit {
+  background: linear-gradient(135deg, #13b6c6, #0fa0af);
+  color: white;
+  box-shadow: 0 2px 4px rgba(19, 182, 198, 0.2);
+}
+
+.btn-edit:hover {
+  background: linear-gradient(135deg, #0fa0af, #0d8a98);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(19, 182, 198, 0.3);
+}
+
+/* Save button */
+.btn-save {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.btn-save:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Cancel button */
+.btn-cancel {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  color: white;
+  box-shadow: 0 2px 4px rgba(107, 114, 128, 0.2);
+}
+
+.btn-cancel:hover {
+  background: linear-gradient(135deg, #4b5563, #374151);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(107, 114, 128, 0.3);
+}
+
+/* Delete button */
+.btn-delete {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.btn-delete:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* Active state for all buttons */
+.action-buttons button:active {
+  transform: translateY(0);
+}
+
+/* Disabled state */
+.action-buttons button:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.action-buttons button:disabled:hover {
+  transform: none;
+}

@@ -114,6 +114,28 @@ const Hero: React.FC = () => {
             >
               Booking now ...
             </button>
+            {/* <img
+              style={{
+                width: "100%",
+                height: "auto",
+                position: "absolute",
+                top: "100px",
+                right: "170px",
+              }}
+              src="images/meme1.png"
+              alt=""
+            />
+            <img
+              style={{
+                width: "100%",
+                height: "auto",
+                position: "absolute",
+                top: "100px",
+                left: "170px",
+              }}
+              src="/images/meme.png"
+              alt=""
+            /> */}
           </div>
 
           {/* Hotline Badge */}
