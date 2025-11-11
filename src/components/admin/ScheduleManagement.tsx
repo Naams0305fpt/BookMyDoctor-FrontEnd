@@ -1,68 +1,69 @@
-import React, { useState, useEffect, useCallback } from "react"; // Thêm useEffect, useCallback
+import React, { useState, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  // faTrash, // Tạm thời bỏ nếu chưa cần xóa
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 // Import từ API service
-import { api, Schedule, formatDateForAPI } from "../../services/api";
+import { api, Schedule } from "../../services/api";
 
 // Bỏ interface cũ và mock data
 // interface Schedule { ... }
 // const mockSchedules: Schedule[] = [ ... ];
 
-// Component Loading/Error (Tương tự các component khác)
-const LoadingSpinner = () => (
-  <div style={{ textAlign: "center", padding: "2rem" }}>
-    Loading schedules...
-  </div>
-);
-const ErrorDisplay = ({ message }: { message: string }) => (
-  <div style={{ color: "red", textAlign: "center", padding: "2rem" }}>
-    Error: {message}
-  </div>
-);
-
 const ScheduleManagement = () => {
-  // Sửa state: dùng Schedule từ API, bỏ mock data
+  // State: dùng Schedule từ API
   const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date()); // Giữ nguyên
-  const [searchQuery, setSearchQuery] = useState(""); // Giữ nguyên (tìm theo tên BS)
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Thêm state loading và error
+  // State loading và error
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Hàm fetch data (tương tự PatientManagement)
-  const fetchSchedules = useCallback(
-    async (doctorName: string, date: Date | null) => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const formattedDate = date ? formatDateForAPI(date) : "";
-        // Gọi hàm API mới getAllSchedules
-        const data = await api.getAllSchedules(doctorName, formattedDate);
-        setSchedules(data);
-      } catch (err: any) {
-        setError(err.message || "Failed to load schedules.");
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  ); // Hàm này không thay đổi dependency
+  // Hàm fetch data - ADMIN: Lấy tất cả lịch của tất cả bác sĩ
+  const fetchSchedules = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      // THAY ĐỔI: Dùng getAllSchedulesForAdmin thay vì getAllSchedules
+      // Admin xem tất cả lịch, không filter theo doctor hay date ở API
+      const data = await api.getAllSchedulesForAdmin();
+      setSchedules(data);
+    } catch (err: any) {
+      setError(err.message || "Failed to load schedules.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []); // Hàm này không thay đổi dependency
 
-  // Gọi API khi filter thay đổi (tương tự PatientManagement)
+  // Gọi API khi component mount (chỉ 1 lần)
   useEffect(() => {
-    const timerId = setTimeout(() => {
-      fetchSchedules(searchQuery, selectedDate);
-    }, 500); // Debounce search query
+    fetchSchedules();
+  }, [fetchSchedules]);
 
-    return () => clearTimeout(timerId);
-  }, [searchQuery, selectedDate, fetchSchedules]);
+  // Client-side filtering
+  const filteredSchedules = schedules.filter((schedule) => {
+    // Filter by doctor name
+    if (searchQuery && schedule.DoctorName) {
+      const nameMatch = schedule.DoctorName.toLowerCase().includes(
+        searchQuery.toLowerCase()
+      );
+      if (!nameMatch) return false;
+    }
+
+    // Filter by date
+    if (selectedDate) {
+      const scheduleDate = new Date(schedule.WorkDate).toDateString();
+      const filterDate = selectedDate.toDateString();
+      if (scheduleDate !== filterDate) return false;
+    }
+
+    // Filter active only
+    return schedule.IsActive === true;
+  });
 
   // Bỏ hàm handleDelete (nếu không cần)
   /*
@@ -98,7 +99,7 @@ const ScheduleManagement = () => {
 
   return (
     <div className="admin-table-container">
-      {/* Header (Giữ nguyên) */}
+      {/* Header */}
       <div className="section-header">
         <div className="section-title">
           <svg
@@ -119,13 +120,13 @@ const ScheduleManagement = () => {
         </div>
       </div>
       <div className="appointment">
-        {/* Controls (Sửa placeholder) */}
+        {/* Controls */}
         <div className="appointment-controls">
           <div className="search-container">
             <div className="search-bar">
               <input
                 type="text"
-                placeholder="Search by doctor name..." // Chỉ tìm theo tên BS
+                placeholder="Search by doctor name..."
                 className="search-input"
                 onChange={(e) => setSearchQuery(e.target.value)}
                 value={searchQuery}
@@ -192,44 +193,44 @@ const ScheduleManagement = () => {
             {/* Hiển thị dữ liệu */}
             {!isLoading &&
               !error &&
-              schedules.length > 0 &&
-              schedules
-                .filter((schedule) => schedule.IsActive === true)
-                .map((schedule, index) => (
-                  <tr
-                    key={`${schedule.DoctorId}-${schedule.WorkDate}-${schedule.StartTime}`}
-                  >
-                    <td>{index + 1}</td>
-                    {/* Dùng đúng tên trường từ API */}
-                    <td>{schedule.DoctorName}</td>
-                    <td>
-                      {new Date(schedule.WorkDate).toLocaleDateString("en-GB")}
-                    </td>
-                    <td>{formatTime(schedule.StartTime)}</td>
-                    <td>{formatTime(schedule.EndTime)}</td>
-                    <td>
-                      {/* Hiển thị status từ API, có thể thêm class CSS */}
-                      <span
-                        className={`status-${schedule.Status?.toLowerCase()}`}
-                      >
-                        {schedule.Status}
-                      </span>
-                    </td>
-                    {/*
+              filteredSchedules.length > 0 &&
+              filteredSchedules.map((schedule, index) => (
+                <tr
+                  key={`${schedule.ScheduleId}-${schedule.DoctorId}-${schedule.WorkDate}`}
+                >
+                  <td>{index + 1}</td>
+                  {/* Dùng đúng tên trường từ API */}
+                  <td>
+                    {schedule.DoctorName || `Doctor ID: ${schedule.DoctorId}`}
+                  </td>
+                  <td>
+                    {new Date(schedule.WorkDate).toLocaleDateString("en-GB")}
+                  </td>
+                  <td>{formatTime(schedule.StartTime)}</td>
+                  <td>{formatTime(schedule.EndTime)}</td>
+                  <td>
+                    {/* Hiển thị status từ API, có thể thêm class CSS */}
+                    <span
+                      className={`status-${schedule.Status?.toLowerCase()}`}
+                    >
+                      {schedule.Status}
+                    </span>
+                  </td>
+                  {/*
                 <td className="action-buttons">
                    <FontAwesomeIcon icon={faTrash} className="delete-icon" onClick={() => handleDelete(schedule.ScheduleId)} />
                 </td>
                 */}
-                  </tr>
-                ))}
-            {/* Hiển thị khi không có dữ liệu */}
-            {/* {!isLoading && !error && schedules.length === 0 && (
+                </tr>
+              ))}
+            {/* Hiển thị khi không có dữ liệu sau khi filter */}
+            {!isLoading && !error && filteredSchedules.length === 0 && (
               <tr>
                 <td colSpan={6} style={{ textAlign: "center" }}>
                   No schedules found for the selected criteria.
                 </td>
               </tr>
-            )} */}
+            )}
           </tbody>
         </table>
       </div>
