@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faPencil,
   faTrash,
   faCheck,
   faTimes,
@@ -14,11 +13,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   api,
-  Patient,
+  DoctorAppointment,
   formatDateForAPI,
   UpdatePatientRequest,
 } from "../../services/api";
-import { useAuth } from "../../contexts/AuthContext"; // Import useAuth
+import { useAuth } from "../../contexts/AuthContext";
+import { useNotification } from "../../contexts/NotificationContext";
 import "./DoctorSchedule.css";
 
 // --- Interface Appointment và TableRowProps giữ nguyên ---
@@ -209,10 +209,11 @@ const TableRow: React.FC<TableRowProps> = ({
 
 // --- Component Chính: AppointmentTable ---
 const AppointmentTable: React.FC = () => {
-  const { user } = useAuth(); // Lấy thông tin user để check role và doctorId
+  const { user } = useAuth();
+  const { showNotification } = useNotification();
 
-  // --- THAY ĐỔI: State dùng Patient từ API ---
-  const [patients, setPatients] = useState<Patient[]>([]);
+  // --- CẬP NHẬT: State dùng DoctorAppointment từ API mới ---
+  const [appointments, setAppointments] = useState<DoctorAppointment[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -221,42 +222,43 @@ const AppointmentTable: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Bắt đầu là null (tất cả ngày)
   const [selectedStatus, setSelectedStatus] = useState(""); // Bắt đầu là rỗng (tất cả status)
 
-  // Hàm fetch data
-  const fetchPatients = useCallback(
-    async (name: string, date: Date | null, status: string) => {
+  // Hàm fetch data với API mới
+  const fetchAppointments = useCallback(
+    async (patientName: string, date: Date | null, status: string) => {
       setIsLoading(true);
       setError(null);
       try {
-        const formattedDate = date ? formatDateForAPI(date) : "";
-
-        // TODO: THAY ĐỔI API MỚI
-        // ==========================================
-        // ⚠️ QUAN TRỌNG: Backend đang phát triển API mới chuyên dụng cho Appointment Management
-        // Hiện tại đang dùng tạm API: GET /api/Patients/AllPatientsAndSearch?doctorId={id}
-        //
-        // KHI BACKEND HOÀN THÀNH API MỚI, HÃY:
-        // 1. Tạo interface mới cho Appointment response trong api.ts
-        // 2. Thêm method mới: api.getAppointments(name, date, status, doctorId)
-        // 3. Thay thế api.getPatients() bên dưới bằng api.getAppointments()
-        // 4. Cập nhật mapping logic nếu response structure khác
-        // ==========================================
-
-        // Nếu là doctor, chỉ lấy bệnh nhân của mình
-        // Nếu là admin, lấy tất cả
+        // Nếu là doctor, chỉ lấy appointments của mình
+        // Nếu là admin, lấy tất cả (không gửi doctorId)
         const doctorIdParam =
           user?.userType === "doctor" && user?.doctorId
             ? user.doctorId
             : undefined;
 
-        const data = await api.getPatients(
-          name,
-          formattedDate,
-          status,
-          doctorIdParam
+        // Gọi API mới
+        const data = await api.getDoctorAppointments(
+          doctorIdParam,
+          patientName || undefined,
+          undefined // patientPhone - để undefined vì search bar chỉ search name
         );
-        setPatients(data);
+
+        // Filter theo date và status ở frontend (vì API không hỗ trợ)
+        let filteredData = data;
+
+        if (date) {
+          const formattedDate = formatDateForAPI(date);
+          filteredData = filteredData.filter(
+            (apt) => apt.AppointDate === formattedDate
+          );
+        }
+
+        if (status) {
+          filteredData = filteredData.filter((apt) => apt.Status === status);
+        }
+
+        setAppointments(filteredData);
       } catch (err: any) {
-        setError(err.message || "Failed to fetch patients.");
+        setError(err.message || "Failed to fetch appointments.");
       } finally {
         setIsLoading(false);
       }
@@ -267,10 +269,10 @@ const AppointmentTable: React.FC = () => {
   // Gọi API khi component mount và khi bộ lọc thay đổi
   useEffect(() => {
     const timerId = setTimeout(() => {
-      fetchPatients(searchQuery, selectedDate, selectedStatus);
+      fetchAppointments(searchQuery, selectedDate, selectedStatus);
     }, 500); // Debounce
     return () => clearTimeout(timerId);
-  }, [searchQuery, selectedDate, selectedStatus, fetchPatients]);
+  }, [searchQuery, selectedDate, selectedStatus, fetchAppointments]);
 
   // --- Handler để update tất cả thông tin cùng lúc ---
   const handleUpdate = async (
@@ -280,10 +282,10 @@ const AppointmentTable: React.FC = () => {
     status: Appointment["status"]
   ) => {
     try {
-      // Tìm patient để lấy appointDate và appointHour
-      const patient = patients.find((p) => p.id === id);
-      if (!patient) {
-        console.error(`Patient with ID ${id} not found`);
+      // Tìm appointment để lấy đầy đủ thông tin
+      const appointment = appointments.find((apt) => apt.AppointId === id);
+      if (!appointment) {
+        console.error(`Appointment with ID ${id} not found`);
         return;
       }
 
@@ -302,30 +304,65 @@ const AppointmentTable: React.FC = () => {
         Prescription: prescription,
       };
 
-      // Gọi API
+      // Gọi API với đầy đủ 4 params
       await api.updatePatientAppointment(
-        id,
-        patient.AppointDate,
-        patient.AppointHour || "00:00",
+        appointment.PatientId,
+        appointment.AppointDate,
+        appointment.AppointHour,
+        appointment.AppointId,
         updateData
       );
 
       // Cập nhật local state sau khi API thành công
-      setPatients((prev) =>
-        prev.map((p) =>
-          p.id === id
+      setAppointments((prev) =>
+        prev.map((apt) =>
+          apt.AppointId === id
             ? {
-                ...p,
+                ...apt,
                 Symptoms: symptom,
                 Prescription: prescription,
                 Status: apiStatus,
               }
-            : p
+            : apt
         )
       );
+
+      // Hiển thị thông báo thành công
+      showNotification(
+        "success",
+        "Updated Successfully",
+        "Appointment information has been updated.",
+        3000
+      );
     } catch (error: any) {
-      console.error(`❌ Failed to update patient:`, error.message);
-      setError(error.message || "Failed to update patient information");
+      console.error(`❌ Failed to update appointment:`, error.message);
+
+      // Xử lý lỗi "Không có thông tin nào để cập nhật"
+      const errorMessage = error.response?.data?.message || error.message || "";
+
+      if (
+        errorMessage.includes("Không có thông tin nào để cập nhật") ||
+        errorMessage.includes("No information to update")
+      ) {
+        // Hiển thị warning thay vì error, KHÔNG set error state
+        showNotification(
+          "warning",
+          "No Changes Detected",
+          "No changes were made to the appointment information.",
+          3000
+        );
+        // Không làm gì thêm - giữ nguyên data trong bảng
+      } else {
+        // Các lỗi khác thì hiển thị error
+        showNotification(
+          "error",
+          "Update Failed",
+          errorMessage || "Failed to update appointment information",
+          3000
+        );
+        // Chỉ set error state cho các lỗi thực sự
+        setError(errorMessage || "Failed to update appointment information");
+      }
     }
   };
 
@@ -338,7 +375,7 @@ const AppointmentTable: React.FC = () => {
       // TODO: Implement delete API when available
 
       // Tạm thời cập nhật local state
-      setPatients((prev) => prev.filter((p) => p.id !== id));
+      setAppointments((prev) => prev.filter((apt) => apt.AppointId !== id));
     } catch (error: any) {
       console.error(`❌ Failed to delete appointment:`, error.message);
       setError(error.message || "Failed to delete appointment");
@@ -362,14 +399,14 @@ const AppointmentTable: React.FC = () => {
 
   // --- Hàm map Status từ API sang Status của component ---
   const mapApiStatusToComponentStatus = (
-    apiStatus: Patient["Status"]
+    apiStatus: DoctorAppointment["Status"]
   ): Appointment["status"] => {
     switch (apiStatus) {
       case "Completed":
         return "completed";
       case "Cancelled":
         return "cancelled";
-      case "Scheduled": // Hoặc các trạng thái khác?
+      case "Scheduled":
       default:
         return "pending";
     }
@@ -472,21 +509,20 @@ const AppointmentTable: React.FC = () => {
           )}
           {!isLoading &&
             !error &&
-            patients.length > 0 &&
-            patients.map((patient) => {
-              // --- ÁNH XẠ (MAP) TỪ Patient -> Appointment ---
+            appointments.length > 0 &&
+            appointments.map((appointment) => {
+              // --- ÁNH XẠ (MAP) TỪ DoctorAppointment -> Appointment ---
               const appointmentData: Appointment = {
-                // Giả sử API trả về 'id' trong object Patient, nếu không cần tìm cách tạo key/id duy nhất
-                id: patient.id || Date.now() + Math.random(), // <-- Cần ID duy nhất
-                fullName: patient.FullName,
-                dateOfBirth: new Date(patient.DateOfBirth), // Chuyển string -> Date
-                gender: patient.Gender,
-                phone: patient.PhoneNumber, // Đổi tên trường
-                appointHour: patient.AppointHour || "N/A", // Lấy giờ hẹn nếu có
-                appointDate: patient.AppointDate, // Lưu ngày hẹn để gọi API
-                symptom: patient.Symptoms, // Đổi tên trường
-                prescription: patient.Prescription,
-                status: mapApiStatusToComponentStatus(patient.Status), // Map status
+                id: appointment.AppointId, // Dùng AppointId từ API
+                fullName: appointment.FullName,
+                dateOfBirth: new Date(appointment.DateOfBirth),
+                gender: appointment.Gender,
+                phone: appointment.PhoneNumber,
+                appointHour: appointment.AppointHour, // Đã có từ API
+                appointDate: appointment.AppointDate,
+                symptom: appointment.Symptoms,
+                prescription: appointment.Prescription || "",
+                status: mapApiStatusToComponentStatus(appointment.Status),
               };
               return (
                 <TableRow
@@ -497,10 +533,10 @@ const AppointmentTable: React.FC = () => {
                 />
               );
             })}
-          {!isLoading && !error && patients.length === 0 && (
+          {!isLoading && !error && appointments.length === 0 && (
             <tr>
               <td colSpan={9} style={{ textAlign: "center" }}>
-                No patients found.
+                No appointments found.
               </td>
             </tr>
           )}

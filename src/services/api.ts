@@ -92,6 +92,25 @@ export interface Patient {
   AppointHour?: string;
 }
 
+// --- THÊM MỚI: Interface cho API GetDoctorAppointments ---
+export interface DoctorAppointment {
+  AppointId: number;
+  DoctorId: number;
+  PatientId: number;
+  FullName: string;
+  Username: string;
+  DateOfBirth: string; // "YYYY-MM-DD"
+  Gender: string;
+  PhoneNumber: string;
+  Email: string;
+  Address: string | null;
+  Status: "Scheduled" | "Completed" | "Cancelled";
+  Symptoms: string;
+  Prescription: string | null;
+  AppointDate: string; // "YYYY-MM-DD"
+  AppointHour: string; // "HH:mm:ss"
+}
+
 export interface UpdatePatientRequest {
   Status: string;
   Symptoms: string;
@@ -387,18 +406,38 @@ export const api = {
     return response.data as Patient[];
   },
 
+  // --- THÊM MỚI: API chuyên dụng cho Doctor Appointments ---
+  getDoctorAppointments: async (
+    doctorId?: number,
+    patientName?: string,
+    patientPhone?: string
+  ): Promise<DoctorAppointment[]> => {
+    const params: any = {};
+    if (doctorId) params.doctorId = doctorId;
+    if (patientName) params.patientName = patientName;
+    if (patientPhone) params.patientPhone = patientPhone;
+
+    const response = await apiClient.get("/Doctors/GetDoctorAppointments", {
+      params: params,
+    });
+
+    return response.data as DoctorAppointment[];
+  },
+
   updatePatientAppointment: async (
     patientId: number,
     appointDate: string,
     appointHour: string,
+    appointId: number,
     data: UpdatePatientRequest
-  ): Promise<any> => { // Thay 'any' bằng kiểu trả về cụ thể nếu có
+  ): Promise<UpdatePatientRequest> => {
     
-    // API yêu cầu gửi 3 trường này qua Query Params
+    // API yêu cầu đầy đủ 4 params
     const params = {
       patientId: patientId,
       appointDate: appointDate,
       appointHour: appointHour,
+      appointId: appointId,
     };
     
     // API yêu cầu gửi 3 trường này trong Request Body
