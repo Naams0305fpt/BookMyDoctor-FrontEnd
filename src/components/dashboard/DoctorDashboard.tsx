@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCalendar,
-  faUsers,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faUsers, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { ScheduleManagement, AppointmentTable } from "../doctor";
 import "../doctor/DoctorSchedule.css";
 
@@ -42,18 +38,14 @@ const DoctorDashboard: React.FC = () => {
             <FontAwesomeIcon icon={faPlus} className="title-icon" />
             <h2>
               {view === "schedule"
-                ? "Schedule Management"
+                ? "My Work Schedule"
                 : "Appointment Management"}
             </h2>
           </div>
         </div>
 
         {/* Content */}
-        {view === "schedule" ? (
-          <ScheduleManagement />
-        ) : (
-          <AppointmentTable />
-        )}
+        {view === "schedule" ? <ScheduleManagement /> : <AppointmentTable />}
       </div>
     </section>
   );
