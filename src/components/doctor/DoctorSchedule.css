@@ -35,8 +35,8 @@
 
 .section-header {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 1.5rem;
   padding: 0 2rem;
@@ -46,6 +46,95 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.section-title h2 {
+  margin: 0;
+}
+
+/* Controls Layout - Create button + Date picker on same row */
+.appointment-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0 1rem;
+  gap: 1rem;
+}
+
+/* Create Button - Left side */
+.btn-create {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #13b6c6, #a8e1ea);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.btn-create:hover {
+  background: linear-gradient(135deg, #a8e1ea, #13b6c6);
+  box-shadow: 0 6px 16px rgba(19, 182, 198, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn-create:active {
+  transform: translateY(0);
+}
+
+/* Date Navigation - Right side */
+.date-navigation {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1rem 0;
+}
+
+.pagination-btn {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #13b6c6, #a8e1ea);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #a8e1ea, #13b6c6);
+  box-shadow: 0 4px 8px rgba(19, 182, 198, 0.35);
+  transform: translateY(-1px);
+}
+
+.pagination-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
 }
 
 .title-icon {
