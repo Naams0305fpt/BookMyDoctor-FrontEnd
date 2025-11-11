@@ -38,6 +38,12 @@ export interface ChangePasswordOtpRequest {
   ConfirmNewPassword: string;
 }
 
+export interface ChangePasswordAfterLoginRequest {
+  OldPassword: string;
+  NewPassword: string;
+  ConfirmNewPassword: string;
+}
+
 export interface SetNewPasswordRequest {
   email: string;
   newPassword: string;
@@ -301,6 +307,16 @@ export const api = {
   changePasswordWithOtp: async (data: ChangePasswordOtpRequest): Promise<any> => {
     // API này đọc cookie, chỉ cần gửi mật khẩu mới
     const response = await apiClient.post("/Auth/change-password-otp", data);
+    
+    if (response.status === 204 || !response.data) {
+      return { success: true };
+    }
+    return response.data;
+  },
+
+  changePasswordAfterLogin: async (data: ChangePasswordAfterLoginRequest): Promise<any> => {
+    // API để đổi password khi đã login (cần old password)
+    const response = await apiClient.post("/Auth/change-password-after-login", data);
     
     if (response.status === 204 || !response.data) {
       return { success: true };

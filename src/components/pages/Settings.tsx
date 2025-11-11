@@ -25,37 +25,17 @@ const Settings: React.FC = () => {
   // Tab states
   const [activeTab, setActiveTab] = useState<"account" | "password">("account");
 
-  // Password change states (using OTP flow like ResetPassword)
-  const [email, setEmail] = useState(user?.email || "");
-  const [otpCode, setOtpCode] = useState("");
+  // Password change states (using changePasswordAfterLogin API)
+  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   // UI control states
-  const [step, setStep] = useState<"email" | "password">("email");
-  const [codeSent, setCodeSent] = useState(false);
-  const [sendingCode, setSendingCode] = useState(false);
-  const [verifyingCode, setVerifyingCode] = useState(false);
-  const [countdown, setCountdown] = useState(0);
+  const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [error, setError] = useState("");
-
-  // Update email when user changes
-  React.useEffect(() => {
-    if (user?.email) {
-      setEmail(user.email);
-    }
-  }, [user]);
-
-  // Countdown timer
-  React.useEffect(() => {
-    if (countdown > 0) {
-      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [countdown]);
 
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -65,76 +45,19 @@ const Settings: React.FC = () => {
   console.log("Settings rendered - isAuthenticated:", isAuthenticated);
   console.log("Settings rendered - activeTab:", activeTab);
 
-  // --- Send OTP ---
-  const handleSendOtp = async () => {
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-    setSendingCode(true);
-    setError("");
-    try {
-      await api.sendVerificationCode({
-        Destination: email,
-        Purpose: "ResetPassword",
-        Channel: "email",
-      });
-      setCodeSent(true);
-      setCountdown(60);
-      showNotification("success", "Code Sent", `OTP sent to ${email}`, 4000);
-    } catch (err: any) {
-      setError(err.message || "Failed to send OTP. Please try again.");
-    } finally {
-      setSendingCode(false);
-    }
-  };
-
-  // --- Verify OTP ---
-  const handleVerifyCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (!email || !otpCode || otpCode.length !== 6) {
-      setError("Please enter a valid 6-digit OTP code.");
-      return;
-    }
-
-    setVerifyingCode(true);
-    try {
-      const result = await api.verifyOtp({
-        Destination: email,
-        Purpose: "ResetPassword",
-        OtpCode: otpCode,
-        Channel: "email",
-      });
-
-      if (result && result.message === "Xác thực OTP thành công.") {
-        setStep("password");
-        setError("");
-        showNotification(
-          "success",
-          "Code Verified",
-          "Please enter your new password",
-          3000
-        );
-      } else {
-        throw new Error("Verification failed: Invalid response from server.");
-      }
-    } catch (err: any) {
-      setError(err.message || "Invalid or expired verification code.");
-    } finally {
-      setVerifyingCode(false);
-    }
-  };
-
-  // --- Change Password ---
+  // --- Change Password (Simple - with old password) ---
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     // Validation
+    if (!oldPassword) {
+      setError("Please enter your current password.");
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("New passwords do not match.");
       return;
     }
 
@@ -149,7 +72,8 @@ const Settings: React.FC = () => {
 
     setIsChangingPassword(true);
     try {
-      await api.changePasswordWithOtp({
+      await api.changePasswordAfterLogin({
+        OldPassword: oldPassword,
         NewPassword: newPassword,
         ConfirmNewPassword: confirmPassword,
       });
@@ -162,21 +86,15 @@ const Settings: React.FC = () => {
       );
 
       // Reset form
-      setStep("email");
-      setCodeSent(false);
-      setOtpCode("");
+      setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
       setActiveTab("account");
     } catch (err: any) {
-      setError(err.message || "Failed to change password. Please try again.");
-      if (err.message.includes("token")) {
-        setStep("email");
-        setCodeSent(false);
-        setError(
-          "Your verification token has expired. Please verify your email again."
-        );
-      }
+      setError(
+        err.message ||
+          "Failed to change password. Please check your current password and try again."
+      );
     } finally {
       setIsChangingPassword(false);
     }
@@ -212,9 +130,7 @@ const Settings: React.FC = () => {
             onClick={() => {
               setActiveTab("password");
               // Reset password change form when switching to password tab
-              setStep("email");
-              setCodeSent(false);
-              setOtpCode("");
+              setOldPassword("");
               setNewPassword("");
               setConfirmPassword("");
               setError("");
@@ -303,205 +219,111 @@ const Settings: React.FC = () => {
                 </div>
               )}
 
-              {/* STEP 1: Email & OTP Verification */}
-              {step === "email" && (
-                <form onSubmit={handleVerifyCode} className="password-form">
-                  <div className="form-group">
-                    <label>
-                      Email Address <span className="required">*</span>
-                    </label>
-                    <div className="input-wrapper">
-                      <FontAwesomeIcon
-                        icon={faEnvelope}
-                        className="input-icon"
-                      />
-                      <input
-                        type="email"
-                        className="input"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="your-email@example.com"
-                        disabled
-                        style={{ paddingLeft: "48px" }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>
-                      Verification Code <span className="required">*</span>
-                    </label>
-                    <div className="input-wrapper">
-                      <FontAwesomeIcon
-                        icon={faShieldAlt}
-                        className="input-icon"
-                      />
-                      <input
-                        type="text"
-                        className="input"
-                        value={otpCode}
-                        onChange={(e) => setOtpCode(e.target.value)}
-                        placeholder="Enter 6-digit code"
-                        maxLength={6}
-                        style={{ paddingLeft: "48px" }}
-                      />
-                    </div>
-                    <span className="input-hint">
-                      {codeSent
-                        ? countdown > 0
-                          ? `Code sent! Resend in ${countdown}s`
-                          : "Code expired. Click Send Code to get a new one."
-                        : "Click 'Send Code' to receive OTP via email"}
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "1rem",
-                      marginTop: "1.5rem",
-                    }}
-                  >
+              <form onSubmit={handlePasswordChange} className="password-form">
+                <div className="form-group">
+                  <label>
+                    Current Password <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FontAwesomeIcon icon={faLock} className="input-icon" />
+                    <input
+                      type={showOld ? "text" : "password"}
+                      className="input"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      placeholder="Enter current password"
+                      style={{ paddingLeft: "48px", paddingRight: "48px" }}
+                    />
                     <button
                       type="button"
-                      className="btn btn-primary"
-                      onClick={handleSendOtp}
-                      disabled={sendingCode || (codeSent && countdown > 0)}
-                      style={{ flex: 1 }}
+                      className="toggle-password"
+                      onClick={() => setShowOld(!showOld)}
                     >
-                      {sendingCode ? (
-                        <>
-                          <FontAwesomeIcon icon={faSpinner} spin />
-                          Sending...
-                        </>
-                      ) : codeSent && countdown > 0 ? (
-                        `Resend in ${countdown}s`
-                      ) : (
-                        "Send Code"
-                      )}
-                    </button>
-
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={
-                        verifyingCode || !otpCode || otpCode.length !== 6
-                      }
-                      style={{ flex: 1 }}
-                    >
-                      {verifyingCode ? (
-                        <>
-                          <FontAwesomeIcon icon={faSpinner} spin />
-                          Verifying...
-                        </>
-                      ) : (
-                        "Continue"
-                      )}
+                      <FontAwesomeIcon icon={showOld ? faEyeSlash : faEye} />
                     </button>
                   </div>
-                </form>
-              )}
+                </div>
 
-              {/* STEP 2: New Password */}
-              {step === "password" && (
-                <form onSubmit={handlePasswordChange} className="password-form">
-                  <div className="form-group">
-                    <label>
-                      New Password <span className="required">*</span>
-                    </label>
-                    <div className="input-wrapper">
-                      <FontAwesomeIcon icon={faLock} className="input-icon" />
-                      <input
-                        type={showNew ? "text" : "password"}
-                        className="input"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="Enter new password"
-                        style={{ paddingLeft: "48px", paddingRight: "48px" }}
-                      />
-                      <button
-                        type="button"
-                        className="toggle-password"
-                        onClick={() => setShowNew(!showNew)}
-                      >
-                        <FontAwesomeIcon icon={showNew ? faEyeSlash : faEye} />
-                      </button>
-                    </div>
-                    <span className="input-hint">
-                      Min 8 characters, with uppercase, lowercase, number, and
-                      special character
-                    </span>
-                  </div>
-
-                  <div className="form-group">
-                    <label>
-                      Confirm New Password <span className="required">*</span>
-                    </label>
-                    <div className="input-wrapper">
-                      <FontAwesomeIcon icon={faKey} className="input-icon" />
-                      <input
-                        type={showConfirm ? "text" : "password"}
-                        className="input"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Confirm new password"
-                        style={{ paddingLeft: "48px", paddingRight: "48px" }}
-                      />
-                      <button
-                        type="button"
-                        className="toggle-password"
-                        onClick={() => setShowConfirm(!showConfirm)}
-                      >
-                        <FontAwesomeIcon
-                          icon={showConfirm ? faEyeSlash : faEye}
-                        />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "1rem",
-                      marginTop: "1.5rem",
-                    }}
-                  >
+                <div className="form-group">
+                  <label>
+                    New Password <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FontAwesomeIcon icon={faKey} className="input-icon" />
+                    <input
+                      type={showNew ? "text" : "password"}
+                      className="input"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter new password"
+                      style={{ paddingLeft: "48px", paddingRight: "48px" }}
+                    />
                     <button
                       type="button"
-                      className="btn btn-primary"
-                      onClick={() => {
-                        setStep("email");
-                        setNewPassword("");
-                        setConfirmPassword("");
-                        setError("");
-                      }}
-                      style={{ flex: 1, background: "#6c757d" }}
+                      className="toggle-password"
+                      onClick={() => setShowNew(!showNew)}
                     >
-                      Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={
-                        isChangingPassword || !newPassword || !confirmPassword
-                      }
-                      style={{ flex: 2 }}
-                    >
-                      {isChangingPassword ? (
-                        <>
-                          <FontAwesomeIcon icon={faSpinner} spin />
-                          Changing Password...
-                        </>
-                      ) : (
-                        <>
-                          <FontAwesomeIcon icon={faKey} />
-                          Change Password
-                        </>
-                      )}
+                      <FontAwesomeIcon icon={showNew ? faEyeSlash : faEye} />
                     </button>
                   </div>
-                </form>
-              )}
+                  <span className="input-hint">
+                    Min 8 characters, with uppercase, lowercase, number, and
+                    special character
+                  </span>
+                </div>
+
+                <div className="form-group">
+                  <label>
+                    Confirm New Password <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FontAwesomeIcon icon={faKey} className="input-icon" />
+                    <input
+                      type={showConfirm ? "text" : "password"}
+                      className="input"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                      style={{ paddingLeft: "48px", paddingRight: "48px" }}
+                    />
+                    <button
+                      type="button"
+                      className="toggle-password"
+                      onClick={() => setShowConfirm(!showConfirm)}
+                    >
+                      <FontAwesomeIcon
+                        icon={showConfirm ? faEyeSlash : faEye}
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: "1.5rem" }}>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={
+                      isChangingPassword ||
+                      !oldPassword ||
+                      !newPassword ||
+                      !confirmPassword
+                    }
+                    style={{ width: "100%" }}
+                  >
+                    {isChangingPassword ? (
+                      <>
+                        <FontAwesomeIcon icon={faSpinner} spin />
+                        Changing Password...
+                      </>
+                    ) : (
+                      <>
+                        <FontAwesomeIcon icon={faKey} />
+                        Change Password
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
           )}
         </div>
