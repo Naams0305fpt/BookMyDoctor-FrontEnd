@@ -259,12 +259,18 @@ await api.getProfileMe();
 ```
 🔥 CRITICAL (Implement THIS WEEK):
 ┌─────────────────────────────────────────────────────────┐
-│ 1. AI Chatbot UI (API ✅ có - Gemini integration)      │
+│ 1. Excel Export (client-side - không cần BE)           │
+│ 2. Unit Tests (core API paths)                         │
+│ 3. Critical UX fixes (Cancel policy, error display)    │
+└─────────────────────────────────────────────────────────┘
+
+⏳ WAITING FOR BACKEND:
+┌─────────────────────────────────────────────────────────┐
+│ AI Chatbot UI (⏳ Backend đang phát triển)             │
 │    - POST /api/Chat/send-message                        │
 │    - GET /api/Chat/conversation/{userId}                │
-│    ⚠️ Remember: Response field is "Reply" not "response" │
-│ 2. Excel Export (client-side - không cần BE)           │
-│ 3. Unit Tests (core API paths)                         │
+│    - Note: Response field is "Reply" not "response"     │
+│    - Frontend effort: 2-3 days (khi backend ready)      │
 └─────────────────────────────────────────────────────────┘
 
 🔴 HIGH (Next Sprint):
