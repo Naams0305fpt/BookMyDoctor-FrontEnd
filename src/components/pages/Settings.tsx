@@ -26,7 +26,7 @@ const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"account" | "password">("account");
 
   // Password change states (using changePasswordAfterLogin API)
-  const [oldPassword, setOldPassword] = useState("");
+  const [CurrentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -50,51 +50,50 @@ const Settings: React.FC = () => {
     e.preventDefault();
     setError("");
 
-    // Validation
-    if (!oldPassword) {
-      setError("Please enter your current password.");
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setError("New passwords do not match.");
-      return;
-    }
-
-    const passRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
-    if (!passRegex.test(newPassword)) {
-      setError(
-        "Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character."
-      );
+    // Basic validation - Backend will handle detailed validation
+    if (!CurrentPassword || !newPassword || !confirmPassword) {
+      setError("Please fill in all fields.");
       return;
     }
 
     setIsChangingPassword(true);
     try {
       await api.changePasswordAfterLogin({
-        OldPassword: oldPassword,
+        CurrentPassword: CurrentPassword,
         NewPassword: newPassword,
         ConfirmNewPassword: confirmPassword,
       });
 
       showNotification(
         "success",
-        "Password Changed",
-        "Your password has been updated successfully.",
-        4000
+        "Password Changed Successfully",
+        "Your password has been updated. You will be redirected to the home page.",
+        3000
       );
 
       // Reset form
-      setOldPassword("");
+      setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      setActiveTab("account");
+
+      // Redirect to home page after successful password change
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
     } catch (err: any) {
-      setError(
-        err.message ||
-          "Failed to change password. Please check your current password and try again."
-      );
+      // Handle validation error from backend
+      if (err.response?.data) {
+        const errorData = err.response.data;
+        if (errorData.field && errorData.message) {
+          setError(errorData.message);
+        } else if (typeof errorData === "string") {
+          setError(errorData);
+        } else {
+          setError(err.message || "Failed to change password.");
+        }
+      } else {
+        setError(err.message || "Failed to change password.");
+      }
     } finally {
       setIsChangingPassword(false);
     }
@@ -130,7 +129,7 @@ const Settings: React.FC = () => {
             onClick={() => {
               setActiveTab("password");
               // Reset password change form when switching to password tab
-              setOldPassword("");
+              setCurrentPassword("");
               setNewPassword("");
               setConfirmPassword("");
               setError("");
@@ -229,8 +228,8 @@ const Settings: React.FC = () => {
                     <input
                       type={showOld ? "text" : "password"}
                       className="input"
-                      value={oldPassword}
-                      onChange={(e) => setOldPassword(e.target.value)}
+                      value={CurrentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
                       placeholder="Enter current password"
                       style={{ paddingLeft: "48px", paddingRight: "48px" }}
                     />
@@ -304,7 +303,7 @@ const Settings: React.FC = () => {
                     className="btn btn-primary"
                     disabled={
                       isChangingPassword ||
-                      !oldPassword ||
+                      !CurrentPassword ||
                       !newPassword ||
                       !confirmPassword
                     }
