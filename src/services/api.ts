@@ -85,6 +85,13 @@ export interface Patient {
   Prescription: string;
   AppointHour?: string;
 }
+
+export interface UpdatePatientRequest {
+  Status: string;
+  Symptoms: string;
+  Prescription: string;
+} 
+
 // --- THÊM MỚI: Interface cho API History (dựa trên ảnh) ---
 export interface MyHistoryResponse {
   NamePatient: string;
@@ -287,15 +294,49 @@ export const api = {
     if (appointDate) params.appointDate = appointDate;
     if (status) params.status = status;
 
-    const response = await apiClient.get("/patients/AllPatientsAndSearch", {
+    const response = await apiClient.get("/Patients/AllPatientsAndSearch", {
       params: params,
     });
     return response.data as Patient[];
   },
 
+  updatePatientAppointment: async (
+    patientId: number,
+    appointDate: string,
+    appointHour: string,
+    data: UpdatePatientRequest
+  ): Promise<any> => { // Thay 'any' bằng kiểu trả về cụ thể nếu có
+    
+    // API yêu cầu gửi 3 trường này qua Query Params
+    const params = {
+      patientId: patientId,
+      appointDate: appointDate,
+      appointHour: appointHour,
+    };
+    
+    // API yêu cầu gửi 3 trường này trong Request Body
+    const body = {
+      Status: data.Status,
+      Symptoms: data.Symptoms,
+      Prescription: data.Prescription,
+    };
+
+    const response = await apiClient.put("/Patients/UpdatePatient", body, {
+      params: params
+    });
+
+    return response.data;
+  },
+
   // --- THÊM MỚI: LẤY LỊCH SỬ CỦA BỆNH NHÂN ---
   getMyHistory: async (): Promise<MyHistoryResponse[]> => {
     const response = await apiClient.get(`/Patients/MyHistoryAppoint`);
+    return response.data;
+  },
+
+  // --- THÊM MỚI: LẤY THÔNG TIN PROFILE ---
+  getProfileMe: async (): Promise<any> => {
+    const response = await apiClient.get('/Profile/profile-me');
     return response.data;
   },
 
