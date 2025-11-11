@@ -128,7 +128,7 @@ Tài liệu này so sánh các yêu cầu trong folder `req` với code hiện t
 | API Endpoint                         | Chức năng                 | Frontend cần            | Ưu tiên                                     |
 | ------------------------------------ | ------------------------- | ----------------------- | ------------------------------------------- |
 | `GET /api/Doctors/Search-Doctors`    | Tìm kiếm bác sĩ nâng cao  | `BookingForm.tsx`       | 🟡 Trung bình (hiện tại filter client-side) |
-| `POST /api/Chat`                     | Chatbot AI                | Chưa có UI chatbot      | ⏳ Backend đang phát triển                        |
+| `POST /api/Chat`                     | Chatbot AI                | Chưa có UI chatbot      | ⏳ Backend đang phát triển                  |
 | `PUT /api/Doctors/UpdateDoctor`      | Cập nhật thông tin bác sĩ | `DoctorManagement.tsx`  | 🟢 Thấp (Admin feature)                     |
 | `DELETE /api/Patients/DeletePatient` | Xóa bệnh nhân             | `PatientManagement.tsx` | � Thấp (Admin feature)                      |
 | `PUT /api/Profile/update-me`         | Cập nhật profile          | `Profile.tsx`           | 🟡 Trung bình                               |
@@ -238,21 +238,21 @@ await api.getProfileMe();
 
 ### ❌ Chưa triển khai (Missing) - Theo API Documentation
 
-| Yêu cầu                                   | API Endpoint có sẵn?        | Mức độ ưu tiên         | Frontend cần         | Backend cần                       | Lý do quan trọng                |
-| ----------------------------------------- | --------------------------- | ---------------------- | -------------------- | --------------------------------- | ------------------------------- |
-| **AI Chatbot**                            | ⏳ `/api/Chat/send-message` | ⏳ Backend đang phát triển | Chatbot UI component | ⏳ Backend đang phát triển       | Feature highlight của app (khi ready) |
-| **FR-A-005: Xuất Excel/CSV**              | ❌ Không cần backend        | 🔴 Cao         | Export button        | ❌ Không cần (client-side export) | Admin cần báo cáo               |
-| **FR-N-001: Email xác nhận booking**      | ❌ Không                    | 🔴 Cao         | Toast UI             | Email service (MailKit)           | Bệnh nhân cần xác nhận đặt lịch |
-| **FR-D-006: Giới hạn số lượt khám/ngày**  | ❌ Không                    | 🔴 Cao         | Settings UI          | Backend logic + DB field          | Tránh bác sĩ bị quá tải         |
-| **FR-N-002: Nhắc nhở 24h trước**          | ❌ Không                    | 🟡 Trung bình  | ❌ Không cần         | Hangfire job + Email              | Giảm no-show                    |
-| **FR-A-004: Dashboard thống kê nâng cao** | ❌ Không `/Statistics`      | 🟡 Trung bình  | Chart components     | API endpoint mới                  | Admin cần insights              |
-| **FR-P-007: Email/SMS notification**      | ❌ Không                    | 🟡 Trung bình  | ❌ Không cần         | Backend notification service      | Real-time updates               |
-| **Update Doctor Info**                    | ✅ `/Doctors/UpdateDoctor`  | 🟡 Trung bình  | Admin UI form        | ✅ Đã có                          | Admin flexibility               |
-| **Update Profile**                        | ✅ `/Profile/update-me`     | 🟡 Trung bình  | Profile edit form    | ✅ Đã có                          | User self-service               |
-| **NFR-U-002: Đa ngôn ngữ (i18n)**         | N/A                         | 🟡 Trung bình  | react-i18next        | ❌ Không cần                      | Hỗ trợ Tiếng Việt + English     |
-| **NFR-M-003: Unit Tests**                 | N/A                         | 🔴 Cao         | `*.test.tsx`         | ❌ Không cần                      | Đảm bảo chất lượng code         |
-| **NFR-L-001: Error Tracking (Sentry)**    | N/A                         | 🟡 Trung bình  | Sentry setup         | ❌ Không cần                      | Giám sát lỗi production         |
-| **NFR-M-004: CI/CD Pipeline**             | N/A                         | 🟡 Trung bình  | `.github/workflows/` | ❌ Không cần                      | Tự động hóa build/test/deploy   |
+| Yêu cầu                                   | API Endpoint có sẵn?        | Mức độ ưu tiên             | Frontend cần         | Backend cần                       | Lý do quan trọng                      |
+| ----------------------------------------- | --------------------------- | -------------------------- | -------------------- | --------------------------------- | ------------------------------------- |
+| **AI Chatbot**                            | ⏳ `/api/Chat/send-message` | ⏳ Backend đang phát triển | Chatbot UI component | ⏳ Backend đang phát triển        | Feature highlight của app (khi ready) |
+| **FR-A-005: Xuất Excel/CSV**              | ❌ Không cần backend        | 🔴 Cao                     | Export button        | ❌ Không cần (client-side export) | Admin cần báo cáo                     |
+| **FR-N-001: Email xác nhận booking**      | ❌ Không                    | 🔴 Cao                     | Toast UI             | Email service (MailKit)           | Bệnh nhân cần xác nhận đặt lịch       |
+| **FR-D-006: Giới hạn số lượt khám/ngày**  | ❌ Không                    | 🔴 Cao                     | Settings UI          | Backend logic + DB field          | Tránh bác sĩ bị quá tải               |
+| **FR-N-002: Nhắc nhở 24h trước**          | ❌ Không                    | 🟡 Trung bình              | ❌ Không cần         | Hangfire job + Email              | Giảm no-show                          |
+| **FR-A-004: Dashboard thống kê nâng cao** | ❌ Không `/Statistics`      | 🟡 Trung bình              | Chart components     | API endpoint mới                  | Admin cần insights                    |
+| **FR-P-007: Email/SMS notification**      | ❌ Không                    | 🟡 Trung bình              | ❌ Không cần         | Backend notification service      | Real-time updates                     |
+| **Update Doctor Info**                    | ✅ `/Doctors/UpdateDoctor`  | 🟡 Trung bình              | Admin UI form        | ✅ Đã có                          | Admin flexibility                     |
+| **Update Profile**                        | ✅ `/Profile/update-me`     | 🟡 Trung bình              | Profile edit form    | ✅ Đã có                          | User self-service                     |
+| **NFR-U-002: Đa ngôn ngữ (i18n)**         | N/A                         | 🟡 Trung bình              | react-i18next        | ❌ Không cần                      | Hỗ trợ Tiếng Việt + English           |
+| **NFR-M-003: Unit Tests**                 | N/A                         | 🔴 Cao                     | `*.test.tsx`         | ❌ Không cần                      | Đảm bảo chất lượng code               |
+| **NFR-L-001: Error Tracking (Sentry)**    | N/A                         | 🟡 Trung bình              | Sentry setup         | ❌ Không cần                      | Giám sát lỗi production               |
+| **NFR-M-004: CI/CD Pipeline**             | N/A                         | 🟡 Trung bình              | `.github/workflows/` | ❌ Không cần                      | Tự động hóa build/test/deploy         |
 
 ### 🎯 Priority Matrix - API vs Frontend (Updated with 31 endpoints)
 

@@ -25,6 +25,7 @@
 ## ✅ ĐÃ HOÀN THÀNH (WORKING PERFECTLY)
 
 ### Authentication & User Management
+
 - ✅ Login/Logout với cookie-based auth
 - ✅ Sign Up với OTP verification
 - ✅ Password Reset (3-step OTP flow)
@@ -33,6 +34,7 @@
 - ✅ Email verification flow
 
 ### Booking System (Patient)
+
 - ✅ View danh sách bác sĩ
 - ✅ Check available time slots (real-time)
 - ✅ Đặt lịch khám (full validation)
@@ -41,6 +43,7 @@
 - ✅ View profile
 
 ### Doctor Features
+
 - ✅ View appointment list với search/filter
 - ✅ Update appointment status
 - ✅ Add notes to patients
@@ -51,6 +54,7 @@
   - Auto-detect current doctor
 
 ### Admin Features
+
 - ✅ Create Doctor accounts
 - ✅ View/Delete Doctors
 - ✅ View/Update/Delete Patients
@@ -61,6 +65,7 @@
   - Date filter
 
 ### Technical
+
 - ✅ API integration: 23/31 endpoints (74%)
 - ✅ Error handling với interceptors
 - ✅ Notification system (toast)
@@ -71,51 +76,47 @@
 
 ## ⚠️ ĐANG LÀM DỞ (PARTIALLY WORKING)
 
-| Feature | Status | Missing |
-|---------|--------|---------|
-| **Cancel Booking** | 80% | 24h policy warning UI |
-| **Profile Update** | 50% | UI form (API available) |
-| **Update Doctor** | 50% | Admin UI (API available) |
-| **Doctor Search** | 70% | Server-side search (đang client-side) |
-| **Error Display** | 80% | Field-level error parsing |
-| **Notifications** | 60% | Real-time push, email backend |
+| Feature            | Status | Missing                               |
+| ------------------ | ------ | ------------------------------------- |
+| **Cancel Booking** | 80%    | 24h policy warning UI                 |
+| **Profile Update** | 50%    | UI form (API available)               |
+| **Update Doctor**  | 50%    | Admin UI (API available)              |
+| **Doctor Search**  | 70%    | Server-side search (đang client-side) |
+| **Error Display**  | 80%    | Field-level error parsing             |
+| **Notifications**  | 60%    | Real-time push, email backend         |
 
 ---
 
 ## ❌ CHƯA LÀM (NOT STARTED)
 
 ### Frontend Tasks (Có thể làm ngay)
+
 - ❌ **Excel Export** (1 day)
   - Patients list
   - Doctors list
   - Booking history
-  
 - ❌ **Unit Tests** (3 days)
   - Jest + React Testing Library
   - Target: 70% coverage
-  
 - ❌ **CI/CD Pipeline** (2 days)
   - GitHub Actions
   - Auto deploy
-  
 - ❌ **Performance Optimization** (2 days)
   - Code splitting
   - Lazy loading
   - Bundle optimization
 
 ### Chờ Backend (Cannot do without API)
+
 - ⏳ **AI Chatbot UI** (3 days)
   - Backend đang phát triển
   - API chưa sẵn sàng
-  
 - ⏳ **Statistics Dashboard** (4 days)
   - Backend chưa có /Statistics API
-  
 - ⏳ **Email Notifications**
   - Backend MailKit chưa trigger
   - Booking confirmation
   - 24h reminder
-  
 - ⏳ **Doctor Appointment Limit**
   - Backend chưa có API
 
@@ -124,37 +125,40 @@
 ## 🔥 TOP PRIORITIES (TUẦN NÀY)
 
 ### Day 1-2: Critical UX Fixes
+
 ```
 1. ⚡ Cancel Policy Warning (2h)
    - Add 24h check before Cancel button
    - Warning modal if < 24h
-   
+
 2. ⚡ Field-level Error Display (4h)
    - Parse API error responses
    - Show errors under specific fields
-   
+
 3. ⚡ Profile Update UI (6h)
    - Use PUT /api/Profile/update-me
    - Form in Profile page
 ```
 
 ### Day 3-4: Quick Wins
+
 ```
 4. 📊 Excel Export (1 day)
    - Install xlsx + file-saver
    - Export buttons in management pages
-   
+
 5. 👨‍⚕️ Update Doctor UI (6h)
    - Modal in DoctorManagement
    - Use PUT /api/Doctors/UpdateDoctor
 ```
 
 ### Day 5: Testing & Cleanup
+
 ```
 6. ✅ Manual Testing (4h)
    - Test all user flows
    - Fix critical bugs
-   
+
 7. 🧹 Code Cleanup (4h)
    - Remove console.logs
    - Fix TypeScript warnings
@@ -168,16 +172,19 @@
 ## 📈 EFFORT ESTIMATION
 
 ### To 80% (MVP Ready)
+
 - **Time**: 1 week (40 hours)
 - **Team**: 2 developers
 - **Focus**: Critical fixes + Quick wins
 
 ### To 90% (Production Ready)
+
 - **Time**: 2-3 weeks (80-120 hours)
 - **Includes**: Testing + CI/CD + Performance
 - **Ready**: Can deploy to production
 
 ### To 100% (Full Features)
+
 - **Time**: 4-6 weeks (160-240 hours)
 - **Depends on**: Backend completion (Chatbot, Stats, Email)
 - **Includes**: All nice-to-have features
@@ -187,21 +194,25 @@
 ## 💰 BUSINESS VALUE vs EFFORT
 
 ### High Value, Low Effort (DO FIRST) 🎯
+
 - ✅ Excel Export (1 day) → Admin loves it
 - ✅ Profile/Doctor Update UI (1 day) → Completes existing APIs
 - ✅ Cancel policy warning (2h) → Prevents business issues
 
 ### High Value, Medium Effort
+
 - ⚠️ Unit Tests (3 days) → Prevents bugs
 - ⚠️ CI/CD (2 days) → Saves deployment time
 - ⚠️ Performance optimization (2 days) → Better UX
 
 ### High Value, High Effort (Needs Backend)
+
 - ⏳ AI Chatbot (3 days FE + backend) → Differentiation
 - ⏳ Statistics Dashboard (4 days FE + backend) → Business insights
 - ⏳ Email Notifications (backend mostly) → User engagement
 
 ### Medium Value, Can Wait
+
 - Advanced search
 - i18n support
 - Advanced animations
@@ -237,6 +248,7 @@ WEEK 4-6 (Day 16-30)
 ## 📋 DETAILED MODULE COMPLETION
 
 ### Module Bệnh nhân: **85%** ✅
+
 ```
 ✅ Đăng ký + OTP         100%
 ✅ Login/Logout          100%
@@ -250,6 +262,7 @@ WEEK 4-6 (Day 16-30)
 ```
 
 ### Module Bác sĩ: **75%** 🟡
+
 ```
 ✅ Login/Logout          100%
 ✅ View patients         100%
@@ -260,6 +273,7 @@ WEEK 4-6 (Day 16-30)
 ```
 
 ### Module Admin: **80%** ✅
+
 ```
 ✅ Admin login           100%
 ✅ Patient management    100%
@@ -271,6 +285,7 @@ WEEK 4-6 (Day 16-30)
 ```
 
 ### Notification: **40%** 🔴
+
 ```
 ⚠️ Toast notifications   60% (có UI, thiếu real-time)
 ❌ Email confirm          0% (backend)
@@ -279,6 +294,7 @@ WEEK 4-6 (Day 16-30)
 ```
 
 ### Search & Filter: **80%** ✅
+
 ```
 ⚠️ Doctor search         70% (client-side, có API server)
 ✅ Slot filtering        100%
@@ -286,6 +302,7 @@ WEEK 4-6 (Day 16-30)
 ```
 
 ### UI/UX: **65%** 🟡
+
 ```
 ✅ Header/Footer         100%
 ✅ Hero section          100%
@@ -302,6 +319,7 @@ WEEK 4-6 (Day 16-30)
 ## 🎯 SUCCESS CRITERIA
 
 ### For MVP (80%)
+
 - ✅ All critical user flows work
 - ✅ No blocking bugs
 - ✅ Basic error handling
@@ -309,6 +327,7 @@ WEEK 4-6 (Day 16-30)
 - ❌ Unit tests (optional for MVP)
 
 ### For Production (90%)
+
 - ✅ Above + 70% test coverage
 - ✅ CI/CD pipeline working
 - ✅ Performance optimized (Lighthouse 90+)
@@ -316,6 +335,7 @@ WEEK 4-6 (Day 16-30)
 - ✅ Documentation complete
 
 ### For Full Release (100%)
+
 - ✅ Above + All features working
 - ✅ Backend integrations complete
 - ✅ Real-time notifications
@@ -327,6 +347,7 @@ WEEK 4-6 (Day 16-30)
 ## 💡 KEY INSIGHTS
 
 ### What's Going Well
+
 1. **API Integration xuất sắc** - 90% compliance, proper architecture
 2. **Authentication solid** - Cookie-based, OTP flow, role-based
 3. **CRUD operations complete** - All core features working
@@ -334,6 +355,7 @@ WEEK 4-6 (Day 16-30)
 5. **Code structure good** - Easy to maintain and extend
 
 ### What Needs Attention
+
 1. **Testing = 0%** - Biggest risk, no safety net
 2. **Backend dependencies** - Chatbot, Stats, Email chưa ready
 3. **UX gaps** - Một số details chưa polish
@@ -341,6 +363,7 @@ WEEK 4-6 (Day 16-30)
 5. **Performance chưa optimize** - Bundle size, loading time
 
 ### Critical Decisions Needed
+
 1. **Testing strategy** - Unit vs E2E vs Manual?
 2. **Chatbot timeline** - When will backend be ready?
 3. **MVP scope** - Ship at 80% or wait for 90%?
