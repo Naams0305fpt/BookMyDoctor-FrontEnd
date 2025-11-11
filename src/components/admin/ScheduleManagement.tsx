@@ -3,17 +3,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
   faChevronRight,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 // Import từ API service
 import { api, Schedule } from "../../services/api";
+import { useNotification } from "../../contexts/NotificationContext";
 
 // Bỏ interface cũ và mock data
 // interface Schedule { ... }
 // const mockSchedules: Schedule[] = [ ... ];
 
 const ScheduleManagement = () => {
+  const { showNotification } = useNotification();
+
   // State: dùng Schedule từ API
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
@@ -22,6 +26,7 @@ const ScheduleManagement = () => {
   // State loading và error
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
 
   // Hàm fetch data - ADMIN: Lấy tất cả lịch của tất cả bác sĩ
   const fetchSchedules = useCallback(async () => {
@@ -44,6 +49,41 @@ const ScheduleManagement = () => {
     fetchSchedules();
   }, [fetchSchedules]);
 
+  // Handle Delete Schedule
+  const handleDelete = async (
+    scheduleId: number,
+    doctorName: string | undefined,
+    workDate: string
+  ) => {
+    // Confirmation dialog
+    const confirmMessage = `Are you sure you want to delete this schedule?\n\nDoctor: ${
+      doctorName || `ID ${scheduleId}`
+    }\nDate: ${new Date(workDate).toLocaleDateString(
+      "en-GB"
+    )}\n\nThis action cannot be undone.`;
+
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    setIsDeleting(scheduleId);
+    try {
+      await api.deleteSchedule(scheduleId);
+      showNotification("success", "Success", "Schedule deleted successfully");
+      // Refresh table
+      await fetchSchedules();
+    } catch (err: any) {
+      console.error("Delete error:", err);
+      showNotification(
+        "error",
+        "Delete Failed",
+        err.message || "Failed to delete schedule. Please try again."
+      );
+    } finally {
+      setIsDeleting(null);
+    }
+  };
+
   // Client-side filtering
   const filteredSchedules = schedules.filter((schedule) => {
     // Filter by doctor name
@@ -65,12 +105,7 @@ const ScheduleManagement = () => {
     return schedule.IsActive === true;
   });
 
-  // Bỏ hàm handleDelete (nếu không cần)
-  /*
-  const handleDelete = (id: number) => {
-    // ... logic gọi API xóa schedule
-  };
-  */
+  // Bỏ hàm handleDelete cũ (đã implement ở trên)
 
   // Date navigation (Giữ nguyên)
   const goToPreviousDay = () => {
@@ -170,14 +205,14 @@ const ScheduleManagement = () => {
               <th>Start Time</th>
               <th>End Time</th>
               <th>Status</th>
-              {/* <th>Actions</th> */}
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {/* Hiển thị loading */}
             {isLoading && (
               <tr>
-                <td colSpan={6} style={{ textAlign: "center" }}>
+                <td colSpan={7} style={{ textAlign: "center" }}>
                   Loading...
                 </td>
               </tr>
@@ -185,7 +220,7 @@ const ScheduleManagement = () => {
             {/* Hiển thị lỗi */}
             {error && (
               <tr>
-                <td colSpan={6} style={{ textAlign: "center", color: "red" }}>
+                <td colSpan={7} style={{ textAlign: "center", color: "red" }}>
                   {error}
                 </td>
               </tr>
@@ -216,17 +251,70 @@ const ScheduleManagement = () => {
                       {schedule.Status}
                     </span>
                   </td>
-                  {/*
-                <td className="action-buttons">
-                   <FontAwesomeIcon icon={faTrash} className="delete-icon" onClick={() => handleDelete(schedule.ScheduleId)} />
-                </td>
-                */}
+                  <td className="action-buttons">
+                    <button
+                      className="delete-icon"
+                      onClick={() => {
+                        if (schedule.ScheduleId) {
+                          handleDelete(
+                            schedule.ScheduleId,
+                            schedule.DoctorName,
+                            schedule.WorkDate
+                          );
+                        }
+                      }}
+                      disabled={
+                        isDeleting === schedule.ScheduleId ||
+                        !schedule.ScheduleId
+                      }
+                      title={
+                        schedule.ScheduleId
+                          ? "Delete Schedule"
+                          : "Schedule ID missing"
+                      }
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        cursor:
+                          isDeleting === schedule.ScheduleId ||
+                          !schedule.ScheduleId
+                            ? "not-allowed"
+                            : "pointer",
+                        opacity:
+                          isDeleting === schedule.ScheduleId ||
+                          !schedule.ScheduleId
+                            ? 0.5
+                            : 1,
+                        fontSize: "1.1rem",
+                        color: "#dc2626",
+                        transition: "all 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (
+                          isDeleting !== schedule.ScheduleId &&
+                          schedule.ScheduleId
+                        ) {
+                          e.currentTarget.style.color = "#991b1b";
+                          e.currentTarget.style.transform = "scale(1.15)";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = "#dc2626";
+                        e.currentTarget.style.transform = "scale(1)";
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faTrash}
+                        spin={isDeleting === schedule.ScheduleId}
+                      />
+                    </button>
+                  </td>
                 </tr>
               ))}
             {/* Hiển thị khi không có dữ liệu sau khi filter */}
             {!isLoading && !error && filteredSchedules.length === 0 && (
               <tr>
-                <td colSpan={6} style={{ textAlign: "center" }}>
+                <td colSpan={7} style={{ textAlign: "center" }}>
                   No schedules found for the selected criteria.
                 </td>
               </tr>
