@@ -55,15 +55,15 @@ const DoctorManagement = () => {
   };
 
   // Xử lý xóa
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (doctorId: number) => {
     if (!window.confirm("Are you sure you want to delete this doctor?")) {
       return;
     }
     try {
-      await api.deleteDoctor(id);
+      await api.deleteDoctor(doctorId);
       // Cập nhật state sau khi xóa thành công
       setDoctors((prevDoctors) =>
-        prevDoctors.filter((doctor) => doctor.DoctorId !== id)
+        prevDoctors.filter((doctor) => doctor.DoctorId !== doctorId)
       );
     } catch (err: any) {
       console.error("Failed to delete doctor:", err);
