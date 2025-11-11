@@ -82,6 +82,11 @@ const UserMenu: React.FC = () => {
     setIsOpen(false);
   };
 
+  const handleSettingClick = () => {
+    navigate("/settings");
+    setIsOpen(false);
+  };
+
   if (!user) return null;
 
   return (
@@ -149,7 +154,7 @@ const UserMenu: React.FC = () => {
                 <span>Booking History</span>
               </button>
             )}
-            <button className="menu-item">
+            <button className="menu-item" onClick={handleSettingClick}>
               <FontAwesomeIcon icon={faCog} />
               <span>Settings</span>
             </button>
