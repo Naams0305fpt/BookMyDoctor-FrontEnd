@@ -138,27 +138,69 @@ export interface CreateDoctorRequest {
 
 // --- THAY ĐỔI: INTERFACE CHO SCHEDULE (TỪ API MỚI) ---
 export interface Schedule {
-  ScheduleId?: number; // API gốc có vẻ không trả về, nhưng có thể hữu ích
-  DoctorId: number;
-  DoctorName: string; // <-- Quan trọng!
-  WorkDate: string; // "YYYY-MM-DD"
-  StartTime: string; // "HH:mm:ss"
-  EndTime: string; // "HH:mm:ss"
-  Status: string; // Ví dụ: "Scheduled", "Available"...
-  IsActive?: boolean; // API gốc có, thêm vào nếu cần
+  ScheduleId?: number; // API gốc có vẻ không trả về, nhưng có thể hữu ích
+  DoctorId: number;
+  DoctorName?: string; // Optional vì API List_All_Schedules_Doctors không trả về
+  WorkDate: string; // "YYYY-MM-DD"
+  StartTime: string; // "HH:mm:ss"
+  EndTime: string; // "HH:mm:ss"
+  Status: string; // Ví dụ: "Scheduled", "Available"...
+  IsActive?: boolean; // API gốc có, thêm vào nếu cần
 }
 // --- KẾT THÚC THÊM MỚI ---
 
+// --- SCHEDULE REQUEST/RESPONSE INTERFACES ---
+// Dựa trên API Documentation:
+// POST /api/Schedule/Add_Schedule_Doctor
+export interface AddScheduleRequest {
+  DoctorId: number;
+  WorkDate: string; // "YYYY-MM-DD"
+  StartTime: string; // "HH:mm" (e.g. "08:00")
+  EndTime: string; // "HH:mm" (e.g. "17:00")
+  Status: string; // "Scheduled", "Available", etc.
+}
+
+// PUT /api/Schedule/Update_Schedule_Doctor
+export interface UpdateScheduleRequest {
+  ScheduleId: number;
+  DoctorId: number;
+  WorkDate: string; // "YYYY-MM-DD"
+  StartTime: string; // "HH:mm"
+  EndTime: string; // "HH:mm"
+  Status: string;
+}
+
+// Response 201 Created từ Add_Schedule_Doctor
+export interface AddScheduleResponse {
+  ScheduleId: number;
+  DoctorId: number;
+  WorkDate: string;
+  StartTime: string;
+  EndTime: string;
+  Status: string;
+  IsActive: boolean;
+}
+
+// GET /api/Schedule/Get_Schedule_ById Response
+export interface ScheduleDetailResponse {
+  ScheduleId: number;
+  DoctorId: number;
+  WorkDate: string;
+  StartTime: string;
+  EndTime: string;
+  Status: string;
+  IsActive: boolean;
+}
+// --- KẾT THÚC SCHEDULE INTERFACES ---
+
 // --- SỬA LỖI TYPE: Thêm Name và Phone (dựa trên API 'info_slot_busy') ---
 export interface ScheduleResponseItem {
-  AppointHour: string; // "HH:mm:ss"
-  Status: string; // "Scheduled", "Cancelled", v.v...
-  Name?: string; // <-- API có trả về
-  Phone?: string; // <-- API có trả về
+  AppointHour: string; // "HH:mm:ss"
+  Status: string; // "Scheduled", "Cancelled", v.v...
+  Name?: string; // <-- API có trả về
+  Phone?: string; // <-- API có trả về
 }
-// --- KẾT THÚC SỬA LỖI ---
-
-// --- HELPER FUNCTION (Giữ nguyên) ---
+// --- KẾT THÚC SỬA LỖI ---// --- HELPER FUNCTION (Giữ nguyên) ---
 export const formatDateForAPI = (date: Date | null): string => {
   // Trả về chuỗi rỗng nếu date là null hoặc undefined
   if (!date) return ""; 
@@ -360,14 +402,16 @@ export const api = {
     return response.data; // Trả về data (thường là rỗng hoặc 200 OK)
   },
 
+  // --- SCHEDULE APIs ---
+  
+  // Lấy lịch 1 bác sĩ (có filter theo tên và ngày)
+  // GET /api/Schedule/List_Schedules_1_Doctor
   getAllSchedules: async (
-    doctorSearch: string, // Giả định API hỗ trợ lọc theo tên
-    date: string // Giả định API hỗ trợ lọc theo ngày "YYYY-MM-DD"
+    doctorName?: string, // Query param: doctorName
+    date?: string // Query param: date "YYYY-MM-DD"
   ): Promise<Schedule[]> => {
-    
-    // Xây dựng params, chỉ gửi nếu có giá trị
     const params: any = {};
-    if (doctorSearch) params.doctorSearch = doctorSearch; // Hoặc tên param API dùng (vd: doctorSearch)
+    if (doctorName) params.doctorName = doctorName;
     if (date) params.date = date;
 
     const response = await apiClient.get("/Schedule/List_Schedules_1_Doctor", {
@@ -376,14 +420,56 @@ export const api = {
     return response.data as Schedule[];
   },
 
+  // Lấy tất cả lịch của tất cả bác sĩ (Admin view)
+  // GET /api/Schedule/List_All_Schedules_Doctors
+  getAllSchedulesForAdmin: async (): Promise<Schedule[]> => {
+    const response = await apiClient.get("/Schedule/List_All_Schedules_Doctors");
+    return response.data as Schedule[];
+  },
+
+  // Lấy chi tiết 1 lịch theo ID
+  // GET /api/Schedule/Get_Schedule_ById?scheduleId={id}
+  getScheduleById: async (scheduleId: number): Promise<ScheduleDetailResponse> => {
+    const response = await apiClient.get("/Schedule/Get_Schedule_ById", {
+      params: { scheduleId }
+    });
+    return response.data as ScheduleDetailResponse;
+  },
+
+  // Tạo lịch mới (Doctor/Admin)
+  // POST /api/Schedule/Add_Schedule_Doctor
+  // Authorize: R02 (Doctor)
+  addSchedule: async (data: AddScheduleRequest): Promise<AddScheduleResponse> => {
+    const response = await apiClient.post("/Schedule/Add_Schedule_Doctor", data);
+    return response.data as AddScheduleResponse;
+  },
+
+  // Cập nhật lịch (Doctor/Admin)
+  // PUT /api/Schedule/Update_Schedule_Doctor
+  // Authorize: R02 (Doctor)
+  updateSchedule: async (data: UpdateScheduleRequest): Promise<void> => {
+    // Response: 204 No Content
+    await apiClient.put("/Schedule/Update_Schedule_Doctor", data);
+  },
+
+  // Xóa lịch (Doctor/Admin)
+  // DELETE /api/Schedule/Delete_Schedule_Doctor?scheduleId={id}
+  // Authorize: R01 (Admin), R02 (Doctor)
+  deleteSchedule: async (scheduleId: number): Promise<{ message: string }> => {
+    const response = await apiClient.delete("/Schedule/Delete_Schedule_Doctor", {
+      params: { scheduleId }
+    });
+    return response.data;
+  },
+
+  // Lấy giờ đã đặt của bác sĩ (BookingForm)
+  // GET /api/Booking/info_slot_busy?doctorId={id}&date={YYYY-MM-DD}
   getDoctorSchedule: async (
     doctorId: number,
     date: Date
   ): Promise<ScheduleResponseItem[]> => {
-    
     const formattedDate = formatDateForAPI(date);
     
-    // axios xử lý query params qua 'params' object, sạch sẽ hơn
     const response = await apiClient.get<ScheduleResponseItem[]>('/booking/info_slot_busy', {
       params: {
         doctorId: doctorId,
