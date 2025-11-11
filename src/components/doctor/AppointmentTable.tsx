@@ -7,11 +7,18 @@ import {
   faTimes,
   faChevronLeft, // <-- Thêm icon
   faChevronRight, // <-- Thêm icon
+  faSave,
+  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker"; // <-- Thêm DatePicker
 import "react-datepicker/dist/react-datepicker.css";
 // --- THAY ĐỔI: Import API, types, helpers ---
-import { api, Patient, formatDateForAPI } from "../../services/api"; // <-- Đường dẫn có thể cần sửa
+import {
+  api,
+  Patient,
+  formatDateForAPI,
+  UpdatePatientRequest,
+} from "../../services/api";
 import "./DoctorSchedule.css"; // <-- Đổi tên CSS nếu cần
 
 // --- Interface Appointment và TableRowProps giữ nguyên ---
@@ -26,137 +33,179 @@ interface Appointment {
   status: "pending" | "completed" | "cancelled"; // Map từ API status
   time?: string; // API getPatients chưa có time?
   appointHour?: string; // Thêm trường giờ hẹn
+  appointDate?: string; // Thêm trường ngày hẹn (YYYY-MM-DD)
 }
 
 interface TableRowProps {
   appointment: Appointment;
-  onEdit: (
+  onUpdate: (
     id: number,
-    field: "symptom" | "prescription",
-    value: string
+    symptom: string,
+    prescription: string,
+    status: Appointment["status"]
   ) => void;
   onDelete: (id: number) => void;
-  onStatusChange: (id: number, status: Appointment["status"]) => void;
 }
 
-// --- Component TableRow giữ nguyên ---
+// --- Component TableRow với chế độ Edit ---
 const TableRow: React.FC<TableRowProps> = ({
   appointment,
-  onEdit,
+  onUpdate,
   onDelete,
-  onStatusChange,
 }) => {
-  const [isEditingSymptom, setIsEditingSymptom] = useState(false);
-  const [isEditingPrescription, setIsEditingPrescription] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [tempSymptom, setTempSymptom] = useState(appointment.symptom);
   const [tempPrescription, setTempPrescription] = useState(
     appointment.prescription
   );
+  const [tempStatus, setTempStatus] = useState(appointment.status);
 
-  const handleEditSave = (
-    field: "symptom" | "prescription",
-    value: string,
-    setEditing: (value: boolean) => void
-  ) => {
-    onEdit(appointment.id, field, value);
-    setEditing(false);
+  // Cập nhật temp values khi appointment thay đổi
+  useEffect(() => {
+    setTempSymptom(appointment.symptom);
+    setTempPrescription(appointment.prescription);
+    setTempStatus(appointment.status);
+  }, [appointment]);
+
+  const handleSave = () => {
+    onUpdate(appointment.id, tempSymptom, tempPrescription, tempStatus);
+    setIsEditMode(false);
+  };
+
+  const handleCancel = () => {
+    // Reset về giá trị gốc
+    setTempSymptom(appointment.symptom);
+    setTempPrescription(appointment.prescription);
+    setTempStatus(appointment.status);
+    setIsEditMode(false);
+  };
+
+  const getStatusIcon = (status: Appointment["status"]) => {
+    switch (status) {
+      case "completed":
+        return (
+          <FontAwesomeIcon
+            icon={faCheck}
+            className="status-icon status-completed"
+            title="Completed"
+          />
+        );
+      case "cancelled":
+        return (
+          <FontAwesomeIcon
+            icon={faTimes}
+            className="status-icon status-cancelled"
+            title="Cancelled"
+          />
+        );
+      case "pending":
+      default:
+        return (
+          <span className="status-icon status-pending" title="Pending">
+            ⏳
+          </span>
+        );
+    }
   };
 
   return (
-    <tr>
-      {/* --- SỬA: Hiển thị đúng dữ liệu từ props --- */}
+    <tr className={isEditMode ? "edit-mode" : ""}>
       <td>{appointment.fullName}</td>
       <td>{appointment.dateOfBirth.toLocaleDateString("en-GB")}</td>
       <td>{appointment.gender}</td>
       <td>{appointment.phone}</td>
+      <td>{appointment.appointHour}</td>
+
+      {/* Symptom */}
       <td>
-        <div className="editable-field">
-          {isEditingSymptom ? (
-            <input
-              type="text"
-              value={tempSymptom}
-              onChange={(e) => setTempSymptom(e.target.value)}
-              onBlur={() =>
-                handleEditSave("symptom", tempSymptom, setIsEditingSymptom)
-              }
-              autoFocus
-            />
+        {isEditMode ? (
+          <input
+            type="text"
+            className="edit-input"
+            value={tempSymptom}
+            onChange={(e) => setTempSymptom(e.target.value)}
+          />
+        ) : (
+          appointment.symptom || "N/A"
+        )}
+      </td>
+
+      {/* Prescription */}
+      <td>
+        {isEditMode ? (
+          <input
+            type="text"
+            className="edit-input"
+            value={tempPrescription}
+            onChange={(e) => setTempPrescription(e.target.value)}
+          />
+        ) : (
+          appointment.prescription || "N/A"
+        )}
+      </td>
+
+      {/* Status */}
+      <td>
+        {isEditMode ? (
+          <select
+            className="edit-select"
+            value={tempStatus}
+            onChange={(e) =>
+              setTempStatus(e.target.value as Appointment["status"])
+            }
+          >
+            <option value="pending">Scheduled</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        ) : (
+          getStatusIcon(appointment.status)
+        )}
+      </td>
+
+      {/* Actions */}
+      <td>
+        <div className="action-buttons">
+          {isEditMode ? (
+            <>
+              <button
+                className="btn-save"
+                onClick={handleSave}
+                title="Save changes"
+              >
+                <FontAwesomeIcon icon={faSave} />
+              </button>
+              <button
+                className="btn-cancel"
+                onClick={handleCancel}
+                title="Cancel"
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </>
           ) : (
             <>
-              {appointment.symptom}
-              <FontAwesomeIcon
-                icon={faPencil}
-                className="edit-icon"
-                onClick={() => setIsEditingSymptom(true)}
-              />
+              <button
+                className="btn-edit"
+                onClick={() => setIsEditMode(true)}
+                title="Edit"
+              >
+                <FontAwesomeIcon icon={faEdit} />
+              </button>
+              <button
+                className="btn-delete"
+                onClick={() => onDelete(appointment.id)}
+                title="Delete"
+              >
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
             </>
           )}
         </div>
-      </td>
-      <td>
-        <div className="editable-field">
-          {isEditingPrescription ? (
-            <input
-              type="text"
-              value={tempPrescription}
-              onChange={(e) => setTempPrescription(e.target.value)}
-              onBlur={() =>
-                handleEditSave(
-                  "prescription",
-                  tempPrescription,
-                  setIsEditingPrescription
-                )
-              }
-              autoFocus
-            />
-          ) : (
-            <>
-              {appointment.prescription}
-              <FontAwesomeIcon
-                icon={faPencil}
-                className="edit-icon"
-                onClick={() => setIsEditingPrescription(true)}
-              />
-            </>
-          )}
-        </div>
-      </td>
-      <td>
-        {/* --- SỬA: Hiển thị icon dựa trên status đã map --- */}
-        {appointment.status === "completed" && (
-          <FontAwesomeIcon
-            icon={faCheck}
-            className="status-icon status-completed" // CSS class này cần tồn tại
-            title="Completed"
-          />
-        )}
-        {appointment.status === "cancelled" && (
-          <FontAwesomeIcon
-            icon={faTimes}
-            className="status-icon status-cancelled" // CSS class này cần tồn tại
-            title="Cancelled"
-          />
-        )}
-        {appointment.status === "pending" && (
-          <span className="status-icon status-pending" title="Pending">
-            {" "}
-            {/* Có thể dùng icon khác */}⏳ {/* Hoặc dùng text */}
-          </span>
-        )}
-      </td>
-      <td>
-        <FontAwesomeIcon
-          icon={faTrash}
-          className="delete-icon"
-          onClick={() => onDelete(appointment.id)}
-        />
       </td>
     </tr>
   );
 };
-
-// --- Bỏ mockAppointments ---
-// const mockAppointments: Appointment[] = [ ... ];
 
 // --- Component Chính: AppointmentTable ---
 const AppointmentTable: React.FC = () => {
@@ -196,44 +245,82 @@ const AppointmentTable: React.FC = () => {
     return () => clearTimeout(timerId);
   }, [searchQuery, selectedDate, selectedStatus, fetchPatients]); // <-- Thêm fetchPatients vào dependency array
 
-  // --- Cần API để sửa/xóa/đổi status ---
-  const handleEdit = (
+  // --- Handler để update tất cả thông tin cùng lúc ---
+  const handleUpdate = async (
     id: number,
-    field: "symptom" | "prescription",
-    value: string
+    symptom: string,
+    prescription: string,
+    status: Appointment["status"]
   ) => {
-    console.log(
-      `TODO: Call API to update ${field} for ID ${id} with value "${value}"`
-    );
-    // Tạm thời cập nhật local state (không lý tưởng)
-    setPatients((prev) =>
-      prev.map((p) =>
-        p.id === id
-          ? { ...p, [field === "symptom" ? "Symptoms" : "Prescription"]: value }
-          : p
-      )
-    );
+    try {
+      // Tìm patient để lấy appointDate và appointHour
+      const patient = patients.find((p) => p.id === id);
+      if (!patient) {
+        console.error(`Patient with ID ${id} not found`);
+        return;
+      }
+
+      // Map status từ component sang API
+      const apiStatus =
+        status === "pending"
+          ? "Scheduled"
+          : status === "completed"
+          ? "Completed"
+          : "Cancelled";
+
+      // Chuẩn bị data để update
+      const updateData: UpdatePatientRequest = {
+        Status: apiStatus,
+        Symptoms: symptom,
+        Prescription: prescription,
+      };
+
+      // Gọi API
+      await api.updatePatientAppointment(
+        id,
+        patient.AppointDate,
+        patient.AppointHour || "00:00",
+        updateData
+      );
+
+      // Cập nhật local state sau khi API thành công
+      setPatients((prev) =>
+        prev.map((p) =>
+          p.id === id
+            ? {
+                ...p,
+                Symptoms: symptom,
+                Prescription: prescription,
+                Status: apiStatus,
+              }
+            : p
+        )
+      );
+
+      console.log(`✅ Updated patient ID ${id} successfully`);
+    } catch (error: any) {
+      console.error(`❌ Failed to update patient:`, error.message);
+      setError(error.message || "Failed to update patient information");
+    }
   };
 
-  const handleDelete = (id: number) => {
-    console.log(`TODO: Call API to delete appointment with ID ${id}`);
-    // Tạm thời cập nhật local state
-    // Nên có confirm modal ở đây
-    setPatients((prev) => prev.filter((p) => p.id !== id));
-  };
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this appointment?")) {
+      return;
+    }
 
-  const handleStatusChange = (id: number, status: Appointment["status"]) => {
-    console.log(`TODO: Call API to update status for ID ${id} to ${status}`);
-    // Tạm thời cập nhật local state (cần map ngược status lại?)
-    const apiStatus =
-      status === "pending"
-        ? "Scheduled"
-        : status === "completed"
-        ? "Completed"
-        : "Cancelled";
-    setPatients((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, Status: apiStatus } : p))
-    );
+    try {
+      // TODO: Implement delete API when available
+      console.log(`TODO: Call API to delete appointment with ID ${id}`);
+
+      // Tạm thời cập nhật local state
+      setPatients((prev) => prev.filter((p) => p.id !== id));
+
+      console.log(`✅ Deleted appointment ID ${id}`);
+    } catch (error: any) {
+      console.error(`❌ Failed to delete appointment:`, error.message);
+      setError(error.message || "Failed to delete appointment");
+    }
   };
 
   // Hàm điều hướng ngày (giống PatientManagement)
@@ -349,14 +436,14 @@ const AppointmentTable: React.FC = () => {
         <tbody>
           {isLoading && (
             <tr>
-              <td colSpan={8} style={{ textAlign: "center" }}>
+              <td colSpan={9} style={{ textAlign: "center" }}>
                 Loading...
               </td>
             </tr>
           )}
           {error && (
             <tr>
-              <td colSpan={8} style={{ textAlign: "center", color: "red" }}>
+              <td colSpan={9} style={{ textAlign: "center", color: "red" }}>
                 {error}
               </td>
             </tr>
@@ -374,24 +461,23 @@ const AppointmentTable: React.FC = () => {
                 gender: patient.Gender,
                 phone: patient.PhoneNumber, // Đổi tên trường
                 appointHour: patient.AppointHour || "N/A", // Lấy giờ hẹn nếu có
+                appointDate: patient.AppointDate, // Lưu ngày hẹn để gọi API
                 symptom: patient.Symptoms, // Đổi tên trường
                 prescription: patient.Prescription,
                 status: mapApiStatusToComponentStatus(patient.Status), // Map status
-                // time: ??? // API getPatients hiện không có giờ hẹn
               };
               return (
                 <TableRow
-                  key={appointmentData.id} // <-- Dùng ID đã map
+                  key={appointmentData.id}
                   appointment={appointmentData}
-                  onEdit={handleEdit}
+                  onUpdate={handleUpdate}
                   onDelete={handleDelete}
-                  onStatusChange={handleStatusChange}
                 />
               );
             })}
           {!isLoading && !error && patients.length === 0 && (
             <tr>
-              <td colSpan={8} style={{ textAlign: "center" }}>
+              <td colSpan={9} style={{ textAlign: "center" }}>
                 No patients found.
               </td>
             </tr>
