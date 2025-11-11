@@ -325,25 +325,52 @@ export const api = {
   },
 
   checkAuthStatus: async (): Promise<User> => {
-    const response = await apiClient.get('/Auth/check-role');
-    const data = response.data; // data thô từ API
+    // Lấy role info
+    const roleResponse = await apiClient.get('/Auth/check-role');
+    const roleData = roleResponse.data;
 
-    // Chuyển đổi dữ liệu API thành interface User của React (Logic này giữ nguyên)
+    // Lấy profile info để có thông tin cơ bản
+    const profileResponse = await apiClient.get('/Profile/profile-me');
+    const profileData = profileResponse.data;
+
+    // Nếu là doctor, cần lấy doctorId từ API All-Doctors
+    let doctorId: number | undefined = undefined;
+    if (roleData.roleName === "Doctor") {
+      try {
+        const doctorsResponse = await apiClient.get('/Doctors/All-Doctors');
+        const doctors = doctorsResponse.data;
+        // Tìm doctor có UserId trùng với user hiện tại
+        const currentDoctor = doctors.find((doc: any) => doc.UserId === profileData.UserId);
+        if (currentDoctor) {
+          doctorId = currentDoctor.DoctorId;
+        } else {
+          console.warn("⚠️ Doctor not found in All-Doctors list for UserId:", profileData.UserId);
+        }
+      } catch (err) {
+        console.error("❌ Failed to fetch doctors list:", err);
+      }
+    }
+
+    // Chuyển đổi dữ liệu API thành interface User của React
     const user: User = {
-      id: data.userId,
-      name: data.username,
-      userType: data.roleName.toLowerCase() as UserType, // "Patient" -> "patient"
-      phone: data.phone,
-      email: data.email,
-      avatar: data.avatar || "/images/default-avatar.png",
+      id: roleData.userId,
+      name: profileData.Name || roleData.username,
+      userType: roleData.roleName.toLowerCase() as UserType, // "Admin"/"Doctor"/"Patient" -> lowercase
+      phone: profileData.Phone,
+      email: profileData.Email,
+      avatar: "/images/default-avatar.png",
+      doctorId: doctorId, // Lấy từ API All-Doctors
+      patientId: profileData.PatientId, // Có với patient (PascalCase)
     };
+
     return user;
   },
 
   getPatients: async (
     name: string,
     appointDate: string,
-    status: string
+    status: string,
+    doctorId?: number // Thêm optional doctorId parameter
   ): Promise<Patient[]> => {
     
     // Xây dựng params, chỉ gửi nếu có giá trị
@@ -351,10 +378,12 @@ export const api = {
     if (name) params.name = name;
     if (appointDate) params.appointDate = appointDate;
     if (status) params.status = status;
+    if (doctorId) params.doctorId = doctorId; // Thêm doctorId nếu có
 
     const response = await apiClient.get("/Patients/AllPatientsAndSearch", {
       params: params,
     });
+    
     return response.data as Patient[];
   },
 
@@ -393,8 +422,24 @@ export const api = {
   },
 
   // --- THÊM MỚI: LẤY THÔNG TIN PROFILE ---
+  // --- THÊM MỚI: LẤY THÔNG TIN PROFILE ---
   getProfileMe: async (): Promise<any> => {
     const response = await apiClient.get('/Profile/profile-me');
+    return response.data;
+  },
+
+  // --- THÊM MỚI: CẬP NHẬT PROFILE ---
+  updateProfileMe: async (data: {
+    name?: string;
+    phone?: string;
+    email?: string;
+    gender?: string;
+    dateOfBirth?: string;
+    address?: string;
+    department?: string;
+    experienceYears?: number;
+  }): Promise<any> => {
+    const response = await apiClient.put('/Profile/Update_Profile_Me', data);
     return response.data;
   },
 

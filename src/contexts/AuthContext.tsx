@@ -18,6 +18,8 @@ export interface User {
   avatar?: string;
   specialization?: string;
   isVerified?: boolean;
+  doctorId?: number; // Thêm doctorId cho doctor
+  patientId?: number; // Thêm patientId cho patient
 }
 
 interface AuthContextType {

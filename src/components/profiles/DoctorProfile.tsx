@@ -10,8 +10,6 @@ import {
   faEnvelope,
   faCalendarAlt,
   faHospital,
-  faGraduationCap,
-  faClock,
   faVenusMars,
   faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
@@ -24,12 +22,16 @@ interface ProfileData {
   UserId: number;
   Username: string;
   RoleId: string;
+  DoctorId?: number;
   Name: string;
   Gender: string;
   DateOfBirth: string;
   Phone: string;
   Email: string;
   Address: string | null;
+  Department?: string;
+  ExperienceYears?: number;
+  Identification?: string;
 }
 
 const DoctorProfile: React.FC = () => {
@@ -37,6 +39,7 @@ const DoctorProfile: React.FC = () => {
   const { showNotification } = useNotification();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -45,12 +48,8 @@ const DoctorProfile: React.FC = () => {
     gender: "",
     dateOfBirth: "",
     address: "",
-    licenseNumber: "MD-2023-5678",
-    hospital: "BookMyDoctor Medical Center",
-    education: "Harvard Medical School",
-    experience: "8 years",
-    consultationFee: "$50",
-    bio: "Experienced medical professional dedicated to providing excellent patient care with a focus on preventive medicine and patient education.",
+    department: "",
+    experienceYears: 0,
   });
 
   useEffect(() => {
@@ -71,12 +70,8 @@ const DoctorProfile: React.FC = () => {
         gender: data.Gender || "",
         dateOfBirth: data.DateOfBirth || "",
         address: data.Address || "",
-        licenseNumber: "MD-2023-5678",
-        hospital: "BookMyDoctor Medical Center",
-        education: "Harvard Medical School",
-        experience: "8 years",
-        consultationFee: "$50",
-        bio: "Experienced medical professional dedicated to providing excellent patient care with a focus on preventive medicine and patient education.",
+        department: data.Department || "",
+        experienceYears: data.ExperienceYears || 0,
       });
     } catch (error: any) {
       console.error("Error fetching profile:", error);
@@ -99,20 +94,45 @@ const DoctorProfile: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "experienceYears" ? parseInt(value) || 0 : value,
     }));
   };
 
-  const handleSave = () => {
-    // Here you would typically call an API to update the profile
-    console.log("Saving doctor profile:", formData);
-    setIsEditing(false);
-    showNotification(
-      "success",
-      "Profile Updated",
-      "Your profile has been successfully updated.",
-      3000
-    );
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      await api.updateProfileMe({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        gender: formData.gender,
+        dateOfBirth: formData.dateOfBirth,
+        address: formData.address,
+        department: formData.department,
+        experienceYears: formData.experienceYears,
+      });
+
+      showNotification(
+        "success",
+        "Profile Updated",
+        "Your profile has been successfully updated.",
+        3000
+      );
+
+      setIsEditing(false);
+      // Refresh profile data
+      await fetchProfile();
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      showNotification(
+        "error",
+        "Update Failed",
+        error.message || "Failed to update profile. Please try again.",
+        3000
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -125,12 +145,8 @@ const DoctorProfile: React.FC = () => {
         gender: profileData.Gender || "",
         dateOfBirth: profileData.DateOfBirth || "",
         address: profileData.Address || "",
-        licenseNumber: "MD-2023-5678",
-        hospital: "BookMyDoctor Medical Center",
-        education: "Harvard Medical School",
-        experience: "8 years",
-        consultationFee: "$50",
-        bio: "Experienced medical professional dedicated to providing excellent patient care with a focus on preventive medicine and patient education.",
+        department: profileData.Department || "",
+        experienceYears: profileData.ExperienceYears || 0,
       });
     }
     setIsEditing(false);
@@ -171,20 +187,38 @@ const DoctorProfile: React.FC = () => {
         <div className="profile-info">
           <h1>{profileData.Name}</h1>
           <p className="profile-type doctor">Verified Doctor</p>
+          {profileData.Department && (
+            <span className="profile-status">
+              <FontAwesomeIcon icon={faHospital} />
+              {profileData.Department}
+            </span>
+          )}
         </div>
         <div className="profile-actions">
           {!isEditing ? (
-            <button className="edit-btn" onClick={() => setIsEditing(true)}>
+            <button
+              className="edit-btn"
+              onClick={() => setIsEditing(true)}
+              disabled={isSaving}
+            >
               <FontAwesomeIcon icon={faEdit} />
               Edit Profile
             </button>
           ) : (
             <div className="edit-actions">
-              <button className="save-btn" onClick={handleSave}>
+              <button
+                className="save-btn"
+                onClick={handleSave}
+                disabled={isSaving}
+              >
                 <FontAwesomeIcon icon={faSave} />
-                Save
+                {isSaving ? "Saving..." : "Save"}
               </button>
-              <button className="cancel-btn" onClick={handleCancel}>
+              <button
+                className="cancel-btn"
+                onClick={handleCancel}
+                disabled={isSaving}
+              >
                 <FontAwesomeIcon icon={faTimes} />
                 Cancel
               </button>
@@ -233,12 +267,13 @@ const DoctorProfile: React.FC = () => {
                   value={formData.gender}
                   onChange={handleInputChange}
                 >
+                  <option value="">Select Gender</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
                 </select>
               ) : (
-                <span>{formData.gender}</span>
+                <span>{formData.gender || "Not specified"}</span>
               )}
             </div>
 
@@ -257,7 +292,7 @@ const DoctorProfile: React.FC = () => {
               ) : (
                 <span>{formatDate(formData.dateOfBirth)}</span>
               )}
-            </div>|
+            </div>
 
             <div className="profile-field">
               <label>
@@ -318,124 +353,46 @@ const DoctorProfile: React.FC = () => {
           <div className="profile-grid">
             <div className="profile-field">
               <label>
-                <FontAwesomeIcon icon={faCalendarAlt} />
-                License Number
-              </label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="licenseNumber"
-                  value={formData.licenseNumber}
-                  onChange={handleInputChange}
-                />
-              ) : (
-                <span>{formData.licenseNumber}</span>
-              )}
-            </div>
-
-            <div className="profile-field">
-              <label>
                 <FontAwesomeIcon icon={faHospital} />
-                Hospital/Clinic
+                Department
               </label>
               {isEditing ? (
                 <input
                   type="text"
-                  name="hospital"
-                  value={formData.hospital}
+                  name="department"
+                  value={formData.department}
                   onChange={handleInputChange}
+                  placeholder="Enter department/specialty"
                 />
               ) : (
-                <span>{formData.hospital}</span>
+                <span>{formData.department || "Not specified"}</span>
               )}
             </div>
 
             <div className="profile-field">
               <label>
-                <FontAwesomeIcon icon={faGraduationCap} />
-                Education
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                Experience (Years)
               </label>
               {isEditing ? (
                 <input
-                  type="text"
-                  name="education"
-                  value={formData.education}
+                  type="number"
+                  name="experienceYears"
+                  value={formData.experienceYears}
                   onChange={handleInputChange}
+                  min="0"
                 />
               ) : (
-                <span>{formData.education}</span>
+                <span>{formData.experienceYears} years</span>
               )}
             </div>
 
-            <div className="profile-field">
-              <label>
-                <FontAwesomeIcon icon={faClock} />
-                Experience
-              </label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleInputChange}
-                />
-              ) : (
-                <span>{formData.experience}</span>
-              )}
-            </div>
-
-            <div className="profile-field">
-              <label>Consultation Fee</label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="consultationFee"
-                  value={formData.consultationFee}
-                  onChange={handleInputChange}
-                />
-              ) : (
-                <span>{formData.consultationFee}</span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="profile-section">
-          <h3>About</h3>
-          <div className="profile-field full-width">
-            {isEditing ? (
-              <textarea
-                name="bio"
-                value={formData.bio}
-                onChange={handleInputChange}
-                rows={4}
-                placeholder="Tell patients about your experience and approach to medicine..."
-              />
-            ) : (
-              <p className="bio-text">{formData.bio}</p>
+            {profileData.Identification && (
+              <div className="profile-field">
+                <label>Identification Number</label>
+                <span>{profileData.Identification}</span>
+              </div>
             )}
-          </div>
-        </div>
-
-        <div className="profile-section">
-          <h3>Statistics</h3>
-          <div className="stats-grid">
-            <div className="stat-card">
-              <h4>Total Patients</h4>
-              <span className="stat-number">156</span>
-            </div>
-            <div className="stat-card">
-              <h4>Appointments Today</h4>
-              <span className="stat-number">8</span>
-            </div>
-            <div className="stat-card">
-              <h4>Patient Rating</h4>
-              <span className="stat-number">4.8/5</span>
-            </div>
-            <div className="stat-card">
-              <h4>Years of Practice</h4>
-              <span className="stat-number">8</span>
-            </div>
           </div>
         </div>
       </div>

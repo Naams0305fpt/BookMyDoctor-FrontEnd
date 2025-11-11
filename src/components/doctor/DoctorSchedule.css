@@ -189,11 +189,11 @@
 }
 
 .status-cancelled {
-  color: #f3f4f6;
+  color: #dc3545;
 }
 
 .status-completed {
-  color: #dc3545;
+  color: rgb(27, 236, 27);
 }
 
 .status-scheduled {

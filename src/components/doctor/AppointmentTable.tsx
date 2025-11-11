@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useCallback } from "react"; // <-- Thêm hook
+import React, { useState, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPencil,
   faTrash,
   faCheck,
   faTimes,
-  faChevronLeft, // <-- Thêm icon
-  faChevronRight, // <-- Thêm icon
+  faChevronLeft,
+  faChevronRight,
   faSave,
   faEdit,
 } from "@fortawesome/free-solid-svg-icons";
-import DatePicker from "react-datepicker"; // <-- Thêm DatePicker
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-// --- THAY ĐỔI: Import API, types, helpers ---
 import {
   api,
   Patient,
   formatDateForAPI,
   UpdatePatientRequest,
 } from "../../services/api";
-import "./DoctorSchedule.css"; // <-- Đổi tên CSS nếu cần
+import { useAuth } from "../../contexts/AuthContext"; // Import useAuth
+import "./DoctorSchedule.css";
 
 // --- Interface Appointment và TableRowProps giữ nguyên ---
 interface Appointment {
@@ -209,6 +209,8 @@ const TableRow: React.FC<TableRowProps> = ({
 
 // --- Component Chính: AppointmentTable ---
 const AppointmentTable: React.FC = () => {
+  const { user } = useAuth(); // Lấy thông tin user để check role và doctorId
+
   // --- THAY ĐỔI: State dùng Patient từ API ---
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -226,7 +228,32 @@ const AppointmentTable: React.FC = () => {
       setError(null);
       try {
         const formattedDate = date ? formatDateForAPI(date) : "";
-        const data = await api.getPatients(name, formattedDate, status);
+
+        // TODO: THAY ĐỔI API MỚI
+        // ==========================================
+        // ⚠️ QUAN TRỌNG: Backend đang phát triển API mới chuyên dụng cho Appointment Management
+        // Hiện tại đang dùng tạm API: GET /api/Patients/AllPatientsAndSearch?doctorId={id}
+        //
+        // KHI BACKEND HOÀN THÀNH API MỚI, HÃY:
+        // 1. Tạo interface mới cho Appointment response trong api.ts
+        // 2. Thêm method mới: api.getAppointments(name, date, status, doctorId)
+        // 3. Thay thế api.getPatients() bên dưới bằng api.getAppointments()
+        // 4. Cập nhật mapping logic nếu response structure khác
+        // ==========================================
+
+        // Nếu là doctor, chỉ lấy bệnh nhân của mình
+        // Nếu là admin, lấy tất cả
+        const doctorIdParam =
+          user?.userType === "doctor" && user?.doctorId
+            ? user.doctorId
+            : undefined;
+
+        const data = await api.getPatients(
+          name,
+          formattedDate,
+          status,
+          doctorIdParam
+        );
         setPatients(data);
       } catch (err: any) {
         setError(err.message || "Failed to fetch patients.");
@@ -234,7 +261,7 @@ const AppointmentTable: React.FC = () => {
         setIsLoading(false);
       }
     },
-    []
+    [user]
   );
 
   // Gọi API khi component mount và khi bộ lọc thay đổi
@@ -243,7 +270,7 @@ const AppointmentTable: React.FC = () => {
       fetchPatients(searchQuery, selectedDate, selectedStatus);
     }, 500); // Debounce
     return () => clearTimeout(timerId);
-  }, [searchQuery, selectedDate, selectedStatus, fetchPatients]); // <-- Thêm fetchPatients vào dependency array
+  }, [searchQuery, selectedDate, selectedStatus, fetchPatients]);
 
   // --- Handler để update tất cả thông tin cùng lúc ---
   const handleUpdate = async (
@@ -296,8 +323,6 @@ const AppointmentTable: React.FC = () => {
             : p
         )
       );
-
-      console.log(`✅ Updated patient ID ${id} successfully`);
     } catch (error: any) {
       console.error(`❌ Failed to update patient:`, error.message);
       setError(error.message || "Failed to update patient information");
@@ -311,12 +336,9 @@ const AppointmentTable: React.FC = () => {
 
     try {
       // TODO: Implement delete API when available
-      console.log(`TODO: Call API to delete appointment with ID ${id}`);
 
       // Tạm thời cập nhật local state
       setPatients((prev) => prev.filter((p) => p.id !== id));
-
-      console.log(`✅ Deleted appointment ID ${id}`);
     } catch (error: any) {
       console.error(`❌ Failed to delete appointment:`, error.message);
       setError(error.message || "Failed to delete appointment");
@@ -422,7 +444,7 @@ const AppointmentTable: React.FC = () => {
         <thead>
           <tr>
             {/* --- SỬA: Bỏ cột No. và Username nếu không cần --- */}
-            <th>Full Name</th>
+            <th>Full Patient Name</th>
             <th>Date of Birth</th>
             <th>Gender</th>
             <th>Phone</th>

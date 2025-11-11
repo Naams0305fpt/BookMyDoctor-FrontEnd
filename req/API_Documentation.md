@@ -637,27 +637,37 @@ GET /api/Patients/AllPatientsAndSearch?doctorId=12&status=Scheduled
 
 ### 6.3. **PUT** `/api/Patients/UpdatePatient`
 
-- **Chức năng**: Cập nhật triệu chứng và đơn thuốc
+- **Chức năng**: Cập nhật trạng thái, triệu chứng và đơn thuốc của bệnh nhân
 - **Authorization**: `[Authorize(Roles = "R02")]` 🔒 Doctor only
 - **Query Parameters**:
 
-  - `patientId` (required)
-  - `appointDate` (required): DateOnly
-  - `appointHour` (required): TimeOnly
+  - `patientId` (required): integer
+  - `appointDate` (required): string (YYYY-MM-DD)
+  - `appointHour` (required): string (HH:mm)
 
 - **Request Body**:
 
 ```json
 {
-  "symptoms": "Đau đầu kéo dài, buồn nôn",
-  "prescription": "Paracetamol 500mg, uống 3 lần/ngày sau ăn"
+  "Status": "Completed",
+  "Symptoms": "Đau đầu kéo dài, buồn nôn",
+  "Prescription": "Paracetamol 500mg, uống 3 lần/ngày sau ăn"
 }
 ```
+
+**Giá trị Status hợp lệ**: `"Scheduled"`, `"Completed"`, `"Cancelled"`
 
 - **Request Example**:
 
 ```
 PUT /api/Patients/UpdatePatient?patientId=25&appointDate=2025-11-15&appointHour=14:00
+Content-Type: application/json
+
+{
+  "Status": "Completed",
+  "Symptoms": "Đau đầu kéo dài, buồn nôn",
+  "Prescription": "Paracetamol 500mg, uống 3 lần/ngày sau ăn"
+}
 ```
 
 - **Response 200 OK**:
