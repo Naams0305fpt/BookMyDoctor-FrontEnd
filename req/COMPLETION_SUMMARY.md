@@ -76,14 +76,14 @@
 
 ## ⚠️ ĐANG LÀM DỞ (PARTIALLY WORKING)
 
-| Feature                | Status             | Missing                                       |
-| ---------------------- | ------------------ | --------------------------------------------- |
-| **Cancel Booking**     | 80%                | 24h policy warning UI                         |
-| **~~Update Doctor~~**  | ❌ Won't implement | Admin không sửa Doctor (by design)            |
-| **~~Delete Patient~~** | ❌ Won't implement | Admin không xóa Patient (data protection)     |
-| **Doctor Search**      | 70%                | Server-side search (đang client-side)         |
-| **Error Display**      | 80%                | Field-level error parsing                     |
-| **Notifications**      | 60%                | Real-time push, email backend                 |
+| Feature                | Status             | Missing                                   |
+| ---------------------- | ------------------ | ----------------------------------------- |
+| **Cancel Booking**     | 80%                | 24h policy warning UI                     |
+| **~~Update Doctor~~**  | ❌ Won't implement | Admin không sửa Doctor (by design)        |
+| **~~Delete Patient~~** | ❌ Won't implement | Admin không xóa Patient (data protection) |
+| **Doctor Search**      | 70%                | Server-side search (đang client-side)     |
+| **Error Display**      | 80%                | Field-level error parsing                 |
+| **Notifications**      | 60%                | Real-time push, email backend             |
 
 ---
 
