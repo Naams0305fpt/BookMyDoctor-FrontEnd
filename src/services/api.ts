@@ -26,13 +26,6 @@ import doctorApi from './api/doctor.api';
 import patientApi from './api/patient.api';
 import scheduleApi from './api/schedule.api';
 
-// Import types
-import type {
-  Patient,
-  DoctorAppointment,
-  Doctor,
-} from '../types';
-
 // ==================== RE-EXPORTS ====================
 
 // Re-export HTTP client utilities for backward compatibility

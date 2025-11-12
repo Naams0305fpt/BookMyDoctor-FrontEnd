@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { Patient, Doctor, Schedule, MyHistoryResponse } from '../services/api';
+import type { Patient, Doctor, Schedule, MyHistoryResponse } from '../types';
 
 /**
  * Utility functions for exporting data to Excel files

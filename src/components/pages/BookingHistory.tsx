@@ -93,21 +93,23 @@ const BookingHistory: React.FC = () => {
       const apiData = await bookingApi.getMyHistory();
 
       // Chuyển đổi dữ liệu từ API sang format component
-      const formattedBookings: Booking[] = apiData.map((item: MyHistoryResponse, index: number) => ({
-        id: item.AppointId,
-        patientName: item.NamePatient,
-        doctorName: item.NameDoctor,
-        doctorPhone: item.PhoneDoctor,
-        department: item.Department,
-        appointmentDate: new Date(item.AppointDate),
-        appointmentTime: item.AppointHour.substring(0, 5),
-        status: mapApiStatus(item.Status),
-        symptom: item.Symptoms,
-        prescription:
-          item.Prescription && item.Prescription.toLowerCase() !== "không có"
-            ? item.Prescription
-            : undefined,
-      }));
+      const formattedBookings: Booking[] = apiData.map(
+        (item: MyHistoryResponse, index: number) => ({
+          id: item.AppointId,
+          patientName: item.NamePatient,
+          doctorName: item.NameDoctor,
+          doctorPhone: item.PhoneDoctor,
+          department: item.Department,
+          appointmentDate: new Date(item.AppointDate),
+          appointmentTime: item.AppointHour.substring(0, 5),
+          status: mapApiStatus(item.Status),
+          symptom: item.Symptoms,
+          prescription:
+            item.Prescription && item.Prescription.toLowerCase() !== "không có"
+              ? item.Prescription
+              : undefined,
+        })
+      );
 
       setBookings(formattedBookings);
     } catch (err) {

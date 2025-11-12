@@ -13,10 +13,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import doctorApi from "../../services/api/doctor.api";
 import { formatDateForAPI } from "../../services/http-client";
-import type {
-  DoctorAppointment,
-  UpdateAppointmentRequest,
-} from "../../types";
+import type { DoctorAppointment, UpdateAppointmentRequest } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
 import { usePagination } from "../../hooks/usePagination";

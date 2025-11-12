@@ -18,11 +18,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { formatDateForAPI } from "../../services/http-client";
 import doctorApi from "../../services/api/doctor.api";
 import bookingApi from "../../services/api/booking.api";
-import type {
-  Doctor,
-  BookingRequest,
-  ScheduleResponseItem,
-} from "../../types";
+import type { Doctor, BookingRequest, ScheduleResponseItem } from "../../types";
 
 // --- STATE VÀ INTERFACES ---
 
@@ -170,8 +166,6 @@ const BookingForm: React.FC = () => {
   useEffect(() => {
     // Chỉ chạy nếu user đã đăng nhập
     if (user) {
-      console.log("AuthProvider: Auto-filling form with user data", user);
-
       setFormData((prevData) => ({
         ...prevData,
         // Chỉ điền nếu trường đó đang rỗng (để không ghi đè nếu user tự nhập)
@@ -280,7 +274,6 @@ const BookingForm: React.FC = () => {
     setNotification("");
 
     try {
-      console.log("Dữ liệu gửi đi:", payload);
       await bookingApi.submitBooking(payload); // Gọi API thật
 
       setSubmitStatus("success");

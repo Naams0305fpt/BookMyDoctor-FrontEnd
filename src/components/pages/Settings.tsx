@@ -41,10 +41,6 @@ const Settings: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  console.log("Settings rendered - User:", user);
-  console.log("Settings rendered - isAuthenticated:", isAuthenticated);
-  console.log("Settings rendered - activeTab:", activeTab);
-
   // --- Change Password (Simple - with old password) ---
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
