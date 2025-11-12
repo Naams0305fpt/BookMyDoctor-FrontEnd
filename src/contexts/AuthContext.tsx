@@ -20,6 +20,8 @@ export interface User {
   isVerified?: boolean;
   doctorId?: number; // Thêm doctorId cho doctor
   patientId?: number; // Thêm patientId cho patient
+  dateOfBirth?: string; // Thêm dateOfBirth (format: "YYYY-MM-DD" hoặc ISO string)
+  gender?: string; // Thêm gender ("Male", "Female", "Other")
 }
 
 interface AuthContextType {

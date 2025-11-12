@@ -178,16 +178,13 @@ const BookingForm: React.FC = () => {
         phone: prevData.phone || user.phone || "",
         email: prevData.email || user.email || "",
 
-        // Thử điền các trường khác nếu user object có (ví dụ: DoctorUser)
-        // Dùng 'as any' để TypeScript không báo lỗi (hoặc kiểm tra user.userType)
-        gender: prevData.gender || (user as any).gender || "",
+        // ✅ SỬA: Sử dụng user.gender và user.dateOfBirth từ User interface
+        gender: prevData.gender || user.gender || "",
 
-        // Chuyển đổi string ngày sinh từ 'user' (nếu có) sang đối tượng Date
+        // ✅ SỬA: Chuyển đổi string dateOfBirth từ user sang Date object
         dateOfBirth:
           prevData.dateOfBirth ||
-          ((user as any).dateOfBirth
-            ? new Date((user as any).dateOfBirth)
-            : null),
+          (user.dateOfBirth ? new Date(user.dateOfBirth) : null),
       }));
     }
   }, [user]); // <-- Dependency: Chạy lại khi 'user' thay đổi
