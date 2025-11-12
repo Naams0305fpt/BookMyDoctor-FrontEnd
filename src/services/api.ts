@@ -1,9 +1,45 @@
-import axios, { AxiosError } from 'axios';
-import config from '../config';
-import { User, UserType } from '../contexts/AuthContext';
+/**
+ * API Service - Main Entry Point (Backward Compatibility Layer)
+ * 
+ * This file maintains backward compatibility with existing code
+ * by re-exporting all API methods from the new service modules.
+ * 
+ * NEW CODE SHOULD IMPORT FROM:
+ * - services/api/auth.api
+ * - services/api/booking.api
+ * - services/api/doctor.api
+ * - services/api/patient.api
+ * - services/api/schedule.api
+ * 
+ * Or use the barrel export:
+ * - services/api/ (index.ts)
+ */
 
-// Import all types from centralized types folder
+// ==================== IMPORTS ====================
+import { User, UserType } from '../contexts/AuthContext';
+import { apiClient } from './http-client';
+
+// Import all API service modules
+import authApi from './api/auth.api';
+import bookingApi from './api/booking.api';
+import doctorApi from './api/doctor.api';
+import patientApi from './api/patient.api';
+import scheduleApi from './api/schedule.api';
+
+// Import types
 import type {
+  Patient,
+  DoctorAppointment,
+  Doctor,
+} from '../types';
+
+// ==================== RE-EXPORTS ====================
+
+// Re-export HTTP client utilities for backward compatibility
+export { apiClient, formatDateForAPI } from './http-client';
+
+// Re-export all types for backward compatibility
+export type {
   // Auth types
   RegisterRequest,
   LoginRequest,
@@ -33,166 +69,39 @@ import type {
   ScheduleResponseItem,
 } from '../types';
 
-// Re-export types for backward compatibility
-export type {
-  RegisterRequest,
-  LoginRequest,
-  SendVerificationCodeRequest,
-  RequestOtpRequest,
-  VerifyOtpRequest,
-  ChangePasswordRequest,
-  ChangePasswordOtpRequest,
-  SetNewPasswordRequest,
-  ResetPasswordOtpRequest,
-  BookingRequest,
-  MyHistoryResponse,
-  Doctor,
-  CreateDoctorRequest,
-  DoctorAppointment,
-  UpdateAppointmentRequest,
-  Patient,
-  Schedule,
-  AddScheduleRequest,
-  UpdateScheduleRequest,
-  AddScheduleResponse,
-  ScheduleDetailResponse,
-  ScheduleResponseItem,
-};
+// ==================== API OBJECT ====================
 
-const API_BASE_URL = config.apiBaseUrl;// --- HELPER FUNCTION (Giữ nguyên) ---
-export const formatDateForAPI = (date: Date | null): string => {
-  // Trả về chuỗi rỗng nếu date là null hoặc undefined
-  if (!date) return ""; 
-
-  // Phần còn lại giữ nguyên
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
-// --- AXIOS INSTANCE ---
-// Tạo một instance axios đã được cấu hình sẵn
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true, // Đây là cách axios thay thế cho 'credentials: include'
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// --- AXIOS ERROR INTERCEPTOR ---
-// Tự động bắt và chuẩn hóa lỗi từ API
-apiClient.interceptors.response.use(
-  (response) => response, // Trả về response nếu thành công (status 2xx)
-  (error: AxiosError) => {
-    // Xử lý lỗi nếu thất bại (status không phải 2xx)
-    let errorMessage = 'An unexpected error occurred';
-
-    if (error.response) {
-      // Server đã trả về lỗi
-      const errorData = error.response.data as { message?: string; title?: string };
-
-      if (typeof error.response.data === 'string' && error.response.data) {
-        errorMessage = error.response.data;
-      } else if (errorData?.message) {
-        errorMessage = errorData.message;
-      } else if (errorData?.title) { // Dành cho lỗi validation của .NET Core
-        errorMessage = errorData.title;
-      }
-    } else if (error.request) {
-      // Request đã được gửi nhưng không nhận được phản hồi (lỗi mạng)
-      errorMessage = 'Network error or server is not responding';
-    } else {
-      // Lỗi xảy ra khi thiết lập request
-      errorMessage = error.message;
-    }
-
-    console.error('API Error:', errorMessage, error);
-    // Ném ra lỗi đã được chuẩn hóa, AuthContext sẽ bắt lỗi này
-    return Promise.reject(new Error(errorMessage));
-  }
-);
-
-// --- API OBJECT (Sử dụng apiClient) ---
+/**
+ * Main API object for backward compatibility
+ * All methods now delegate to their respective service modules
+ */
 export const api = {
-  // axios tự động trả về response.data
-  // axios tự động stringify 'data' cho body
-  // 'withCredentials' đã được set trong apiClient
-  // Interceptor đã xử lý lỗi
+  // ==================== AUTH APIS ====================
+  // Re-export from authApi
+  login: authApi.login,
+  logout: authApi.logout,
+  register: authApi.register,
+  sendVerificationCode: authApi.sendVerificationCode,
+  verifyOtp: authApi.verifyOtp,
+  changePasswordWithOtp: authApi.changePasswordWithOtp,
+  changePasswordAfterLogin: authApi.changePasswordAfterLogin,
   
-  login: async (data: LoginRequest) => {
-    const response = await apiClient.post('/Auth/login', data);
-    return response.data;
-  },
-
-  logout: async (): Promise<void> => {
-    await apiClient.post('/Auth/logout');
-  },
-
-  register: async (data: RegisterRequest) => {
-    const response = await apiClient.post('/Register/user', data);
-    return response.data;
-  },
-
-  sendVerificationCode: async (data: RequestOtpRequest) => {
-    const response = await apiClient.post('/Auth/request-otp', data);
-    return response.data;
-  },
-
-  verifyOtp: async (data: VerifyOtpRequest): Promise<{ message: string }> => {
-    // API này sẽ set cookie và trả về message
-    const response = await apiClient.post<{ message: string }>("/Auth/verify-otp", data);
-    return response.data;
-  },
-
-  // resetPasswordWithOtp: async (data: ResetPasswordOtpRequest): Promise<any> => {
-  //   const response = await apiClient.post('/Auth/reset-password-otp', data);
-
-  //   // Xử lý trường hợp 204 No Content hoặc data rỗng
-  //   if (response.status === 204 || !response.data) {
-  //     console.log("Password reset successful, empty response received.");
-  //     return { success: true };
-  //   }
-  //   return response.data;
-  // },
-
-  changePasswordWithOtp: async (data: ChangePasswordOtpRequest): Promise<any> => {
-    // API này đọc cookie, chỉ cần gửi mật khẩu mới
-    const response = await apiClient.post("/Auth/change-password-otp", data);
-    
-    if (response.status === 204 || !response.data) {
-      return { success: true };
-    }
-    return response.data;
-  },
-
-  changePasswordAfterLogin: async (data: ChangePasswordRequest): Promise<any> => {
-    // API để đổi password khi đã login (cần old password)
-    const response = await apiClient.post("/Auth/change-password", data);
-    
-    if (response.status === 204 || !response.data) {
-      return { success: true };
-    }
-    return response.data;
-  },
-
+  // checkAuthStatus remains here because it combines multiple API calls
   checkAuthStatus: async (): Promise<User> => {
-    // Lấy role info
+    // Get role info
     const roleResponse = await apiClient.get('/Auth/check-role');
     const roleData = roleResponse.data;
 
-    // Lấy profile info để có thông tin cơ bản
+    // Get profile info
     const profileResponse = await apiClient.get('/Profile/profile-me');
     const profileData = profileResponse.data;
 
-    // Nếu là doctor, cần lấy doctorId từ API All-Doctors
+    // If doctor, get doctorId from All-Doctors API
     let doctorId: number | undefined = undefined;
     if (roleData.roleName === "Doctor") {
       try {
         const doctorsResponse = await apiClient.get('/Doctors/All-Doctors');
         const doctors = doctorsResponse.data;
-        // Tìm doctor có UserId trùng với user hiện tại
         const currentDoctor = doctors.find((doc: any) => doc.UserId === profileData.UserId);
         if (currentDoctor) {
           doctorId = currentDoctor.DoctorId;
@@ -204,231 +113,58 @@ export const api = {
       }
     }
 
-    // Chuyển đổi dữ liệu API thành interface User của React
+    // Convert API data to User interface
     const user: User = {
       id: roleData.userId,
       name: profileData.Name || roleData.username,
-      userType: roleData.roleName.toLowerCase() as UserType, // "Admin"/"Doctor"/"Patient" -> lowercase
+      userType: roleData.roleName.toLowerCase() as UserType,
       phone: profileData.Phone,
       email: profileData.Email,
       avatar: "/images/default-avatar.png",
-      doctorId: doctorId, // Lấy từ API All-Doctors
-      patientId: profileData.PatientId, // Có với patient (PascalCase)
-      dateOfBirth: profileData.DateOfBirth, // Thêm DateOfBirth từ API
-      gender: profileData.Gender, // Thêm Gender từ API
+      doctorId: doctorId,
+      patientId: profileData.PatientId,
+      dateOfBirth: profileData.DateOfBirth,
+      gender: profileData.Gender,
     };
 
     return user;
   },
 
-  getPatients: async (
-    name: string,
-    appointDate: string,
-    status: string,
-    doctorId?: number // Thêm optional doctorId parameter
-  ): Promise<Patient[]> => {
-    
-    // Xây dựng params, chỉ gửi nếu có giá trị
-    const params: any = {};
-    if (name) params.name = name;
-    if (appointDate) params.appointDate = appointDate;
-    if (status) params.status = status;
-    if (doctorId) params.doctorId = doctorId; // Thêm doctorId nếu có
+  // ==================== BOOKING APIS ====================
+  // Re-export from bookingApi
+  getMyHistory: bookingApi.getMyHistory,
+  submitBooking: bookingApi.submitBooking,
+  cancelBooking: bookingApi.cancelBooking,
+  getDoctorSchedule: bookingApi.getDoctorSchedule,
 
-    const response = await apiClient.get("/Patients/AllPatientsAndSearch", {
-      params: params,
-    });
-    
-    return response.data as Patient[];
-  },
-
-  // --- THÊM MỚI: API chuyên dụng cho Doctor Appointments ---
-  getDoctorAppointments: async (
-    doctorId?: number,
-    patientName?: string,
-    patientPhone?: string
-  ): Promise<DoctorAppointment[]> => {
-    const params: any = {};
-    if (doctorId) params.doctorId = doctorId;
-    if (patientName) params.patientName = patientName;
-    if (patientPhone) params.patientPhone = patientPhone;
-
-    const response = await apiClient.get("/Doctors/GetDoctorAppointments", {
-      params: params,
-    });
-
-    return response.data as DoctorAppointment[];
-  },
-
-  updateAppointment: async (
-    patientId: number,
-    appointDate: string,
-    appointHour: string,
-    appointId: number,
-    data: UpdateAppointmentRequest
-  ): Promise<UpdateAppointmentRequest> => {
-    
-    // API yêu cầu đầy đủ 4 params
-    const params = {
-      patientId: patientId,
-      appointDate: appointDate,
-      appointHour: appointHour,
-      appointId: appointId,
-    };
-    
-    // API yêu cầu gửi 3 trường này trong Request Body
-    const body = {
-      Status: data.Status,
-      Symptoms: data.Symptoms,
-      Prescription: data.Prescription,
-    };
-
-    const response = await apiClient.put("/Patients/UpdateAppointment", body, {
-      params: params
-    });
-
-    return response.data;
-  },
-
-  // --- THÊM MỚI: LẤY LỊCH SỬ CỦA BỆNH NHÂN ---
-  getMyHistory: async (): Promise<MyHistoryResponse[]> => {
-    const response = await apiClient.get(`/Patients/MyHistoryAppoint`);
-    return response.data;
-  },
-
-  // --- THÊM MỚI: LẤY THÔNG TIN PROFILE ---
-  // --- THÊM MỚI: LẤY THÔNG TIN PROFILE ---
-  getProfileMe: async (): Promise<any> => {
-    const response = await apiClient.get('/Profile/profile-me');
-    return response.data;
-  },
-
-  // --- THÊM MỚI: CẬP NHẬT PROFILE ---
-  updateProfileMe: async (data: {
-    name?: string;
-    phone?: string;
-    email?: string;
-    gender?: string;
-    dateOfBirth?: string;
-    address?: string;
-    department?: string;
-    experienceYears?: number;
-  }): Promise<any> => {
-    const response = await apiClient.put('/Profile/Update_Profile_Me', data);
-    return response.data;
-  },
-
-  // --- THÊM MỚI: HÀM TẠO BÁC SĨ ---
-  createDoctor: async (data: CreateDoctorRequest): Promise<any> => { 
-    const response = await apiClient.post("/Owner/create-doctor", data);
-    return response.data;
-  },
-  // --- KẾT THÚC THÊM MỚI ---
-
-  getDoctors: async (): Promise<Doctor[]> => {
-    const response = await apiClient.get<Doctor[]>('/Doctors/All-Doctors');
-    return response.data;
-  },
-
+  // ==================== DOCTOR APIS ====================
+  // Re-export from doctorApi
+  getDoctors: doctorApi.getAllDoctors,
+  createDoctor: doctorApi.createDoctor,
+  getDoctorAppointments: doctorApi.getDoctorAppointments,
+  updateAppointment: doctorApi.updateAppointment,
+  
+  // deleteDoctor remains here (not in doctorApi yet)
   deleteDoctor: async (id: number): Promise<any> => {
-    // API của bạn dùng query param 'id'
     const response = await apiClient.delete("/Doctors/DeleteDoctor", {
       params: { id: id },
     });
-    return response.data; // Trả về data (thường là rỗng hoặc 200 OK)
-  },
-
-  // --- SCHEDULE APIs ---
-  
-  // Lấy lịch 1 bác sĩ (có filter theo tên và ngày)
-  // GET /api/Schedule/List_Schedules_1_Doctor
-  getAllSchedules: async (
-    doctorName?: string, // Query param: doctorName
-    date?: string // Query param: date "YYYY-MM-DD"
-  ): Promise<Schedule[]> => {
-    const params: any = {};
-    if (doctorName) params.doctorName = doctorName;
-    if (date) params.date = date;
-
-    const response = await apiClient.get("/Schedule/List_Schedules_1_Doctor", {
-      params: params,
-    });
-    return response.data as Schedule[];
-  },
-
-  // Lấy tất cả lịch của tất cả bác sĩ (Admin view)
-  // GET /api/Schedule/List_All_Schedules_Doctors
-  getAllSchedulesForAdmin: async (): Promise<Schedule[]> => {
-    const response = await apiClient.get("/Schedule/List_All_Schedules_Doctors");
-    return response.data as Schedule[];
-  },
-
-  // Lấy chi tiết 1 lịch theo ID
-  // GET /api/Schedule/Get_Schedule_ById?scheduleId={id}
-  getScheduleById: async (scheduleId: number): Promise<ScheduleDetailResponse> => {
-    const response = await apiClient.get("/Schedule/Get_Schedule_ById", {
-      params: { scheduleId }
-    });
-    return response.data as ScheduleDetailResponse;
-  },
-
-  // Tạo lịch mới (Doctor/Admin)
-  // POST /api/Schedule/Add_Schedule_Doctor
-  // Authorize: R02 (Doctor)
-  addSchedule: async (data: AddScheduleRequest): Promise<AddScheduleResponse> => {
-    const response = await apiClient.post("/Schedule/Add_Schedule_Doctor", data);
-    return response.data as AddScheduleResponse;
-  },
-
-  // Cập nhật lịch (Doctor/Admin)
-  // PUT /api/Schedule/Update_Schedule_Doctor
-  // Authorize: R02 (Doctor)
-  updateSchedule: async (data: UpdateScheduleRequest): Promise<void> => {
-    // Response: 204 No Content
-    await apiClient.put("/Schedule/Update_Schedule_Doctor", data);
-  },
-
-  // Xóa lịch (Doctor/Admin)
-  // DELETE /api/Schedule/Delete_Schedule_Doctor?scheduleId={id}
-  // Authorize: R01 (Admin), R02 (Doctor)
-  deleteSchedule: async (scheduleId: number): Promise<{ message: string }> => {
-    const response = await apiClient.delete("/Schedule/Delete_Schedule_Doctor", {
-      params: { scheduleId }
-    });
     return response.data;
   },
 
-  // Lấy giờ đã đặt của bác sĩ (BookingForm)
-  // GET /api/Booking/info_slot_busy?doctorId={id}&date={YYYY-MM-DD}
-  getDoctorSchedule: async (
-    doctorId: number,
-    date: Date
-  ): Promise<ScheduleResponseItem[]> => {
-    const formattedDate = formatDateForAPI(date);
-    
-    const response = await apiClient.get<ScheduleResponseItem[]>('/booking/info_slot_busy', {
-      params: {
-        doctorId: doctorId,
-        date: formattedDate
-      }
-    });
-    return response.data;
-  },
+  // ==================== PATIENT APIS ====================
+  // Re-export from patientApi
+  getPatients: patientApi.getAllPatients,
+  getProfileMe: patientApi.getProfileMe,
+  updateProfileMe: patientApi.updateProfileMe,
 
-  submitBooking: async (data: BookingRequest) => {
-    const response = await apiClient.post('/booking/public', data);
-    return response.data;
-  },
-
-  // Cancel booking (24h policy enforced on backend)
-  // PUT /api/Patients/CancelAppointment?appointId={appointId}
-  // Response: { "message": "Hủy lịch hẹn thành công." }
-  cancelBooking: async (appointId: number): Promise<{ message: string }> => {
-    const response = await apiClient.put('/Patients/CancelAppointment', null, {
-      params: { appointId }
-    });
-    return response.data;
-  },
-  
+  // ==================== SCHEDULE APIS ====================
+  // Re-export from scheduleApi
+  getAllSchedules: scheduleApi.getAllSchedules,
+  getAllSchedulesForAdmin: scheduleApi.getAllSchedulesForAdmin,
+  getScheduleById: scheduleApi.getScheduleById,
+  addSchedule: scheduleApi.addSchedule,
+  updateSchedule: scheduleApi.updateSchedule,
+  deleteSchedule: scheduleApi.deleteSchedule,
 };
 
