@@ -10,7 +10,9 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./DoctorSchedule.css";
-import { api, Schedule, UpdateScheduleRequest } from "../../services/api";
+import scheduleApi from "../../services/api/schedule.api";
+import doctorApi from "../../services/api/doctor.api";
+import type { Schedule, UpdateScheduleRequest } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
 import ScheduleFormModal from "../admin/ScheduleFormModal";
@@ -55,7 +57,7 @@ const ScheduleManagement: React.FC = () => {
             return;
           }
 
-          const allDoctors = await api.getDoctors();
+          const allDoctors = await doctorApi.getAllDoctors();
           const matchingDoctor = allDoctors.find(
             (doc) => doc.UserId === currentUserId
           );
@@ -86,7 +88,7 @@ const ScheduleManagement: React.FC = () => {
     setError(null);
     try {
       // Get all schedules, will filter client-side
-      const data = await api.getAllSchedulesForAdmin();
+      const data = await scheduleApi.getAllSchedulesForAdmin();
       // Filter by current doctor
       const doctorSchedules = data.filter(
         (schedule) => schedule.DoctorId === currentDoctorId
@@ -167,7 +169,7 @@ const ScheduleManagement: React.FC = () => {
 
     setIsDeleting(scheduleId);
     try {
-      await api.deleteSchedule(scheduleId);
+      await scheduleApi.deleteSchedule(scheduleId);
       showNotification("success", "Success", "Schedule deleted successfully");
       await fetchSchedules();
     } catch (err: any) {

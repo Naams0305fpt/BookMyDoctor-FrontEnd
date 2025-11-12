@@ -17,8 +17,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./CreateDoctorModal.css"; // Import file CSS của bạn
-import { api, CreateDoctorRequest, formatDateForAPI } from "../../services/api"; // Đường dẫn đến api.ts
+import "./CreateDoctorModal.css";
+import doctorApi from "../../services/api/doctor.api";
+import { formatDateForAPI } from "../../services/http-client";
+import type { CreateDoctorRequest } from "../../types";
 
 interface CreateDoctorModalProps {
   onClose: () => void;
@@ -140,7 +142,7 @@ const CreateDoctorModal: React.FC<CreateDoctorModalProps> = ({
         ExperienceYears: Number(formData.ExperienceYears),
       };
 
-      const response = await api.createDoctor(dataToSend);
+      const response = await doctorApi.createDoctor(dataToSend);
 
       // ✅ Backend đã sửa: 200 = thành công, 400 = lỗi
       // Nếu code chạy đến đây = API đã trả về 200 (thành công)

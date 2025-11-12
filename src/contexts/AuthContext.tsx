@@ -5,7 +5,8 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { api, RegisterRequest } from "../services/api";
+import { api } from "../services/api";
+import type { RegisterRequest } from "../types";
 
 export type UserType = "admin" | "doctor" | "patient";
 

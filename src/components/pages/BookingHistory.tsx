@@ -16,7 +16,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./BookingHistory.css";
 import { useAuth } from "../../contexts/AuthContext";
 import { Navigate } from "react-router-dom";
-import { api, MyHistoryResponse } from "../../services/api";
+import bookingApi from "../../services/api/booking.api";
+import type { MyHistoryResponse } from "../../types";
 import { useNotification } from "../../contexts/NotificationContext";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
@@ -89,10 +90,10 @@ const BookingHistory: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      const apiData = await api.getMyHistory();
+      const apiData = await bookingApi.getMyHistory();
 
       // Chuyển đổi dữ liệu từ API sang format component
-      const formattedBookings: Booking[] = apiData.map((item, index) => ({
+      const formattedBookings: Booking[] = apiData.map((item: MyHistoryResponse, index: number) => ({
         id: item.AppointId,
         patientName: item.NamePatient,
         doctorName: item.NameDoctor,
@@ -151,7 +152,7 @@ const BookingHistory: React.FC = () => {
 
     try {
       // Call API to cancel (PUT /api/Patients/CancelAppointment?appointId={appointId})
-      const response = await api.cancelBooking(appointId);
+      const response = await bookingApi.cancelBooking(appointId);
 
       // Show success notification with message from API
       showNotification(

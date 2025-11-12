@@ -7,7 +7,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { api, Patient, formatDateForAPI } from "../../services/api";
+import patientApi from "../../services/api/patient.api";
+import { formatDateForAPI } from "../../services/http-client";
+import type { Patient } from "../../types";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
 import { exportPatientsToExcel } from "../../utils/excelExport";
@@ -45,7 +47,7 @@ const PatientManagement: React.FC = () => {
       // Chuyển đổi Date object thành string "YYYY-MM-DD"
       const formattedDate = date ? formatDateForAPI(date) : "";
 
-      const data = await api.getPatients(name, formattedDate, status);
+      const data = await patientApi.getAllPatients(name, formattedDate, status);
       setPatients(data);
     } catch (err: any) {
       setError(err.message || "Failed to fetch patients.");

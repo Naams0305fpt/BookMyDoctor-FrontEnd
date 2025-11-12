@@ -14,7 +14,7 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
 import { Navigate, useNavigate } from "react-router-dom";
-import { api } from "../../services/api";
+import authApi from "../../services/api/auth.api";
 import "./Settings.css";
 
 const Settings: React.FC = () => {
@@ -58,7 +58,7 @@ const Settings: React.FC = () => {
 
     setIsChangingPassword(true);
     try {
-      await api.changePasswordAfterLogin({
+      await authApi.changePasswordAfterLogin({
         CurrentPassword: CurrentPassword,
         NewPassword: newPassword,
         ConfirmNewPassword: confirmPassword,

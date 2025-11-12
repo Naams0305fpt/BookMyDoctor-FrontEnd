@@ -6,7 +6,9 @@ import {
   faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 import CreateDoctorModal from "./CreateDoctorModal";
-import { api, Doctor } from "../../services/api";
+import { api } from "../../services/api"; // Keep for deleteDoctor
+import doctorApi from "../../services/api/doctor.api";
+import type { Doctor } from "../../types";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
 import { exportDoctorsToExcel } from "../../utils/excelExport";
@@ -32,7 +34,7 @@ const DoctorManagement = () => {
     setIsLoading(true); // Bắt đầu loading mỗi khi fetch
     setError(null); // Xóa lỗi cũ
     try {
-      const data = await api.getDoctors();
+      const data = await doctorApi.getAllDoctors();
       setDoctors(data);
     } catch (err: any) {
       setError(err.message || "Could not load doctor list.");

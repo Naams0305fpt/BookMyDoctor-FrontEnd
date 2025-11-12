@@ -8,7 +8,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { api, Schedule } from "../../services/api";
+import scheduleApi from "../../services/api/schedule.api";
+import type { Schedule } from "../../types";
 import { useNotification } from "../../contexts/NotificationContext";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
@@ -34,7 +35,7 @@ const ScheduleManagement = () => {
     try {
       // THAY ĐỔI: Dùng getAllSchedulesForAdmin thay vì getAllSchedules
       // Admin xem tất cả lịch, không filter theo doctor hay date ở API
-      const data = await api.getAllSchedulesForAdmin();
+      const data = await scheduleApi.getAllSchedulesForAdmin();
       setSchedules(data);
     } catch (err: any) {
       setError(err.message || "Failed to load schedules.");
@@ -67,7 +68,7 @@ const ScheduleManagement = () => {
 
     setIsDeleting(scheduleId);
     try {
-      await api.deleteSchedule(scheduleId);
+      await scheduleApi.deleteSchedule(scheduleId);
       showNotification("success", "Success", "Schedule deleted successfully");
       // Refresh table
       await fetchSchedules();

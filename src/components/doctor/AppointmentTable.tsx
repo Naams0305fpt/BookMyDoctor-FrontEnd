@@ -11,12 +11,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  api,
+import doctorApi from "../../services/api/doctor.api";
+import { formatDateForAPI } from "../../services/http-client";
+import type {
   DoctorAppointment,
-  formatDateForAPI,
   UpdateAppointmentRequest,
-} from "../../services/api";
+} from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
 import { usePagination } from "../../hooks/usePagination";
@@ -235,7 +235,7 @@ const AppointmentTable: React.FC = () => {
             ? user.doctorId
             : undefined;
 
-        const data = await api.getDoctorAppointments(
+        const data = await doctorApi.getDoctorAppointments(
           doctorIdParam,
           patientName || undefined,
           undefined
@@ -307,7 +307,7 @@ const AppointmentTable: React.FC = () => {
       };
 
       // Gọi API với đầy đủ 4 params
-      await api.updateAppointment(
+      await doctorApi.updateAppointment(
         appointment.PatientId,
         appointment.AppointDate,
         appointment.AppointHour,

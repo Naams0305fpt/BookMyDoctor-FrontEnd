@@ -15,7 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
-import { api } from "../../services/api";
+import patientApi from "../../services/api/patient.api";
 import "../pages/Profile.css";
 
 interface ProfileData {
@@ -54,7 +54,7 @@ const PatientProfile: React.FC = () => {
   const fetchProfile = async () => {
     try {
       setIsLoading(true);
-      const data = await api.getProfileMe();
+      const data = await patientApi.getProfileMe();
       setProfileData(data);
 
       // Cập nhật formData với dữ liệu từ API
@@ -94,7 +94,7 @@ const PatientProfile: React.FC = () => {
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      await api.updateProfileMe({
+      await patientApi.updateProfileMe({
         name: formData.name,
         email: formData.email,
         phone: formData.phone,

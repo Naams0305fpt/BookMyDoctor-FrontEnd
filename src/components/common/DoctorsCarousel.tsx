@@ -7,8 +7,8 @@ import {
   faSpinner, // <-- Add spinner for loading
 } from "@fortawesome/free-solid-svg-icons";
 import "./DoctorsCarousel.css";
-// --- THAY ĐỔI: Import API and Doctor type ---
-import { api, Doctor } from "../../services/api"; // <-- Adjust path if needed
+import doctorApi from "../../services/api/doctor.api";
+import type { Doctor } from "../../types";
 
 // --- BỎ interface Doctor cũ ---
 // interface Doctor { ... }
@@ -31,7 +31,7 @@ const DoctorsCarousel: React.FC = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const doctorsData = await api.getDoctors();
+        const doctorsData = await doctorApi.getAllDoctors();
         setFetchedDoctors(doctorsData);
       } catch (err) {
         console.error("Failed to load doctors:", err);

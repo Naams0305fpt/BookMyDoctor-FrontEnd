@@ -11,13 +11,14 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./ScheduleFormModal.css";
-import {
-  api,
+import scheduleApi from "../../services/api/schedule.api";
+import doctorApi from "../../services/api/doctor.api";
+import { formatDateForAPI } from "../../services/http-client";
+import type {
   AddScheduleRequest,
   UpdateScheduleRequest,
-  formatDateForAPI,
   Doctor,
-} from "../../services/api";
+} from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
 
 interface ScheduleFormModalProps {
@@ -78,7 +79,7 @@ const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
     const loadDoctors = async () => {
       setIsLoadingDoctors(true);
       try {
-        const doctors = await api.getDoctors();
+        const doctors = await doctorApi.getAllDoctors();
         setAllDoctors(doctors);
       } catch (error) {
         console.error("Failed to load doctors:", error);
@@ -157,7 +158,7 @@ const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
           EndTime: formData.EndTime,
           Status: formData.Status,
         };
-        await api.addSchedule(createData);
+        await scheduleApi.addSchedule(createData);
         setNotification("Schedule created successfully!");
       } else {
         // Update existing schedule
@@ -172,7 +173,7 @@ const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
           EndTime: formData.EndTime,
           Status: formData.Status,
         };
-        await api.updateSchedule(updateData);
+        await scheduleApi.updateSchedule(updateData);
         setNotification("Schedule updated successfully!");
       }
 

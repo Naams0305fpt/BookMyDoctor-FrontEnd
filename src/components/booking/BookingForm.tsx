@@ -15,13 +15,14 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./BookingForm.css";
 import { useAuth } from "../../contexts/AuthContext";
-// MỚI: Import API, interfaces, và helper
-import { api, formatDateForAPI } from "../../services/api"; // !! Đảm bảo đường dẫn này đúng
+import { formatDateForAPI } from "../../services/http-client";
+import doctorApi from "../../services/api/doctor.api";
+import bookingApi from "../../services/api/booking.api";
 import type {
   Doctor,
   BookingRequest,
   ScheduleResponseItem,
-} from "../../services/api";
+} from "../../types";
 
 // --- STATE VÀ INTERFACES ---
 
@@ -106,7 +107,7 @@ const BookingForm: React.FC = () => {
     const loadDoctors = async () => {
       setIsLoadingDoctors(true);
       try {
-        const doctorsData = await api.getDoctors();
+        const doctorsData = await doctorApi.getAllDoctors();
         setAllDoctors(doctorsData);
       } catch (error) {
         console.error("Failed to load doctors", error);
@@ -132,7 +133,7 @@ const BookingForm: React.FC = () => {
         try {
           // THAY ĐỔI: Truyền ID (số) vào hàm
           const busySchedule: ScheduleResponseItem[] =
-            await api.getDoctorSchedule(
+            await bookingApi.getDoctorSchedule(
               parseInt(formData.doctorId), // formData.doctorId bây giờ là ID
               formData.date!
             );
@@ -280,7 +281,7 @@ const BookingForm: React.FC = () => {
 
     try {
       console.log("Dữ liệu gửi đi:", payload);
-      await api.submitBooking(payload); // Gọi API thật
+      await bookingApi.submitBooking(payload); // Gọi API thật
 
       setSubmitStatus("success");
       setFormData(initialFormData); // Reset form về trạng thái ban đầu
