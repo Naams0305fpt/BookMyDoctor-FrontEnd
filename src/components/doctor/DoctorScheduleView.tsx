@@ -15,9 +15,9 @@ import doctorApi from "../../services/api/doctor.api";
 import type { Schedule, UpdateScheduleRequest } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
-import ScheduleFormModal from "../admin/ScheduleFormModal";
+import ScheduleFormModal from "../common/ScheduleFormModal";
 
-const ScheduleManagement: React.FC = () => {
+const DoctorScheduleView: React.FC = () => {
   const { user } = useAuth();
   const { showNotification } = useNotification();
 
@@ -440,4 +440,4 @@ const ScheduleManagement: React.FC = () => {
   );
 };
 
-export default ScheduleManagement;
+export default DoctorScheduleView;

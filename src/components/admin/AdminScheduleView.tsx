@@ -15,7 +15,7 @@ import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
 import { exportSchedulesToExcel } from "../../utils/excelExport";
 
-const ScheduleManagement = () => {
+const AdminScheduleView = () => {
   const { showNotification } = useNotification();
 
   // State: dùng Schedule từ API
@@ -354,4 +354,4 @@ const ScheduleManagement = () => {
   );
 };
 
-export default ScheduleManagement;
+export default AdminScheduleView;

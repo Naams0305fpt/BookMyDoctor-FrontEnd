@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faUsers, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { ScheduleManagement, AppointmentTable } from "../doctor";
+import DoctorScheduleView from "../doctor/DoctorScheduleView";
+import AppointmentTable from "../doctor/AppointmentTable";
 import "../doctor/DoctorSchedule.css";
 
 const DoctorDashboard: React.FC = () => {
@@ -45,7 +46,7 @@ const DoctorDashboard: React.FC = () => {
         </div>
 
         {/* Content */}
-        {view === "schedule" ? <ScheduleManagement /> : <AppointmentTable />}
+        {view === "schedule" ? <DoctorScheduleView /> : <AppointmentTable />}
       </div>
     </section>
   );

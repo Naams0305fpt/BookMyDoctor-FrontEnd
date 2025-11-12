@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PatientManagement from "../admin/PatientManagement";
 import DoctorManagement from "../admin/DoctorManagement";
-import ScheduleManagement from "../admin/ScheduleManagement";
+import AdminScheduleView from "../admin/AdminScheduleView";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
@@ -40,7 +40,7 @@ const AdminDashboard = () => {
       <div className="admin-content">
         {view === "doctors" && <DoctorManagement />}
         {view === "patients" && <PatientManagement />}
-        {view === "schedules" && <ScheduleManagement />}
+        {view === "schedules" && <AdminScheduleView />}
       </div>
     </section>
   );
