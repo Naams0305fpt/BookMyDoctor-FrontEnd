@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faUserMd } from "@fortawesome/free-solid-svg-icons";
-import CreateDoctorModal from "./CreateDoctorModal"; // Import modal thật
-import { api, Doctor } from "../../services/api"; // Import API thật
+import CreateDoctorModal from "./CreateDoctorModal";
+import { api, Doctor } from "../../services/api";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../common/Pagination";
 
 // Component hiển thị loading
 const LoadingSpinner = () => (
@@ -73,8 +75,7 @@ const DoctorManagement = () => {
 
   // Lọc dữ liệu
   const filteredDoctors = useMemo(() => {
-    // Chỉ lọc khi không có lỗi và không đang loading (hoặc luôn lọc nếu muốn)
-    if (isLoading || error) return []; // Trả về mảng rỗng khi loading hoặc lỗi
+    if (isLoading || error) return [];
     return doctors.filter((doctor) => {
       const searchLower = searchQuery.toLowerCase();
       return (
@@ -84,7 +85,10 @@ const DoctorManagement = () => {
         doctor.Email?.toLowerCase().includes(searchLower)
       );
     });
-  }, [doctors, searchQuery, isLoading, error]); // Thêm isLoading, error
+  }, [doctors, searchQuery, isLoading, error]);
+
+  // Pagination hook
+  const pagination = usePagination(filteredDoctors, 10);
 
   return (
     <div className="admin-table-container">
@@ -168,12 +172,12 @@ const DoctorManagement = () => {
                 </td>
               </tr>
             )}
-            {/* Chỉ map dữ liệu khi không loading và không có lỗi */}
+            {/* Hiển thị dữ liệu với pagination */}
             {!isLoading &&
               !error &&
-              filteredDoctors.map((d, index) => (
+              pagination.currentItems.map((d, index) => (
                 <tr key={d.DoctorId}>
-                  <td>{index + 1}</td>
+                  <td>{pagination.startIndex + index}</td>
                   <td>{d.Name}</td>
                   <td>{new Date(d.DateOfBirth).toLocaleDateString("en-GB")}</td>
                   <td>{d.Gender}</td>
@@ -185,14 +189,14 @@ const DoctorManagement = () => {
                   <td className="action-buttons">
                     <FontAwesomeIcon
                       icon={faTrash}
-                      className="delete-icon" // Bạn cần định nghĩa class này trong CSS
+                      className="delete-icon"
                       onClick={() => handleDelete(d.DoctorId)}
                       title="Delete Doctor"
                       style={{
                         cursor: "pointer",
                         color: "#dc3545",
                         fontSize: "1.1rem",
-                      }} // Thêm style tạm
+                      }}
                     />
                   </td>
                 </tr>
@@ -201,7 +205,7 @@ const DoctorManagement = () => {
             {!isLoading &&
               !error &&
               doctors.length > 0 &&
-              filteredDoctors.length === 0 && ( // Chỉ hiện khi có data gốc nhưng filter không ra kq
+              filteredDoctors.length === 0 && (
                 <tr>
                   <td
                     colSpan={11}
@@ -211,20 +215,20 @@ const DoctorManagement = () => {
                   </td>
                 </tr>
               )}
-            {/* {!isLoading &&
-              !error &&
-              doctors.length === 0 && ( // Hiện khi API không trả về data hoặc fetch lần đầu bị lỗi
-                <tr>
-                  <td
-                    colSpan={11}
-                    style={{ textAlign: "center", padding: "1.5rem" }}
-                  >
-                    There are currently no doctors in the system.
-                  </td>
-                </tr>
-              )} */}
           </tbody>
         </table>
+
+        {/* Pagination Component */}
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          onPreviousPage={pagination.goToPreviousPage}
+          onNextPage={pagination.goToNextPage}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          itemName="doctors"
+        />
       </div>
 
       {/* Modal */}

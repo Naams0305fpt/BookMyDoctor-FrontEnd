@@ -6,7 +6,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { api, Patient, formatDateForAPI } from "../../services/api"; // <-- Import API
+import { api, Patient, formatDateForAPI } from "../../services/api";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../common/Pagination";
 
 // (Component Loading/Error có thể thêm vào đây)
 const LoadingSpinner = () => (
@@ -23,8 +25,11 @@ const PatientManagement: React.FC = () => {
 
   // State cho bộ lọc
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // <-- Sửa: Bắt đầu là null
-  const [selectedStatus, setSelectedStatus] = useState(""); // <-- Thêm: Bộ lọc status
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState("");
+
+  // Pagination hook - áp dụng cho danh sách patients
+  const pagination = usePagination(patients, 10);
 
   // Hàm fetch data chính
   const fetchPatients = async (
@@ -199,13 +204,10 @@ const PatientManagement: React.FC = () => {
             )}
             {!isLoading &&
               !error &&
-              patients.length > 0 &&
-              patients.map((patient, index) => (
+              pagination.currentItems.length > 0 &&
+              pagination.currentItems.map((patient, index) => (
                 <tr key={patient.Username}>
-                  {" "}
-                  {/* Dùng Username hoặc key duy nhất */}
-                  <td>{index + 1}</td>
-                  {/* SỬA: Dùng đúng tên thuộc tính (viết hoa) */}
+                  <td>{pagination.startIndex + index}</td>
                   <td>{patient.FullName}</td>
                   <td>{patient.Username}</td>
                   <td>
@@ -214,7 +216,6 @@ const PatientManagement: React.FC = () => {
                   <td>{patient.Gender}</td>
                   <td>{patient.PhoneNumber}</td>
                   <td>{patient.Email || "N/A"}</td>
-                  {/* SỬA: Đổi thứ tự 2 cột này */}
                   <td>{patient.Address}</td>
                   <td>
                     <span
@@ -229,15 +230,27 @@ const PatientManagement: React.FC = () => {
                   <td>{patient.Prescription}</td>
                 </tr>
               ))}
-            {/* {!isLoading && !error && patients.length === 0 && (
+            {!isLoading && !error && patients.length === 0 && (
               <tr>
                 <td colSpan={11} style={{ textAlign: "center" }}>
                   No patients found.
                 </td>
               </tr>
-            )} */}
+            )}
           </tbody>
         </table>
+
+        {/* Pagination Component */}
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          onPreviousPage={pagination.goToPreviousPage}
+          onNextPage={pagination.goToNextPage}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          itemName="patients"
+        />
       </div>
     </div>
   );

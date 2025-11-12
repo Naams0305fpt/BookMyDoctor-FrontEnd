@@ -7,13 +7,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-// Import từ API service
 import { api, Schedule } from "../../services/api";
 import { useNotification } from "../../contexts/NotificationContext";
-
-// Bỏ interface cũ và mock data
-// interface Schedule { ... }
-// const mockSchedules: Schedule[] = [ ... ];
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../common/Pagination";
 
 const ScheduleManagement = () => {
   const { showNotification } = useNotification();
@@ -105,7 +102,8 @@ const ScheduleManagement = () => {
     return schedule.IsActive === true;
   });
 
-  // Bỏ hàm handleDelete cũ (đã implement ở trên)
+  // Pagination hook
+  const pagination = usePagination(filteredSchedules, 10);
 
   // Date navigation (Giữ nguyên)
   const goToPreviousDay = () => {
@@ -225,16 +223,15 @@ const ScheduleManagement = () => {
                 </td>
               </tr>
             )}
-            {/* Hiển thị dữ liệu */}
+            {/* Hiển thị dữ liệu với pagination */}
             {!isLoading &&
               !error &&
-              filteredSchedules.length > 0 &&
-              filteredSchedules.map((schedule, index) => (
+              pagination.currentItems.length > 0 &&
+              pagination.currentItems.map((schedule, index) => (
                 <tr
                   key={`${schedule.ScheduleId}-${schedule.DoctorId}-${schedule.WorkDate}`}
                 >
-                  <td>{index + 1}</td>
-                  {/* Dùng đúng tên trường từ API */}
+                  <td>{pagination.startIndex + index}</td>
                   <td>
                     {schedule.DoctorName || `Doctor ID: ${schedule.DoctorId}`}
                   </td>
@@ -244,7 +241,6 @@ const ScheduleManagement = () => {
                   <td>{formatTime(schedule.StartTime)}</td>
                   <td>{formatTime(schedule.EndTime)}</td>
                   <td>
-                    {/* Hiển thị status từ API, có thể thêm class CSS */}
                     <span
                       className={`status-${schedule.Status?.toLowerCase()}`}
                     >
@@ -321,6 +317,18 @@ const ScheduleManagement = () => {
             )}
           </tbody>
         </table>
+
+        {/* Pagination Component */}
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          onPreviousPage={pagination.goToPreviousPage}
+          onNextPage={pagination.goToNextPage}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          itemName="schedules"
+        />
       </div>
     </div>
   );
