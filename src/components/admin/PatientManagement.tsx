@@ -170,16 +170,6 @@ const PatientManagement: React.FC = () => {
               <option value="Cancelled">Cancelled</option>
             </select>
           </div>
-
-          {/* Export Excel Button */}
-          <button
-            className="export-btn"
-            onClick={() => exportPatientsToExcel(patients, 'danh_sach_benh_nhan')}
-            title="Export to Excel"
-            disabled={patients.length === 0}
-          >
-            <FontAwesomeIcon icon={faFileExcel} /> Export Excel
-          </button>
         </div>
 
         {/* Bảng Dữ liệu */}
@@ -252,17 +242,30 @@ const PatientManagement: React.FC = () => {
           </tbody>
         </table>
 
-        {/* Pagination Component */}
-        <Pagination
-          currentPage={pagination.currentPage}
-          totalPages={pagination.totalPages}
-          totalItems={pagination.totalItems}
-          onPreviousPage={pagination.goToPreviousPage}
-          onNextPage={pagination.goToNextPage}
-          hasNextPage={pagination.hasNextPage}
-          hasPreviousPage={pagination.hasPreviousPage}
-          itemName="patients"
-        />
+        {/* Pagination & Export Section */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
+          {/* Pagination Component */}
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            totalItems={pagination.totalItems}
+            onPreviousPage={pagination.goToPreviousPage}
+            onNextPage={pagination.goToNextPage}
+            hasNextPage={pagination.hasNextPage}
+            hasPreviousPage={pagination.hasPreviousPage}
+            itemName="patients"
+          />
+
+          {/* Export Excel Button */}
+          <button
+            className="export-btn"
+            onClick={() => exportPatientsToExcel(patients, 'danh_sach_benh_nhan')}
+            title="Export to Excel"
+            disabled={patients.length === 0}
+          >
+            <FontAwesomeIcon icon={faFileExcel} /> Export Excel
+          </button>
+        </div>
       </div>
     </div>
   );

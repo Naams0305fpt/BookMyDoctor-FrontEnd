@@ -132,14 +132,6 @@ const DoctorManagement = () => {
             <FontAwesomeIcon icon={faUserMd} />
             <span>Create Doctor Account</span>
           </button>
-          <button
-            className="export-btn"
-            onClick={() => exportDoctorsToExcel(filteredDoctors, 'danh_sach_bac_si')}
-            title="Export to Excel"
-            disabled={filteredDoctors.length === 0}
-          >
-            <FontAwesomeIcon icon={faFileExcel} /> Export Excel
-          </button>
         </div>
 
         {/* Bảng */}
@@ -227,17 +219,30 @@ const DoctorManagement = () => {
           </tbody>
         </table>
 
-        {/* Pagination Component */}
-        <Pagination
-          currentPage={pagination.currentPage}
-          totalPages={pagination.totalPages}
-          totalItems={pagination.totalItems}
-          onPreviousPage={pagination.goToPreviousPage}
-          onNextPage={pagination.goToNextPage}
-          hasNextPage={pagination.hasNextPage}
-          hasPreviousPage={pagination.hasPreviousPage}
-          itemName="doctors"
-        />
+        {/* Pagination & Export Section */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
+          {/* Pagination Component */}
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            totalItems={pagination.totalItems}
+            onPreviousPage={pagination.goToPreviousPage}
+            onNextPage={pagination.goToNextPage}
+            hasNextPage={pagination.hasNextPage}
+            hasPreviousPage={pagination.hasPreviousPage}
+            itemName="doctors"
+          />
+
+          {/* Export Excel Button */}
+          <button
+            className="export-btn"
+            onClick={() => exportDoctorsToExcel(filteredDoctors, 'danh_sach_bac_si')}
+            title="Export to Excel"
+            disabled={filteredDoctors.length === 0}
+          >
+            <FontAwesomeIcon icon={faFileExcel} /> Export Excel
+          </button>
+        </div>
       </div>
 
       {/* Modal */}

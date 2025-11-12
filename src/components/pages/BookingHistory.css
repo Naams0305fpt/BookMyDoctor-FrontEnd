@@ -18,12 +18,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.625rem 1.25rem;
   background: linear-gradient(135deg, #1d8348 0%, #27ae60 100%);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -50,7 +50,7 @@
 }
 
 .export-btn svg {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 /* Statistics Overview */

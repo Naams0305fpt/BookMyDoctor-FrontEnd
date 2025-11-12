@@ -181,7 +181,31 @@ const BookingHistory: React.FC = () => {
   }, []);
   // --- KẾT THÚC THÊM MỚI ---
 
-  // Redirect if not patient
+  // Filter and sort bookings BEFORE early return
+  const filteredBookings = bookings
+    .filter((booking) => {
+      const matchesSearch =
+        booking.doctorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        booking.department.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "all" || booking.status === statusFilter;
+
+      const matchesDate =
+        !selectedDate ||
+        booking.appointmentDate.toDateString() === selectedDate.toDateString();
+
+      return matchesSearch && matchesStatus && matchesDate;
+    })
+    .sort((a, b) => {
+      // Sort by appointment date (newest first)
+      return b.appointmentDate.getTime() - a.appointmentDate.getTime();
+    });
+
+  // Pagination hook - MUST be called before any early returns
+  const pagination = usePagination(filteredBookings, 10);
+
+  // Redirect if not patient - AFTER all hooks
   if (!isAuthenticated || user?.userType !== "patient") {
     return <Navigate to="/" replace />;
   }
@@ -234,29 +258,6 @@ const BookingHistory: React.FC = () => {
     nextDay.setDate(nextDay.getDate() + 1);
     setSelectedDate(nextDay);
   };
-
-  const filteredBookings = bookings
-    .filter((booking) => {
-      const matchesSearch =
-        booking.doctorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        booking.department.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesStatus =
-        statusFilter === "all" || booking.status === statusFilter;
-
-      const matchesDate =
-        !selectedDate ||
-        booking.appointmentDate.toDateString() === selectedDate.toDateString();
-
-      return matchesSearch && matchesStatus && matchesDate;
-    })
-    .sort((a, b) => {
-      // Sort by appointment date (newest first)
-      return b.appointmentDate.getTime() - a.appointmentDate.getTime();
-    });
-
-  // Pagination hook
-  const pagination = usePagination(filteredBookings, 10);
 
   const stats = {
     total: bookings.length,
@@ -388,31 +389,6 @@ const BookingHistory: React.FC = () => {
                   <FontAwesomeIcon icon={faChevronRight} />
                 </button>
               </div>
-
-              {/* Export Excel Button */}
-              <button
-                className="export-btn"
-                onClick={() => {
-                  // Convert bookings to MyHistoryResponse format for export
-                  const exportData: MyHistoryResponse[] = filteredBookings.map(b => ({
-                    AppointId: b.id,
-                    NamePatient: b.patientName,
-                    NameDoctor: b.doctorName,
-                    PhoneDoctor: b.doctorPhone,
-                    Department: b.department,
-                    AppointDate: b.appointmentDate.toISOString().split('T')[0],
-                    AppointHour: b.appointmentTime,
-                    Status: b.status.charAt(0).toUpperCase() + b.status.slice(1),
-                    Symptoms: b.symptom,
-                    Prescription: b.prescription || '',
-                  }));
-                  exportBookingHistoryToExcel(exportData, 'lich_su_dat_kham');
-                }}
-                title="Export to Excel"
-                disabled={filteredBookings.length === 0}
-              >
-                <FontAwesomeIcon icon={faFileExcel} /> Export Excel
-              </button>
             </div>
 
             {/* Booking Table */}
@@ -517,17 +493,45 @@ const BookingHistory: React.FC = () => {
               </tbody>
             </table>
 
-            {/* Pagination Component */}
-            <Pagination
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.totalItems}
-              onPreviousPage={pagination.goToPreviousPage}
-              onNextPage={pagination.goToNextPage}
-              hasNextPage={pagination.hasNextPage}
-              hasPreviousPage={pagination.hasPreviousPage}
-              itemName="bookings"
-            />
+            {/* Pagination & Export Section */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
+              {/* Pagination Component */}
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                totalItems={pagination.totalItems}
+                onPreviousPage={pagination.goToPreviousPage}
+                onNextPage={pagination.goToNextPage}
+                hasNextPage={pagination.hasNextPage}
+                hasPreviousPage={pagination.hasPreviousPage}
+                itemName="bookings"
+              />
+
+              {/* Export Excel Button */}
+              <button
+                className="export-btn"
+                onClick={() => {
+                  // Convert bookings to MyHistoryResponse format for export
+                  const exportData: MyHistoryResponse[] = filteredBookings.map(b => ({
+                    AppointId: b.id,
+                    NamePatient: b.patientName,
+                    NameDoctor: b.doctorName,
+                    PhoneDoctor: b.doctorPhone,
+                    Department: b.department,
+                    AppointDate: b.appointmentDate.toISOString().split('T')[0],
+                    AppointHour: b.appointmentTime,
+                    Status: b.status.charAt(0).toUpperCase() + b.status.slice(1),
+                    Symptoms: b.symptom,
+                    Prescription: b.prescription || '',
+                  }));
+                  exportBookingHistoryToExcel(exportData, 'lich_su_dat_kham');
+                }}
+                title="Export to Excel"
+                disabled={filteredBookings.length === 0}
+              >
+                <FontAwesomeIcon icon={faFileExcel} /> Export Excel
+              </button>
+            </div>
           </div>
         </div>
       )}
