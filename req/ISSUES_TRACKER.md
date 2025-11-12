@@ -398,7 +398,7 @@ const handleUpdateProfile = async () => {
     email,
     phone,
     department,
-    experienceYears
+    experienceYears,
   });
 };
 ```

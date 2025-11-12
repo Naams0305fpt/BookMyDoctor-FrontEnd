@@ -95,7 +95,7 @@
 | `GET /Patients/AllPatientsAndSearch` | `PatientManagement.tsx` | ✅ Hoàn hảo |
 | `PUT /Patients/UpdateAppointment`    | `AppointmentTable.tsx`  | ✅ Hoàn hảo |
 | `GET /Patients/MyHistoryAppoint`     | `BookingHistory.tsx`    | ✅ Hoàn hảo |
-| `DELETE /Patients/DeletePatient`     | ❌ Chưa dùng            | ℹ️ Tùy chọn |
+| `DELETE /Patients/DeletePatient`     | ❌ Won't implement      | 🔒 Data protection |
 
 ### ❌ Schedule Controller (0/7) - 0% - 🔥 KHOẢNG TRỐNG LỚN
 
