@@ -2,229 +2,64 @@ import axios, { AxiosError } from 'axios';
 import config from '../config';
 import { User, UserType } from '../contexts/AuthContext';
 
-const API_BASE_URL = config.apiBaseUrl;
+// Import all types from centralized types folder
+import type {
+  // Auth types
+  RegisterRequest,
+  LoginRequest,
+  SendVerificationCodeRequest,
+  RequestOtpRequest,
+  VerifyOtpRequest,
+  ChangePasswordRequest,
+  ChangePasswordOtpRequest,
+  SetNewPasswordRequest,
+  ResetPasswordOtpRequest,
+  // Booking types
+  BookingRequest,
+  MyHistoryResponse,
+  // Doctor types
+  Doctor,
+  CreateDoctorRequest,
+  DoctorAppointment,
+  UpdateAppointmentRequest,
+  // Patient types
+  Patient,
+  // Schedule types
+  Schedule,
+  AddScheduleRequest,
+  UpdateScheduleRequest,
+  AddScheduleResponse,
+  ScheduleDetailResponse,
+  ScheduleResponseItem,
+} from '../types';
 
-// --- CÁC INTERFACE (Giữ nguyên) ---
-export interface RegisterRequest {
-  Username: string;
-  Password: string;
-  ConfirmPassword: string;
-  Email: string;
-  Phone: string;
-}
+// Re-export types for backward compatibility
+export type {
+  RegisterRequest,
+  LoginRequest,
+  SendVerificationCodeRequest,
+  RequestOtpRequest,
+  VerifyOtpRequest,
+  ChangePasswordRequest,
+  ChangePasswordOtpRequest,
+  SetNewPasswordRequest,
+  ResetPasswordOtpRequest,
+  BookingRequest,
+  MyHistoryResponse,
+  Doctor,
+  CreateDoctorRequest,
+  DoctorAppointment,
+  UpdateAppointmentRequest,
+  Patient,
+  Schedule,
+  AddScheduleRequest,
+  UpdateScheduleRequest,
+  AddScheduleResponse,
+  ScheduleDetailResponse,
+  ScheduleResponseItem,
+};
 
-export interface LoginRequest {
-  UsernameOrPhoneOrEmail: string;
-  Password: string;
-}
-
-export interface SendVerificationCodeRequest {
-  email: string;
-}
-
-// export interface VerifyCodeRequest {
-//   email: string;
-//   code: string;
-// }
-export interface VerifyOtpRequest {
-  Destination: string; // Email
-  Purpose: string;     // "ResetPassword"
-  OtpCode: string;
-  Channel: string;     // "email"
-}
-
-export interface ChangePasswordOtpRequest {
-  NewPassword: string;
-  ConfirmNewPassword: string;
-}
-
-export interface ChangePasswordRequest {
-  CurrentPassword: string;
-  NewPassword: string;
-  ConfirmNewPassword: string;
-}
-
-export interface SetNewPasswordRequest {
-  email: string;
-  newPassword: string;
-  confirmPassword: string;
-}
-
-export interface RequestOtpRequest {
-  Destination: string; // Email address
-  Purpose: string; // e.g., "ResetPassword"
-  Channel: string; // Should be "email"
-}
-
-export interface ResetPasswordOtpRequest {
-  Destination: string; // Email address
-  Purpose: string; // e.g., "ResetPassword"
-  OtpCode: string; // The 6-digit code
-  NewPassword: string;
-  ConfirmNewPassword: string;
-}
-
-export interface BookingRequest {
-  FullName: string;
-  Phone: string;
-  Email: string;
-  Date: string; // "YYYY-MM-DD"
-  DoctorId: number;
-  AppointHour: string; // "HH:mm"
-  Gender: string;
-  DateOfBirth: string; // "YYYY-MM-DD"
-  Symptom: string;
-}
-
-export interface Patient {
-  id?: number; // ID có thể không có trong mọi response, nhưng hữu ích
-  FullName: string;
-  Username: string;
-  DateOfBirth: string; // "YYYY-MM-DD"
-  Gender: string;
-  PhoneNumber: string;
-  Email?: string;
-  Address: string;
-  AppointDate: string; // "YYYY-MM-DD"
-  Status: "Completed" | "Scheduled" | "Cancelled";
-  Symptoms: string;
-  Prescription: string;
-  AppointHour?: string;
-}
-
-// --- THÊM MỚI: Interface cho API GetDoctorAppointments ---
-export interface DoctorAppointment {
-  AppointId: number;
-  DoctorId: number;
-  PatientId: number;
-  FullName: string;
-  Username: string;
-  DateOfBirth: string; // "YYYY-MM-DD"
-  Gender: string;
-  PhoneNumber: string;
-  Email: string;
-  Address: string | null;
-  Status: "Scheduled" | "Completed" | "Cancelled";
-  Symptoms: string;
-  Prescription: string | null;
-  AppointDate: string; // "YYYY-MM-DD"
-  AppointHour: string; // "HH:mm:ss"
-}
-
-export interface UpdateAppointmentRequest {
-  Status: string;
-  Symptoms: string;
-  Prescription: string;
-} 
-
-// --- THÊM MỚI: Interface cho API History (dựa trên ảnh) ---
-export interface MyHistoryResponse {
-  AppointId: number; // ID của appointment - dùng để cancel (BE đang bổ sung)
-  NamePatient: string;
-  NameDoctor: string;
-  PhoneDoctor: string;
-  Department: string;
-  AppointHour: string; // "HH:mm:ss"
-  AppointDate: string; // "YYYY-MM-DD"
-  Status: string; // "Scheduled", "Completed", "Cancelled"
-  Symptoms: string;
-  Prescription: string;
-}
-// --- KẾT THÚC THÊM MỚI ---
-export interface Doctor {
-  DoctorId: number;
-  UserId: number;
-  Name: string;
-  Gender: string;
-  DateOfBirth: string;
-  Identification: string;
-  Phone: string;
-  Email: string;
-  Address: string;
-  Department: string;
-  Experience_year: number;
-  Image: string | null;
-  IsActive: boolean;
-}
-
-export interface CreateDoctorRequest {
-  Username: string;
-  Password: string;
-  Phone: string;
-  Email: string;
-  Name: string;
-  Gender: string;
-  DateOfBirth: string; // "YYYY-MM-DD"
-  Identification: string;
-  Department: string;
-  ExperienceYears: number; 
-}
-
-// --- THAY ĐỔI: INTERFACE CHO SCHEDULE (TỪ API MỚI) ---
-export interface Schedule {
-  ScheduleId?: number; // API gốc có vẻ không trả về, nhưng có thể hữu ích
-  DoctorId: number;
-  DoctorName?: string; // Optional vì API List_All_Schedules_Doctors không trả về
-  WorkDate: string; // "YYYY-MM-DD"
-  StartTime: string; // "HH:mm:ss"
-  EndTime: string; // "HH:mm:ss"
-  Status: string; // Ví dụ: "Scheduled", "Available"...
-  IsActive?: boolean; // API gốc có, thêm vào nếu cần
-}
-// --- KẾT THÚC THÊM MỚI ---
-
-// --- SCHEDULE REQUEST/RESPONSE INTERFACES ---
-// Dựa trên API Documentation:
-// POST /api/Schedule/Add_Schedule_Doctor
-export interface AddScheduleRequest {
-  DoctorId: number;
-  WorkDate: string; // "YYYY-MM-DD"
-  StartTime: string; // "HH:mm" (e.g. "08:00")
-  EndTime: string; // "HH:mm" (e.g. "17:00")
-  Status: string; // "Scheduled", "Available", etc.
-}
-
-// PUT /api/Schedule/Update_Schedule_Doctor
-export interface UpdateScheduleRequest {
-  ScheduleId: number;
-  DoctorId: number;
-  WorkDate: string; // "YYYY-MM-DD"
-  StartTime: string; // "HH:mm"
-  EndTime: string; // "HH:mm"
-  Status: string;
-}
-
-// Response 201 Created từ Add_Schedule_Doctor
-export interface AddScheduleResponse {
-  ScheduleId: number;
-  DoctorId: number;
-  WorkDate: string;
-  StartTime: string;
-  EndTime: string;
-  Status: string;
-  IsActive: boolean;
-}
-
-// GET /api/Schedule/Get_Schedule_ById Response
-export interface ScheduleDetailResponse {
-  ScheduleId: number;
-  DoctorId: number;
-  WorkDate: string;
-  StartTime: string;
-  EndTime: string;
-  Status: string;
-  IsActive: boolean;
-}
-// --- KẾT THÚC SCHEDULE INTERFACES ---
-
-// --- SỬA LỖI TYPE: Thêm Name và Phone (dựa trên API 'info_slot_busy') ---
-export interface ScheduleResponseItem {
-  AppointHour: string; // "HH:mm:ss"
-  Status: string; // "Scheduled", "Cancelled", v.v...
-  Name?: string; // <-- API có trả về
-  Phone?: string; // <-- API có trả về
-}
-// --- KẾT THÚC SỬA LỖI ---// --- HELPER FUNCTION (Giữ nguyên) ---
+const API_BASE_URL = config.apiBaseUrl;// --- HELPER FUNCTION (Giữ nguyên) ---
 export const formatDateForAPI = (date: Date | null): string => {
   // Trả về chuỗi rỗng nếu date là null hoặc undefined
   if (!date) return ""; 
