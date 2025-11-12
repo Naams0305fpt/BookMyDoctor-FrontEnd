@@ -19,6 +19,8 @@ import {
 } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../common/Pagination";
 import "./DoctorSchedule.css";
 
 // --- Interface Appointment và TableRowProps giữ nguyên ---
@@ -219,8 +221,8 @@ const AppointmentTable: React.FC = () => {
 
   // State cho bộ lọc
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Bắt đầu là null (tất cả ngày)
-  const [selectedStatus, setSelectedStatus] = useState(""); // Bắt đầu là rỗng (tất cả status)
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   // Hàm fetch data với API mới
   const fetchAppointments = useCallback(
@@ -228,21 +230,18 @@ const AppointmentTable: React.FC = () => {
       setIsLoading(true);
       setError(null);
       try {
-        // Nếu là doctor, chỉ lấy appointments của mình
-        // Nếu là admin, lấy tất cả (không gửi doctorId)
         const doctorIdParam =
           user?.userType === "doctor" && user?.doctorId
             ? user.doctorId
             : undefined;
 
-        // Gọi API mới
         const data = await api.getDoctorAppointments(
           doctorIdParam,
           patientName || undefined,
-          undefined // patientPhone - để undefined vì search bar chỉ search name
+          undefined
         );
 
-        // Filter theo date và status ở frontend (vì API không hỗ trợ)
+        // Filter theo date và status ở frontend
         let filteredData = data;
 
         if (date) {
@@ -265,6 +264,9 @@ const AppointmentTable: React.FC = () => {
     },
     [user]
   );
+
+  // Pagination hook
+  const pagination = usePagination(appointments, 10);
 
   // Gọi API khi component mount và khi bộ lọc thay đổi
   useEffect(() => {
@@ -509,16 +511,16 @@ const AppointmentTable: React.FC = () => {
           )}
           {!isLoading &&
             !error &&
-            appointments.length > 0 &&
-            appointments.map((appointment) => {
-              // --- ÁNH XẠ (MAP) TỪ DoctorAppointment -> Appointment ---
+            pagination.currentItems.length > 0 &&
+            pagination.currentItems.map((appointment) => {
+              // Ánh xạ từ DoctorAppointment -> Appointment
               const appointmentData: Appointment = {
-                id: appointment.AppointId, // Dùng AppointId từ API
+                id: appointment.AppointId,
                 fullName: appointment.FullName,
                 dateOfBirth: new Date(appointment.DateOfBirth),
                 gender: appointment.Gender,
                 phone: appointment.PhoneNumber,
-                appointHour: appointment.AppointHour, // Đã có từ API
+                appointHour: appointment.AppointHour,
                 appointDate: appointment.AppointDate,
                 symptom: appointment.Symptoms,
                 prescription: appointment.Prescription || "",
@@ -542,6 +544,17 @@ const AppointmentTable: React.FC = () => {
           )}
         </tbody>
       </table>
+      {/* Pagination Component */}
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        onPreviousPage={pagination.goToPreviousPage}
+        onNextPage={pagination.goToNextPage}
+        hasNextPage={pagination.hasNextPage}
+        hasPreviousPage={pagination.hasPreviousPage}
+        itemName="appointments"
+      />
     </div>
   );
 };

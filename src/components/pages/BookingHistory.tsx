@@ -17,6 +17,8 @@ import { useAuth } from "../../contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { api, MyHistoryResponse } from "../../services/api";
 import { useNotification } from "../../contexts/NotificationContext";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../common/Pagination";
 
 interface Booking {
   id: number;
@@ -251,6 +253,9 @@ const BookingHistory: React.FC = () => {
       return b.appointmentDate.getTime() - a.appointmentDate.getTime();
     });
 
+  // Pagination hook
+  const pagination = usePagination(filteredBookings, 10);
+
   const stats = {
     total: bookings.length,
     completed: bookings.filter((b) => b.status === "completed").length,
@@ -401,7 +406,7 @@ const BookingHistory: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredBookings.length === 0 ? (
+                {pagination.currentItems.length === 0 ? (
                   <tr>
                     <td colSpan={11} className="no-data-cell">
                       <div className="no-data">
@@ -415,7 +420,7 @@ const BookingHistory: React.FC = () => {
                     </td>
                   </tr>
                 ) : (
-                  filteredBookings.map((booking, index) => {
+                  pagination.currentItems.map((booking, index) => {
                     const canCancel = canCancelBooking(
                       booking.appointmentDate,
                       booking.appointmentTime
@@ -425,7 +430,7 @@ const BookingHistory: React.FC = () => {
 
                     return (
                       <tr key={booking.id}>
-                        <td>{index + 1}</td>
+                        <td>{pagination.startIndex + index}</td>
                         <td>{booking.patientName}</td>
                         <td>{booking.doctorName}</td>
                         <td>{booking.doctorPhone}</td>
@@ -484,6 +489,18 @@ const BookingHistory: React.FC = () => {
                 )}
               </tbody>
             </table>
+
+            {/* Pagination Component */}
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              onPreviousPage={pagination.goToPreviousPage}
+              onNextPage={pagination.goToNextPage}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              itemName="bookings"
+            />
           </div>
         </div>
       )}
