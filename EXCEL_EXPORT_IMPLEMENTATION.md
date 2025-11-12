@@ -10,6 +10,7 @@
 ## 🎯 MỤC TIÊU
 
 Triển khai tính năng **Export to Excel** cho Admin (Clinic Owner) và Patient để:
+
 - Admin có thể export danh sách bệnh nhân, bác sĩ, lịch làm việc
 - Patient có thể export lịch sử đặt khám cá nhân
 - Tạo báo cáo dễ dàng cho quản lý
@@ -24,6 +25,7 @@ npm install --save-dev @types/file-saver
 ```
 
 ### Libraries sử dụng:
+
 - **`xlsx`** (v0.18.5+): Tạo và xuất file Excel (.xlsx)
 - **`file-saver`** (v2.0.5+): Download file từ browser
 - **`@types/file-saver`**: TypeScript definitions
@@ -51,6 +53,7 @@ exportBookingHistoryToExcel(bookings: MyHistoryResponse[], filename?: string)
 ```
 
 **Features**:
+
 - ✅ Auto-format dates → `dd/MM/yyyy` (Vietnamese format)
 - ✅ Translate status → "Scheduled" → "Đã đặt"
 - ✅ Vietnamese column headers
@@ -64,9 +67,10 @@ exportBookingHistoryToExcel(bookings: MyHistoryResponse[], filename?: string)
 ## 📋 EXCEL FILE STRUCTURE
 
 ### 1. **Patients Export** (14 columns)
+
 ```
-STT | ID | Họ tên | Tên đăng nhập | Số điện thoại | Email | 
-Ngày sinh | Giới tính | Địa chỉ | Trạng thái | Ngày khám | 
+STT | ID | Họ tên | Tên đăng nhập | Số điện thoại | Email |
+Ngày sinh | Giới tính | Địa chỉ | Trạng thái | Ngày khám |
 Giờ khám | Triệu chứng | Đơn thuốc
 ```
 
@@ -78,8 +82,9 @@ Giờ khám | Triệu chứng | Đơn thuốc
 ---
 
 ### 2. **Doctors Export** (12 columns)
+
 ```
-STT | Mã BS | Họ tên | Số điện thoại | Email | Chuyên khoa | 
+STT | Mã BS | Họ tên | Số điện thoại | Email | Chuyên khoa |
 Kinh nghiệm | Giới tính | Ngày sinh | Địa chỉ | CCCD | Trạng thái
 ```
 
@@ -91,8 +96,9 @@ Kinh nghiệm | Giới tính | Ngày sinh | Địa chỉ | CCCD | Trạng thái
 ---
 
 ### 3. **Schedules Export** (9 columns)
+
 ```
-STT | Mã lịch | Mã bác sĩ | Tên bác sĩ | Ngày làm việc | 
+STT | Mã lịch | Mã bác sĩ | Tên bác sĩ | Ngày làm việc |
 Thời gian bắt đầu | Thời gian kết thúc | Trạng thái | Hoạt động
 ```
 
@@ -104,8 +110,9 @@ Thời gian bắt đầu | Thời gian kết thúc | Trạng thái | Hoạt đ�
 ---
 
 ### 4. **Booking History Export** (11 columns)
+
 ```
-STT | Mã đặt chỗ | Bệnh nhân | Bác sĩ | SĐT bác sĩ | Chuyên khoa | 
+STT | Mã đặt chỗ | Bệnh nhân | Bác sĩ | SĐT bác sĩ | Chuyên khoa |
 Ngày khám | Giờ khám | Trạng thái | Triệu chứng | Đơn thuốc
 ```
 
@@ -123,6 +130,7 @@ Ngày khám | Giờ khám | Trạng thái | Triệu chứng | Đơn thuốc
 **Placement**: Trong `appointment-controls` section (cùng hàng với search/filter)
 
 **Visual**:
+
 ```css
 .export-btn {
   background: linear-gradient(135deg, #1d8348 0%, #27ae60 100%);
@@ -134,6 +142,7 @@ Ngày khám | Giờ khám | Trạng thái | Triệu chứng | Đơn thuốc
 ```
 
 **States**:
+
 - 🟢 **Normal**: Green gradient with Excel icon
 - 🔵 **Hover**: Lighter green, lift effect (-2px translateY)
 - ⚪ **Disabled**: Gray (#95a5a6), cursor: not-allowed
@@ -148,17 +157,18 @@ Ngày khám | Giờ khám | Trạng thái | Triệu chứng | Đơn thuốc
 ### Admin Components (3 files)
 
 #### 1. `src/components/admin/PatientManagement.tsx`
+
 ```typescript
 import { exportPatientsToExcel } from "../../utils/excelExport";
 
 // ... trong JSX:
 <button
   className="export-btn"
-  onClick={() => exportPatientsToExcel(patients, 'danh_sach_benh_nhan')}
+  onClick={() => exportPatientsToExcel(patients, "danh_sach_benh_nhan")}
   disabled={patients.length === 0}
 >
   <FontAwesomeIcon icon={faFileExcel} /> Export Excel
-</button>
+</button>;
 ```
 
 **Export data**: Toàn bộ `patients` array (đã filter)
@@ -166,17 +176,18 @@ import { exportPatientsToExcel } from "../../utils/excelExport";
 ---
 
 #### 2. `src/components/admin/DoctorManagement.tsx`
+
 ```typescript
 import { exportDoctorsToExcel } from "../../utils/excelExport";
 
 // ... trong JSX:
 <button
   className="export-btn"
-  onClick={() => exportDoctorsToExcel(filteredDoctors, 'danh_sach_bac_si')}
+  onClick={() => exportDoctorsToExcel(filteredDoctors, "danh_sach_bac_si")}
   disabled={filteredDoctors.length === 0}
 >
   <FontAwesomeIcon icon={faFileExcel} /> Export Excel
-</button>
+</button>;
 ```
 
 **Export data**: `filteredDoctors` (đã search)
@@ -184,17 +195,18 @@ import { exportDoctorsToExcel } from "../../utils/excelExport";
 ---
 
 #### 3. `src/components/admin/ScheduleManagement.tsx`
+
 ```typescript
 import { exportSchedulesToExcel } from "../../utils/excelExport";
 
 // ... trong JSX:
 <button
   className="export-btn"
-  onClick={() => exportSchedulesToExcel(filteredSchedules, 'lich_lam_viec')}
+  onClick={() => exportSchedulesToExcel(filteredSchedules, "lich_lam_viec")}
   disabled={filteredSchedules.length === 0}
 >
   <FontAwesomeIcon icon={faFileExcel} /> Export Excel
-</button>
+</button>;
 ```
 
 **Export data**: `filteredSchedules` (đã filter by date & doctor)
@@ -204,11 +216,12 @@ import { exportSchedulesToExcel } from "../../utils/excelExport";
 ### Patient Component (1 file)
 
 #### 4. `src/components/pages/BookingHistory.tsx`
+
 ```typescript
 import { exportBookingHistoryToExcel } from "../../utils/excelExport";
 
 // Convert bookings to MyHistoryResponse format
-const exportData: MyHistoryResponse[] = filteredBookings.map(b => ({
+const exportData: MyHistoryResponse[] = filteredBookings.map((b) => ({
   AppointId: b.id,
   NamePatient: b.patientName,
   NameDoctor: b.doctorName,
@@ -217,11 +230,11 @@ const exportData: MyHistoryResponse[] = filteredBookings.map(b => ({
 
 <button
   className="export-btn"
-  onClick={() => exportBookingHistoryToExcel(exportData, 'lich_su_dat_kham')}
+  onClick={() => exportBookingHistoryToExcel(exportData, "lich_su_dat_kham")}
   disabled={filteredBookings.length === 0}
 >
   <FontAwesomeIcon icon={faFileExcel} /> Export Excel
-</button>
+</button>;
 ```
 
 **Export data**: `filteredBookings` (đã filter by status & date)
@@ -231,9 +244,11 @@ const exportData: MyHistoryResponse[] = filteredBookings.map(b => ({
 ### Styles (2 files)
 
 #### 5. `src/components/dashboard/AdminDashboard.css`
+
 Added `.export-btn` styles (52 lines)
 
 #### 6. `src/components/pages/BookingHistory.css`
+
 Added `.export-btn` styles (52 lines, matching admin)
 
 ---
@@ -241,6 +256,7 @@ Added `.export-btn` styles (52 lines, matching admin)
 ## ✅ FEATURES CHECKLIST
 
 ### Core Functionality
+
 - [x] Export Patients to Excel (Admin)
 - [x] Export Doctors to Excel (Admin)
 - [x] Export Schedules to Excel (Admin)
@@ -249,6 +265,7 @@ Added `.export-btn` styles (52 lines, matching admin)
 - [x] Alert when no data available
 
 ### Data Quality
+
 - [x] Vietnamese column headers
 - [x] Date formatting (dd/MM/yyyy)
 - [x] Status translation (EN → VI)
@@ -258,6 +275,7 @@ Added `.export-btn` styles (52 lines, matching admin)
 - [x] Handle null/undefined values
 
 ### UI/UX
+
 - [x] Green gradient button design
 - [x] Excel icon (FontAwesome)
 - [x] Hover effects with animation
@@ -266,6 +284,7 @@ Added `.export-btn` styles (52 lines, matching admin)
 - [x] Responsive design
 
 ### Technical
+
 - [x] TypeScript type safety
 - [x] Proper import/export
 - [x] Error handling (alert)
@@ -277,6 +296,7 @@ Added `.export-btn` styles (52 lines, matching admin)
 ## 🧪 TESTING CHECKLIST
 
 ### Manual Testing (Admin)
+
 - [ ] Login as Admin
 - [ ] Navigate to Patient Management
   - [ ] Click Export Excel → Download `danh_sach_benh_nhan_YYYYMMDD.xlsx`
@@ -290,6 +310,7 @@ Added `.export-btn` styles (52 lines, matching admin)
   - [ ] Check date/time formatting
 
 ### Manual Testing (Patient)
+
 - [ ] Login as Patient
 - [ ] Navigate to Booking History
   - [ ] Export booking history → Download `lich_su_dat_kham_YYYYMMDD.xlsx`
@@ -297,6 +318,7 @@ Added `.export-btn` styles (52 lines, matching admin)
   - [ ] Check status translation (Scheduled → Đã đặt)
 
 ### Edge Cases
+
 - [ ] Empty table → Button disabled, alert shows
 - [ ] After filter → Export only filtered data
 - [ ] Large dataset (100+ rows) → Performance OK
@@ -308,27 +330,31 @@ Added `.export-btn` styles (52 lines, matching admin)
 ## 📊 BUSINESS VALUE
 
 ### Benefits for Admin
+
 ✅ **Quick Reports**: Export patient/doctor lists in seconds  
 ✅ **Data Analysis**: Use Excel for pivot tables, charts  
 ✅ **Compliance**: Easy backup for medical records  
-✅ **Sharing**: Send reports to management/stakeholders  
+✅ **Sharing**: Send reports to management/stakeholders
 
 ### Benefits for Patient
+
 ✅ **Personal Records**: Download complete appointment history  
 ✅ **Insurance Claims**: Attach Excel file as proof  
-✅ **Tracking**: Analyze own health appointments  
+✅ **Tracking**: Analyze own health appointments
 
 ---
 
 ## 📈 METRICS
 
 ### Development
+
 - **Time spent**: ~2 hours (quick win!)
 - **Files created**: 1 (excelExport.ts)
 - **Files modified**: 6 (3 admin + 1 patient + 2 CSS)
 - **Lines of code**: ~350 lines (utility + components + styles)
 
 ### Code Quality
+
 - **TypeScript**: 100% type-safe
 - **Reusability**: 4 utility functions, 1 CSS class
 - **Maintainability**: Clean separation of concerns
@@ -338,6 +364,7 @@ Added `.export-btn` styles (52 lines, matching admin)
 ## 🚀 DEPLOYMENT NOTES
 
 ### Dependencies Added
+
 ```json
 {
   "dependencies": {
@@ -351,6 +378,7 @@ Added `.export-btn` styles (52 lines, matching admin)
 ```
 
 ### Build Impact
+
 - Bundle size: +~150KB (xlsx library)
 - No performance impact on runtime
 - Compatible with existing build process
@@ -360,6 +388,7 @@ Added `.export-btn` styles (52 lines, matching admin)
 ## 🔮 FUTURE ENHANCEMENTS (Optional)
 
 ### Nice-to-have features:
+
 1. **CSV Export**: Alternative format for larger datasets
 2. **PDF Export**: Pretty reports with charts
 3. **Email Export**: Send Excel directly via email
@@ -374,15 +403,17 @@ Added `.export-btn` styles (52 lines, matching admin)
 ## 💡 LESSONS LEARNED
 
 ### What went well:
+
 ✅ Reusable utility functions reduce code duplication  
 ✅ TypeScript types catch errors early  
 ✅ Consistent UI design (green button across all components)  
-✅ Quick implementation (~2 hours from start to commit)  
+✅ Quick implementation (~2 hours from start to commit)
 
 ### What could be improved:
+
 ⚠️ Large datasets (1000+ rows) may cause browser lag  
 ⚠️ Excel library adds ~150KB to bundle size  
-⚠️ Could add progress indicator for large exports  
+⚠️ Could add progress indicator for large exports
 
 ---
 
@@ -392,12 +423,14 @@ Added `.export-btn` styles (52 lines, matching admin)
 **Message**: "feat(admin,patient): add Excel export functionality"
 
 **Changes**:
+
 - 12 files changed
 - 850 insertions
 - 69 deletions
 - 2 files created (RESTRUCTURE_SUMMARY.md, excelExport.ts)
 
 **Related Commits**:
+
 - `acb7d38`: docs: restructure req folder
 - `fc07b3a`: docs: add pagination documentation
 - `bb5fd4a`: feat(doctor,patient): add pagination
@@ -420,6 +453,7 @@ Added `.export-btn` styles (52 lines, matching admin)
 - [ ] User acceptance testing (pending)
 
 **Next Steps**:
+
 1. Manual testing theo checklist trên
 2. Fix bugs nếu có
 3. Deploy to staging

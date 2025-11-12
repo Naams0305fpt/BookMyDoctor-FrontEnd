@@ -13,6 +13,30 @@
   min-height: 100vh;
 }
 
+/* Table Footer Controls - Export & Pagination */
+.table-footer-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+  gap: 1rem;
+}
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.pagination-wrapper .pagination-container {
+  border-top: none;
+  padding: 0;
+  margin: 0;
+  justify-content: flex-end;
+}
+
 /* Export Excel Button */
 .export-btn {
   display: inline-flex;

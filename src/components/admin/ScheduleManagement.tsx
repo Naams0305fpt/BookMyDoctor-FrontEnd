@@ -320,29 +320,33 @@ const ScheduleManagement = () => {
           </tbody>
         </table>
 
-        {/* Pagination & Export Section */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
-          {/* Pagination Component */}
-          <Pagination
-            currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
-            totalItems={pagination.totalItems}
-            onPreviousPage={pagination.goToPreviousPage}
-            onNextPage={pagination.goToNextPage}
-            hasNextPage={pagination.hasNextPage}
-            hasPreviousPage={pagination.hasPreviousPage}
-            itemName="schedules"
-          />
-
-          {/* Export Excel Button */}
+        {/* Export & Pagination Section */}
+        <div className="table-footer-controls">
+          {/* Export Excel Button - Left */}
           <button
             className="export-btn"
-            onClick={() => exportSchedulesToExcel(filteredSchedules, 'lich_lam_viec')}
+            onClick={() =>
+              exportSchedulesToExcel(filteredSchedules, "lich_lam_viec")
+            }
             title="Export to Excel"
             disabled={filteredSchedules.length === 0}
           >
             <FontAwesomeIcon icon={faFileExcel} /> Export Excel
           </button>
+
+          {/* Pagination Component - Right */}
+          <div className="pagination-wrapper">
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              onPreviousPage={pagination.goToPreviousPage}
+              onNextPage={pagination.goToNextPage}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              itemName="schedules"
+            />
+          </div>
         </div>
       </div>
     </div>

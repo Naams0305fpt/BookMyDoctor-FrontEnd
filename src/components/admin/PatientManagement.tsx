@@ -242,29 +242,33 @@ const PatientManagement: React.FC = () => {
           </tbody>
         </table>
 
-        {/* Pagination & Export Section */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
-          {/* Pagination Component */}
-          <Pagination
-            currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
-            totalItems={pagination.totalItems}
-            onPreviousPage={pagination.goToPreviousPage}
-            onNextPage={pagination.goToNextPage}
-            hasNextPage={pagination.hasNextPage}
-            hasPreviousPage={pagination.hasPreviousPage}
-            itemName="patients"
-          />
-
-          {/* Export Excel Button */}
+        {/* Export & Pagination Section */}
+        <div className="table-footer-controls">
+          {/* Export Excel Button - Left */}
           <button
             className="export-btn"
-            onClick={() => exportPatientsToExcel(patients, 'danh_sach_benh_nhan')}
+            onClick={() =>
+              exportPatientsToExcel(patients, "danh_sach_benh_nhan")
+            }
             title="Export to Excel"
             disabled={patients.length === 0}
           >
             <FontAwesomeIcon icon={faFileExcel} /> Export Excel
           </button>
+
+          {/* Pagination Component - Right */}
+          <div className="pagination-wrapper">
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              onPreviousPage={pagination.goToPreviousPage}
+              onNextPage={pagination.goToNextPage}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              itemName="patients"
+            />
+          </div>
         </div>
       </div>
     </div>

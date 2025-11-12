@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faUserMd, faFileExcel } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faUserMd,
+  faFileExcel,
+} from "@fortawesome/free-solid-svg-icons";
 import CreateDoctorModal from "./CreateDoctorModal";
 import { api, Doctor } from "../../services/api";
 import { usePagination } from "../../hooks/usePagination";
@@ -219,29 +223,33 @@ const DoctorManagement = () => {
           </tbody>
         </table>
 
-        {/* Pagination & Export Section */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
-          {/* Pagination Component */}
-          <Pagination
-            currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
-            totalItems={pagination.totalItems}
-            onPreviousPage={pagination.goToPreviousPage}
-            onNextPage={pagination.goToNextPage}
-            hasNextPage={pagination.hasNextPage}
-            hasPreviousPage={pagination.hasPreviousPage}
-            itemName="doctors"
-          />
-
-          {/* Export Excel Button */}
+        {/* Export & Pagination Section */}
+        <div className="table-footer-controls">
+          {/* Export Excel Button - Left */}
           <button
             className="export-btn"
-            onClick={() => exportDoctorsToExcel(filteredDoctors, 'danh_sach_bac_si')}
+            onClick={() =>
+              exportDoctorsToExcel(filteredDoctors, "danh_sach_bac_si")
+            }
             title="Export to Excel"
             disabled={filteredDoctors.length === 0}
           >
             <FontAwesomeIcon icon={faFileExcel} /> Export Excel
           </button>
+
+          {/* Pagination Component - Right */}
+          <div className="pagination-wrapper">
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              onPreviousPage={pagination.goToPreviousPage}
+              onNextPage={pagination.goToNextPage}
+              hasNextPage={pagination.hasNextPage}
+              hasPreviousPage={pagination.hasPreviousPage}
+              itemName="doctors"
+            />
+          </div>
         </div>
       </div>
 
