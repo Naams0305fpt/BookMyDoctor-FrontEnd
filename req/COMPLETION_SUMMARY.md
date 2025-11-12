@@ -79,8 +79,7 @@
 | Feature            | Status | Missing                               |
 | ------------------ | ------ | ------------------------------------- |
 | **Cancel Booking** | 80%    | 24h policy warning UI                 |
-| **Profile Update** | 50%    | UI form (API available)               |
-| **Update Doctor**  | 50%    | Admin UI (API available)              |
+| **~~Update Doctor~~** | ❌ Won't implement | Admin không sửa Doctor (by design) |
 | **Doctor Search**  | 70%    | Server-side search (đang client-side) |
 | **Error Display**  | 80%    | Field-level error parsing             |
 | **Notifications**  | 60%    | Real-time push, email backend         |
@@ -146,10 +145,6 @@
 4. 📊 Excel Export (1 day)
    - Install xlsx + file-saver
    - Export buttons in management pages
-
-5. 👨‍⚕️ Update Doctor UI (6h)
-   - Modal in DoctorManagement
-   - Use PUT /api/Doctors/UpdateDoctor
 ```
 
 ### Day 5: Testing & Cleanup

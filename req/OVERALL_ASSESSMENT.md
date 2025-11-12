@@ -106,7 +106,7 @@
 - ❌ Statistics dashboard chưa có
 - ❌ Excel export chưa có (quick win!)
 - ❌ System settings chưa có
-- ⚠️ Update Doctor UI thiếu (API available)
+- ✅ Doctor Management hoàn chỉnh (Admin không sửa Doctor - by design)
 
 ---
 
@@ -358,12 +358,6 @@
   - Install xlsx + file-saver
   - Add export buttons in PatientManagement, DoctorManagement
   - Export with current filters
-- [ ] **Profile Update UI** (1 day)
-  - Use existing PUT /api/Profile/update-me
-  - Form similar to Settings page
-- [ ] **Update Doctor UI** (1 day)
-  - Use PUT /api/Doctors/UpdateDoctor
-  - Modal form in DoctorManagement
 - [ ] **Field-level Error Display** (0.5 day)
   - Parse API error responses
   - Show errors under specific fields
@@ -507,12 +501,12 @@
 
 1. **Focus on Quick Wins**
    - Excel export: 1 day, high business value
-   - Profile/Doctor update: 2 days, completes existing APIs
+   - Unit tests: 3 days, ensure code quality
 2. **Fix UX Gaps**
-   - Cancel policy is business-critical
+   - Cancel policy UX improvements
    - Error display improves user experience significantly
 3. **Prepare for Backend Features**
-   - Document Chatbot UI requirements
+   - Document Chatbot UI requirements (backend in development)
    - Design Statistics dashboard mockup
    - Plan email notification UX
 

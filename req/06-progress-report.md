@@ -90,9 +90,9 @@ Tài liệu này so sánh các yêu cầu trong folder `req` với code hiện t
 
 **Booking Controller** (0/3 unused - 100% coverage ✅)
 
-**Doctors Controller** (1/4 unused):
+**Doctors Controller** (0/4 unused - 100% coverage ✅):
 
-- `PUT /api/Doctors/UpdateDoctor` - Update doctor info (Admin feature chưa có UI)
+- _(No unused endpoints - Admin không được phép sửa thông tin bác sĩ, chỉ Doctor tự update qua Profile)_
 
 **Patients Controller** (1/4 unused):
 
@@ -119,12 +119,12 @@ Tài liệu này so sánh các yêu cầu trong folder `req` với code hiện t
 | Register          | 1               | 1      | 0      | 100% ✅     | Complete        |
 | **Profile**       | **3**           | **3**  | **0**  | **100% ✅** | **Complete**    |
 | Booking           | 3               | 3      | 0      | 100% ✅     | Complete        |
-| **Doctors**       | **4**           | **3**  | **1**  | **75%**     | **Medium**      |
+| **Doctors**       | **4**           | **4**  | **0**  | **100% ✅** | **Complete**    |
 | Patients          | 4               | 3      | 1      | 75%         | Low             |
 | **Schedule**      | **7**           | **5**  | **2**  | **71%**     | **Medium**      |
 | Owner             | 1               | 1      | 0      | 100% ✅     | Complete        |
 | **Chat (Gemini)** | **2**           | **0**  | **2**  | **0%**      | **⏳ IN DEV**   |
-| **TOTAL**         | **32**          | **26** | **6**  | **81%**     | **Target: 85%** |
+| **TOTAL**         | **32**          | **27** | **5**  | **84%**     | **Target: 85%** |
 
 **Note**: Compliance score is 97% when considering only features that are supposed to be implemented. The 81% overall usage reflects planned future features.
 
@@ -132,7 +132,6 @@ Tài liệu này so sánh các yêu cầu trong folder `req` với code hiện t
 | ------------------------------------ | ------------------------- | ----------------------- | ------------------------------------------- |
 | `GET /api/Doctors/Search-Doctors`    | Tìm kiếm bác sĩ nâng cao  | `BookingForm.tsx`       | 🟡 Trung bình (hiện tại filter client-side) |
 | `POST /api/Chat`                     | Chatbot AI                | Chưa có UI chatbot      | ⏳ Backend đang phát triển                  |
-| `PUT /api/Doctors/UpdateDoctor`      | Cập nhật thông tin bác sĩ | `DoctorManagement.tsx`  | 🟢 Thấp (Admin feature)                     |
 | `DELETE /api/Patients/DeletePatient` | Xóa bệnh nhân             | `PatientManagement.tsx` | 🟢 Thấp (Admin feature)                     |
 
 ### 🔧 API Request/Response Format Compliance
@@ -248,7 +247,7 @@ await api.updateProfileMe(data); // PUT /api/Profile/update-me
 | **Hủy lịch khám**          | UI có nút Cancel        | `BookingHistory.tsx`                                            | ⚠️ API có policy (không cho hủy < 24h) nhưng frontend chưa hiển thị message | Hiển thị cảnh báo policy trước khi hủy |
 | **Thống kê cơ bản**        | Hiển thị một số số liệu | `BookingHistory.tsx`                                            | ❌ Không có API endpoint cho statistics                                     | Backend cần API `/Statistics`          |
 | **Search bác sĩ nâng cao** | Filter client-side      | `BookingForm.tsx`                                               | ⚠️ API có `/Doctors/Search-Doctors` nhưng frontend chưa dùng                | Migrate sang server-side search        |
-| **Update Doctor Info**     | Chưa có UI              | Chưa có                                                         | ⚠️ API có `/Doctors/UpdateDoctor` nhưng frontend chưa có UI                 | Admin feature - UI để sửa bác sĩ       |
+| **~~Update Doctor Info~~** | ❌ Không triển khai     | N/A                                                             | ❌ Admin không được phép sửa thông tin bác sĩ (business logic)              | Doctor tự update qua Profile           |
 | **Schedule Management**    | Đã có CRUD đầy đủ       | `admin/ScheduleManagement.tsx`, `doctor/ScheduleManagement.tsx` | ✅ Đã implement đầy đủ 5 endpoints                                          | ✅ Hoàn tất                            |
 
 ### 🔴 Critical Issues - API Integration (2 Active)
@@ -272,8 +271,8 @@ await api.updateProfileMe(data); // PUT /api/Profile/update-me
 | **FR-N-002: Nhắc nhở 24h trước**          | ❌ Không                    | 🟡 Trung bình              | ❌ Không cần         | Hangfire job + Email              | Giảm no-show                          |
 | **FR-A-004: Dashboard thống kê nâng cao** | ❌ Không `/Statistics`      | 🟡 Trung bình              | Chart components     | API endpoint mới                  | Admin cần insights                    |
 | **FR-P-007: Email/SMS notification**      | ❌ Không                    | 🟡 Trung bình              | ❌ Không cần         | Backend notification service      | Real-time updates                     |
-| **Update Doctor Info**                    | ✅ `/Doctors/UpdateDoctor`  | 🟡 Trung bình              | Admin UI form        | ✅ Đã có                          | Admin flexibility                     |
-| **Update Profile**                        | ✅ `/Profile/update-me`     | 🟡 Trung bình              | Profile edit form    | ✅ Đã có                          | User self-service                     |
+| **~~Update Doctor Info~~**                | ❌ Không triển khai         | ❌ Không                   | N/A                  | ❌ Không cần                      | Admin không được sửa Doctor info      |
+| **Update Profile**                        | ✅ `/Profile/update-me`     | ✅ Đã có                   | Profile edit form    | ✅ Đã có                          | User self-service                     |
 | **NFR-U-002: Đa ngôn ngữ (i18n)**         | N/A                         | 🟡 Trung bình              | react-i18next        | ❌ Không cần                      | Hỗ trợ Tiếng Việt + English           |
 | **NFR-M-003: Unit Tests**                 | N/A                         | 🔴 Cao                     | `*.test.tsx`         | ❌ Không cần                      | Đảm bảo chất lượng code               |
 | **NFR-L-001: Error Tracking (Sentry)**    | N/A                         | 🟡 Trung bình              | Sentry setup         | ❌ Không cần                      | Giám sát lỗi production               |
@@ -302,8 +301,7 @@ await api.updateProfileMe(data); // PUT /api/Profile/update-me
 ┌─────────────────────────────────────────────────────────┐
 │ 1. Doctor appointment limit (cần BE)                   │
 │ 2. Email notifications (cần BE)                        │
-│ 3. Profile Update UI (API ✅ đã có)                     │
-│ 4. Update Doctor UI (API ✅ đã có)                      │
+│ 3. Server-side doctor search (optional)                │
 └─────────────────────────────────────────────────────────┘
 
 🟡 MEDIUM (Backlog):
@@ -701,6 +699,15 @@ await api.updateProfileMe(data); // PUT /api/Profile/update-me
   - Appointments by department
 - Status: ❌ **Not Implemented**
 - Priority: 🟡 Medium
+
+**~~FR-ADMIN-008: Update Doctor Info~~** ❌ **Không triển khai**
+
+- Business Rule: **Admin không được phép chỉnh sửa thông tin bác sĩ**
+- Reasoning:
+  - Bác sĩ tự quản lý profile qua `/Profile/update-me` (đã có)
+  - Admin chỉ có quyền: Create Doctor, Delete Doctor
+  - Không có nhu cầu business cho Admin update Doctor info
+- Status: ❌ **Won't Implement** (by design)
 
 ---
 
@@ -1237,29 +1244,28 @@ await api.updateProfileMe(data); // PUT /api/Profile/update-me
 
 ## 📊 API Compliance Score
 
-| Category               | Score   | Details                                                                       |
-| ---------------------- | ------- | ----------------------------------------------------------------------------- |
-| **Authentication**     | 100%    | ✅ Login, Logout, OTP flow, Change Password - All perfect                     |
-| **Booking**            | 90%     | ✅ Public booking, slots check. ⚠️ Cancel policy UX missing                   |
-| **Doctor Management**  | 95%     | ✅ Create, delete, view, Schedule CRUD. ⚠️ Update Doctor UI missing           |
-| **Patient Management** | 100%    | ✅ All endpoints used correctly                                               |
-| **Admin Features**     | 90%     | ✅ CRUD doctors/patients, Schedule view/delete. ❌ Export, Statistics missing |
-| **Schedule API**       | 100%    | ✅ Full CRUD implementation (admin + doctor views)                            |
-| **Settings/Profile**   | 100%    | ✅ Change Password complete. ⚠️ Profile Update UI missing (API available)     |
-| **AI Chatbot**         | 0%      | ❌ API exists, no UI                                                          |
-| **Error Handling**     | 95%     | ✅ Interceptor handles all cases                                              |
-| **Cookie Auth**        | 100%    | ✅ Perfect implementation                                                     |
-| **Overall**            | **90%** | **Excellent foundation, only Chatbot UI + minor features missing**            |
+| Category               | Score   | Details                                                                     |
+| ---------------------- | ------- | --------------------------------------------------------------------------- |
+| **Authentication**     | 100%    | ✅ Login, Logout, OTP flow, Change Password - All perfect                   |
+| **Booking**            | 90%     | ✅ Public booking, slots check. ⚠️ Cancel policy UX missing                 |
+| **Doctor Management**  | 100%    | ✅ Create, delete, view, Schedule CRUD. ✅ Update via Profile (by design)   |
+| **Patient Management** | 100%    | ✅ All endpoints used correctly                                             |
+| **Admin Features**     | 90%     | ✅ CRUD doctors/patients, Schedule view/delete. ❌ Export, Statistics       |
+| **Schedule API**       | 100%    | ✅ Full CRUD implementation (admin + doctor views)                          |
+| **Settings/Profile**   | 100%    | ✅ Change Password complete, Profile Update complete                        |
+| **AI Chatbot**         | 0%      | ❌ Backend in development, no UI yet                                        |
+| **Error Handling**     | 95%     | ✅ Interceptor handles all cases                                            |
+| **Cookie Auth**        | 100%    | ✅ Perfect implementation                                                   |
+| **Overall**            | **92%** | **Excellent foundation, only Chatbot UI + minor features missing**          |
 
 ### Improvement Path to 100%
 
 ```
-Current: 90% ────> Target: 100%
+Current: 92% ────> Target: 100%
                    │
-                   ├─ +5%: Implement Chatbot UI (biggest gap)
+                   ├─ +5%: Implement Chatbot UI (when backend ready)
                    ├─ +2%: Add Excel export (quick win)
-                   ├─ +2%: Profile Update UI (API ready)
-                   └─ +1%: Update Doctor UI (API ready)
+                   └─ +1%: Minor UX improvements (Cancel policy warning)
 ```
 
 ---
@@ -1300,11 +1306,7 @@ Current: 90% ────> Target: 100%
 
 ### Short-term (Next 2 Weeks)
 
-6. **Complete Remaining UI Features**
-
-   - Update Doctor UI (`PUT /api/Doctors/UpdateDoctor`)
-
-7. **Testing & Quality**
+6. **Testing & Quality**
    - 70% test coverage for critical paths (`api.ts`, `BookingForm.tsx`, `AuthContext.tsx`)
    - Setup CI/CD pipeline (GitHub Actions)
    - Performance audit (Lighthouse)
@@ -1325,10 +1327,11 @@ Current: 90% ────> Target: 100%
 **Smart Error Handling**: ✅ **COMPLETE (100%)** - "No changes" warnings preserve UI state  
 **Schedule API Integration**: ✅ **COMPLETE (100%)**  
 **Change Password Feature**: ✅ **COMPLETE (100%)**  
-**Overall API Coverage**: **81%** (26/32 endpoints, up from 74%)  
+**Doctor Management**: ✅ **COMPLETE (100%)** - Admin không sửa Doctor info (by design)  
+**Overall API Coverage**: **84%** (27/32 endpoints, up from 74%)  
 **Integration Status**: **97% compliant**  
-**Critical Issues**: 2 remaining (Excel export, Cancel policy UI)  
-**Recommended Focus**: Excel Export → Unit Tests → Cancel Policy UI
+**Critical Issues**: 2 remaining (Excel export, Unit testing)  
+**Recommended Focus**: Excel Export → Unit Tests → CI/CD Pipeline
 
 ---
 

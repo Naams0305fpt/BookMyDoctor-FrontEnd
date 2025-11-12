@@ -373,41 +373,38 @@ return (
 
 ---
 
-### HIGH-02: Update Doctor UI Missing (Admin Feature)
+### ~~HIGH-02: Update Doctor UI Missing (Admin Feature)~~ ❌ CLOSED - WON'T FIX
 
-**Status**: 🟡 Open  
-**Priority**: HIGH  
-**Category**: Feature  
-**Impact**: MEDIUM - Admin flexibility limited
+**Status**: ❌ Closed - Won't Implement  
+**Priority**: ~~HIGH~~ → N/A  
+**Category**: ~~Feature~~ → Business Decision  
+**Resolution**: **Admin không được phép chỉnh sửa thông tin bác sĩ**
 
-**Problem**:
+**Reasoning**:
 
-- API `PUT /api/Doctors/UpdateDoctor` available
-- Admin can Create/Delete but not Update
-- Need to delete+recreate to fix typos
+- ✅ Doctors tự quản lý profile qua `/Profile/update-me` (đã implement)
+- ✅ Admin chỉ có quyền: **Create Doctor** và **Delete Doctor**
+- ❌ Không có nhu cầu business cho Admin update Doctor info
+- 🔒 Security: Ngăn chặn Admin abuse (thay đổi credentials, thông tin nhạy cảm)
 
-**Solution**:
+**Alternative Solution**:
 
 ```typescript
-// DoctorManagement.tsx
-const [editingDoctor, setEditingDoctor] = useState(null);
-
-<Modal show={editingDoctor !== null}>
-  <UpdateDoctorForm
-    doctor={editingDoctor}
-    onSave={handleUpdate}
-    onCancel={() => setEditingDoctor(null)}
-  />
-</Modal>
-
-// Table row
-<button onClick={() => setEditingDoctor(doctor)}>
-  ✏️ Edit
-</button>
+// Doctor tự update profile
+// src/components/profiles/DoctorProfile.tsx (✅ đã có)
+const handleUpdateProfile = async () => {
+  await api.updateProfileMe({
+    name,
+    email,
+    phone,
+    department,
+    experienceYears
+  });
+};
 ```
 
-**Effort**: 6-8 hours  
-**Deadline**: This week
+**Decision**: Feature này **won't be implemented by design**  
+**Closed Date**: November 12, 2025
 
 ---
 
@@ -742,9 +739,10 @@ Backend Blocked:   2 issues (Chatbot, Email)
 
 **Day 4** (8h):
 
-- ✅ HIGH-02: Update Doctor UI (6h)
+- ~~✅ HIGH-02: Update Doctor UI (6h)~~ → ❌ Closed (won't implement - business decision)
 - ✅ MED-02: Console.log cleanup (1h)
 - ✅ Testing manual flows (1h)
+- ✅ **NEW**: Excel Export implementation (6h)
 
 **Day 5** (8h):
 
