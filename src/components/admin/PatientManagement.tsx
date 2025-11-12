@@ -3,12 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
   faChevronRight,
+  faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { api, Patient, formatDateForAPI } from "../../services/api";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
+import { exportPatientsToExcel } from "../../utils/excelExport";
 
 // (Component Loading/Error có thể thêm vào đây)
 const LoadingSpinner = () => (
@@ -168,6 +170,16 @@ const PatientManagement: React.FC = () => {
               <option value="Cancelled">Cancelled</option>
             </select>
           </div>
+
+          {/* Export Excel Button */}
+          <button
+            className="export-btn"
+            onClick={() => exportPatientsToExcel(patients, 'danh_sach_benh_nhan')}
+            title="Export to Excel"
+            disabled={patients.length === 0}
+          >
+            <FontAwesomeIcon icon={faFileExcel} /> Export Excel
+          </button>
         </div>
 
         {/* Bảng Dữ liệu */}

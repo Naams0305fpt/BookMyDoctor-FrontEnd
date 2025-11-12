@@ -22,32 +22,34 @@
 
 ### Chỉ số chi tiết
 
-| Category                  | Score | Status |
-| ------------------------- | ----- | ------ |
-| 🔌 API Integration        | 90%   | ✅     |
-| 👥 Patient Module         | 85%   | ✅     |
-| 👨‍⚕️ Doctor Module          | 75%   | 🟡     |
-| 🔐 Admin Module           | 80%   | ✅     |
-| 🔔 Notifications          | 40%   | 🔴     |
-| 🔍 Search & Filter        | 80%   | ✅     |
-| 🎨 UI/UX Implementation   | 65%   | 🟡     |
-| 🧪 Testing Coverage       | 0%    | 🔴     |
-| 💻 Code Quality           | 70%   | 🟡     |
-| 🚀 Production Readiness   | 60%   | 🟡     |
+| Category                | Score | Status |
+| ----------------------- | ----- | ------ |
+| 🔌 API Integration      | 90%   | ✅     |
+| 👥 Patient Module       | 85%   | ✅     |
+| 👨‍⚕️ Doctor Module        | 75%   | 🟡     |
+| 🔐 Admin Module         | 80%   | ✅     |
+| 🔔 Notifications        | 40%   | 🔴     |
+| 🔍 Search & Filter      | 80%   | ✅     |
+| 🎨 UI/UX Implementation | 65%   | 🟡     |
+| 🧪 Testing Coverage     | 0%    | 🔴     |
+| 💻 Code Quality         | 70%   | 🟡     |
+| 🚀 Production Readiness | 60%   | 🟡     |
 
 ---
 
 ## ✅ ĐÃ HOÀN THÀNH (WORKING PERFECTLY)
 
 ### Authentication & User Management
+
 - ✅ Login/Logout với cookie-based auth
-- ✅ Sign Up với OTP verification  
+- ✅ Sign Up với OTP verification
 - ✅ Password Reset (3-step OTP flow)
 - ✅ Change Password (Settings page)
 - ✅ Role-based routing (Patient/Doctor/Admin)
 - ✅ Email verification flow
 
 ### Booking System (Patient)
+
 - ✅ View danh sách bác sĩ
 - ✅ Check available time slots (real-time)
 - ✅ Đặt lịch khám (full validation)
@@ -56,6 +58,7 @@
 - ✅ View profile
 
 ### Doctor Features
+
 - ✅ View appointment list với search/filter
 - ✅ Update appointment status
 - ✅ Add notes to patients
@@ -66,6 +69,7 @@
   - Auto-detect current doctor
 
 ### Admin Features
+
 - ✅ Create Doctor accounts
 - ✅ View/Delete Doctors
 - ✅ View/Update/Delete Patients với pagination
@@ -77,6 +81,7 @@
   - Pagination (10 items/page)
 
 ### Technical
+
 - ✅ API integration: 23/31 endpoints (74%)
 - ✅ Error handling với interceptors
 - ✅ Notification system (toast)
@@ -91,22 +96,23 @@
 
 ## ⚠️ ĐANG LÀM DỞ / CẦN CẢI THIỆN
 
-| Feature               | Status | Missing                           |
-| --------------------- | ------ | --------------------------------- |
-| **Cancel Booking**    | 80%    | 24h policy warning UI             |
-| **Doctor Search**     | 70%    | Server-side search                |
-| **Error Display**     | 80%    | Field-level error parsing         |
-| **Profile Update UI** | 50%    | Frontend form (API đã ready)      |
-| **Notifications**     | 60%    | Real-time push, email backend     |
+| Feature               | Status | Missing                       |
+| --------------------- | ------ | ----------------------------- |
+| **Cancel Booking**    | 80%    | 24h policy warning UI         |
+| **Doctor Search**     | 70%    | Server-side search            |
+| **Error Display**     | 80%    | Field-level error parsing     |
+| **Profile Update UI** | 50%    | Frontend form (API đã ready)  |
+| **Notifications**     | 60%    | Real-time push, email backend |
 
 ---
 
 ## ❌ CHƯA LÀM (NOT STARTED)
 
 ### Frontend Tasks (Có thể làm ngay)
+
 - ❌ **Excel Export** (1 day) - Quick win!
   - Patients list
-  - Doctors list  
+  - Doctors list
   - Booking history
 - ❌ **Unit Tests** (3 days)
   - Jest + React Testing Library
@@ -120,6 +126,7 @@
   - Bundle optimization
 
 ### Chờ Backend (Cannot do without API)
+
 - ⏳ **AI Chatbot UI** (3 days)
   - Backend đang phát triển
   - API chưa sẵn sàng
@@ -137,11 +144,14 @@
 ## 🔥 TOP PRIORITIES (TUẦN NÀY)
 
 ### Day 1-2: Critical UX Fixes
+
 1. ⚡ **Cancel Policy Warning** (2h)
+
    - Add 24h check before Cancel button
    - Warning modal if < 24h
 
 2. ⚡ **Field-level Error Display** (4h)
+
    - Parse API error responses
    - Show errors under specific fields
 
@@ -150,12 +160,15 @@
    - Form in Profile page
 
 ### Day 3-4: Quick Wins
+
 4. 📊 **Excel Export** (1 day)
    - Install xlsx + file-saver
    - Export buttons in management pages
 
 ### Day 5: Testing & Cleanup
+
 5. ✅ **Manual Testing** (4h)
+
    - Test all user flows
    - Fix critical bugs
 
@@ -171,18 +184,21 @@
 ## 📈 ROADMAP
 
 ### WEEK 1 (Now - Day 5) → 80% (MVP READY)
+
 - ✅ Critical UX fixes
 - ✅ Excel export
 - ✅ Profile/Doctor update UI
 - ✅ Manual testing
 
 ### WEEK 2-3 (Day 6-15) → 90% (PRODUCTION READY)
+
 - ✅ Unit testing (70% coverage)
 - ✅ CI/CD pipeline
 - ✅ Performance optimization
 - ✅ Code quality improvements
 
 ### WEEK 4-6 (Day 16-30) → 100% (FULL FEATURES)
+
 - ⏳ AI Chatbot UI (when backend ready)
 - ⏳ Statistics Dashboard (when API ready)
 - ⏳ Email integration testing
@@ -192,20 +208,21 @@
 
 ## 🔌 API INTEGRATION (90% ✅)
 
-| Controller   | Total | Used | Unused | Coverage |
-| ------------ | ----- | ---- | ------ | -------- |
-| Auth         | 8     | 7    | 1      | 88%      |
-| Register     | 1     | 1    | 0      | 100%     |
-| Profile      | 2     | 1    | 1      | 50%      |
-| Booking      | 3     | 3    | 0      | 100%     |
-| Doctors      | 3     | 2    | 1      | 67%      |
-| Patients     | 4     | 3    | 1      | 75%      |
-| Schedule     | 7     | 5    | 2      | 71%      |
-| Owner        | 1     | 1    | 0      | 100%     |
-| Chat         | 2     | 0    | 2      | 0%       |
-| **TOTAL**    | **31**| **23**| **8** | **74%**  |
+| Controller | Total  | Used   | Unused | Coverage |
+| ---------- | ------ | ------ | ------ | -------- |
+| Auth       | 8      | 7      | 1      | 88%      |
+| Register   | 1      | 1      | 0      | 100%     |
+| Profile    | 2      | 1      | 1      | 50%      |
+| Booking    | 3      | 3      | 0      | 100%     |
+| Doctors    | 3      | 2      | 1      | 67%      |
+| Patients   | 4      | 3      | 1      | 75%      |
+| Schedule   | 7      | 5      | 2      | 71%      |
+| Owner      | 1      | 1      | 0      | 100%     |
+| Chat       | 2      | 0      | 2      | 0%       |
+| **TOTAL**  | **31** | **23** | **8**  | **74%**  |
 
 ### Compliance by Category
+
 - ✅ **Excellent (90-100%)**: Authentication, Booking, Patient Management
 - 🟡 **Good (70-89%)**: Doctor Management, Admin Features
 - 🔴 **Needs Work (<70%)**: AI Chatbot, Profile Updates, Statistics
@@ -236,6 +253,7 @@
 ## 🎯 SUCCESS CRITERIA
 
 ### For MVP (80%)
+
 - ✅ All critical user flows work
 - ✅ No blocking bugs
 - ✅ Basic error handling
@@ -243,6 +261,7 @@
 - ❌ Unit tests (optional for MVP)
 
 ### For Production (90%)
+
 - ✅ Above + 70% test coverage
 - ✅ CI/CD pipeline working
 - ✅ Performance optimized (Lighthouse 90+)
@@ -250,6 +269,7 @@
 - ✅ Documentation complete
 
 ### For Full Release (100%)
+
 - ✅ Above + All features working
 - ✅ Backend integrations complete
 - ✅ Real-time notifications
@@ -260,11 +280,11 @@
 
 ## 📊 EFFORT ESTIMATION
 
-| Target | Timeline | Team | Deliverables |
-| ------ | -------- | ---- | ------------ |
-| **80% (MVP)** | 1 week | 2 devs | Critical fixes + Quick wins |
-| **90% (Prod)** | 2-3 weeks | 2 devs | Testing + CI/CD + Performance |
-| **100% (Full)** | 4-6 weeks | 2 devs | All features + Backend deps |
+| Target          | Timeline  | Team   | Deliverables                  |
+| --------------- | --------- | ------ | ----------------------------- |
+| **80% (MVP)**   | 1 week    | 2 devs | Critical fixes + Quick wins   |
+| **90% (Prod)**  | 2-3 weeks | 2 devs | Testing + CI/CD + Performance |
+| **100% (Full)** | 4-6 weeks | 2 devs | All features + Backend deps   |
 
 ---
 
@@ -283,6 +303,7 @@
 ---
 
 **Chi tiết đầy đủ**:
+
 - API Documentation: `req/API_Documentation.md`
 - Progress Report: `req/06-progress-report.md`
 - Issues Tracker: `req/ISSUES_TRACKER.md`

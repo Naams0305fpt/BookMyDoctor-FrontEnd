@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faUserMd } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faUserMd, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 import CreateDoctorModal from "./CreateDoctorModal";
 import { api, Doctor } from "../../services/api";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
+import { exportDoctorsToExcel } from "../../utils/excelExport";
 
 // Component hiển thị loading
 const LoadingSpinner = () => (
@@ -130,6 +131,14 @@ const DoctorManagement = () => {
           <button className="create-doctor-btn" onClick={handleCreateDoctor}>
             <FontAwesomeIcon icon={faUserMd} />
             <span>Create Doctor Account</span>
+          </button>
+          <button
+            className="export-btn"
+            onClick={() => exportDoctorsToExcel(filteredDoctors, 'danh_sach_bac_si')}
+            title="Export to Excel"
+            disabled={filteredDoctors.length === 0}
+          >
+            <FontAwesomeIcon icon={faFileExcel} /> Export Excel
           </button>
         </div>
 

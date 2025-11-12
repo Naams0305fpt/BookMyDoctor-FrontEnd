@@ -9,6 +9,7 @@ import {
   faChevronRight,
   faTimes,
   faBan,
+  faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -19,6 +20,7 @@ import { api, MyHistoryResponse } from "../../services/api";
 import { useNotification } from "../../contexts/NotificationContext";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
+import { exportBookingHistoryToExcel } from "../../utils/excelExport";
 
 interface Booking {
   id: number;
@@ -386,6 +388,31 @@ const BookingHistory: React.FC = () => {
                   <FontAwesomeIcon icon={faChevronRight} />
                 </button>
               </div>
+
+              {/* Export Excel Button */}
+              <button
+                className="export-btn"
+                onClick={() => {
+                  // Convert bookings to MyHistoryResponse format for export
+                  const exportData: MyHistoryResponse[] = filteredBookings.map(b => ({
+                    AppointId: b.id,
+                    NamePatient: b.patientName,
+                    NameDoctor: b.doctorName,
+                    PhoneDoctor: b.doctorPhone,
+                    Department: b.department,
+                    AppointDate: b.appointmentDate.toISOString().split('T')[0],
+                    AppointHour: b.appointmentTime,
+                    Status: b.status.charAt(0).toUpperCase() + b.status.slice(1),
+                    Symptoms: b.symptom,
+                    Prescription: b.prescription || '',
+                  }));
+                  exportBookingHistoryToExcel(exportData, 'lich_su_dat_kham');
+                }}
+                title="Export to Excel"
+                disabled={filteredBookings.length === 0}
+              >
+                <FontAwesomeIcon icon={faFileExcel} /> Export Excel
+              </button>
             </div>
 
             {/* Booking Table */}

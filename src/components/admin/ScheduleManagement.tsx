@@ -4,6 +4,7 @@ import {
   faChevronLeft,
   faChevronRight,
   faTrash,
+  faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -11,6 +12,7 @@ import { api, Schedule } from "../../services/api";
 import { useNotification } from "../../contexts/NotificationContext";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
+import { exportSchedulesToExcel } from "../../utils/excelExport";
 
 const ScheduleManagement = () => {
   const { showNotification } = useNotification();
@@ -192,6 +194,14 @@ const ScheduleManagement = () => {
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>
+          <button
+            className="export-btn"
+            onClick={() => exportSchedulesToExcel(filteredSchedules, 'lich_lam_viec')}
+            title="Export to Excel"
+            disabled={filteredSchedules.length === 0}
+          >
+            <FontAwesomeIcon icon={faFileExcel} /> Export Excel
+          </button>
         </div>
         {/* Bảng Dữ liệu */}
         <table className="appointments-table">

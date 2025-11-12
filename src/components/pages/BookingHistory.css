@@ -13,6 +13,46 @@
   min-height: 100vh;
 }
 
+/* Export Excel Button */
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #1d8348 0%, #27ae60 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(29, 131, 72, 0.3);
+  white-space: nowrap;
+}
+
+.export-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(29, 131, 72, 0.4);
+}
+
+.export-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(29, 131, 72, 0.3);
+}
+
+.export-btn:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.export-btn svg {
+  font-size: 1.2rem;
+}
+
 /* Statistics Overview */
 .stats-overview {
   display: grid;

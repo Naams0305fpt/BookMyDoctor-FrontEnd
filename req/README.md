@@ -1,12 +1,8 @@
 # 📁 REQ FOLDER - TÀI LIỆU YÊU CẦU & PHÂN TÍCH# Requirements & Documentation (req)
 
-
-
 > **Mục đích**: Chứa tất cả tài liệu yêu cầu, phân tích, tiến độ và đánh giá của dự án BookMyDoctorThư mục `req` chứa tài liệu yêu cầu, phân tích và báo cáo tiến độ cho dự án BookMyDoctor-FE.
 
-
-
-**Cập nhật**: 12/11/2025  ## Mục đích
+**Cập nhật**: 12/11/2025 ## Mục đích
 
 **Cấu trúc**: ✅ Đã tổ chức lại (Reorganized)
 
@@ -76,15 +72,15 @@ req/### 📋 Phân tích & Yêu cầu
 
 8. **`08-week1-action-plan.md`** - Kế hoạch thực thi tuần 1
 
----   - Chi tiết từng ngày (5 ngày)
+--- - Chi tiết từng ngày (5 ngày)
 
-   - Code examples với tiếng Việt
+- Code examples với tiếng Việt
 
-## 🎯 QUICK START   - Testing checklist
+## 🎯 QUICK START - Testing checklist
 
-   - Chỉ số thành công
+- Chỉ số thành công
 
-### ⭐ Muốn xem tổng quan dự án?   - ✅ Ngày 1 hoàn thành: Đã xác minh 31 API endpoints
+### ⭐ Muốn xem tổng quan dự án? - ✅ Ngày 1 hoàn thành: Đã xác minh 31 API endpoints
 
 → **`PROJECT_STATUS.md`** - File tổng hợp DUY NHẤT (thay thế 3 files summary cũ)
 
@@ -93,8 +89,6 @@ req/### 📋 Phân tích & Yêu cầu
 ### 📊 Muốn xem tiến độ chi tiết?
 
 → **`06-progress-report.md`** - Cập nhật liên tục, có chi tiết từng feature**Trạng thái dự án** (cập nhật: 11/11/2025):
-
-
 
 ### 🔌 Muốn xem API documentation?- ✅ Tính năng cốt lõi: 90% hoàn thành
 
@@ -105,8 +99,6 @@ req/### 📋 Phân tích & Yêu cầu
 ### 🐛 Muốn track issues?- � Ưu tiên #1: Triển khai UI AI Chatbot (API ✅ đã có - Gemini)
 
 → **`ISSUES_TRACKER.md`** - Bug tracking, priorities- 🔥 Ưu tiên #2: Schedule Management (0/7 endpoints - khoảng trống lớn)
-
-
 
 ### 📋 Muốn xem requirements ban đầu?**Xem nhanh**:
 
@@ -154,7 +146,7 @@ Các file báo cáo nên được cập nhật:
 
 ### 📚 Reference Docs - Tài liệu tham khảo
 
-| File | Nội dung | Mục đích |**Last Updated**: 11/11/2025  
+| File | Nội dung | Mục đích |**Last Updated**: 11/11/2025
 
 |------|----------|----------|**Maintained By**: Development Team
 
@@ -172,8 +164,8 @@ Các file báo cáo nên được cập nhật:
    - Merge nội dung từ 3 files: `COMPLETION_SUMMARY.md`, `OVERALL_ASSESSMENT.md`, `VISUAL_DASHBOARD.md`
    - Loại bỏ trùng lặp
    - Cập nhật với pagination implementation mới nhất
-   
 2. **Tổ chức lại cấu trúc**
+
    - Di chuyển files lỗi thời → `archive/`
    - Di chuyển old summaries → `summaries/` (để tham khảo)
    - Di chuyển `PAGINATION_IMPLEMENTATION.md` → `/docs/features/`
@@ -184,6 +176,7 @@ Các file báo cáo nên được cập nhật:
    - ❌ `09-component-api-mapping.md` → `archive/` (merged vào 06)
 
 ### 📊 Kết quả
+
 - **Trước**: 17 files (nhiều trùng lặp, khó tìm)
 - **Sau**: 11 files active + 6 files archive (rõ ràng, dễ maintain)
 
@@ -197,6 +190,7 @@ Các file báo cáo nên được cập nhật:
 **Production Ready**: 60%
 
 ### ✅ Điểm mạnh
+
 - API integration xuất sắc (90%)
 - Authentication hoàn chỉnh (100%)
 - Schedule Management hoàn thành (100%)
@@ -204,6 +198,7 @@ Các file báo cáo nên được cập nhật:
 - CRUD operations đầy đủ
 
 ### ⚠️ Cần làm tiếp
+
 - Unit testing (0% → target 70%)
 - AI Chatbot UI (chờ backend)
 - Excel export (quick win - 1 day)
@@ -214,14 +209,17 @@ Các file báo cáo nên được cập nhật:
 ## 📖 WORKFLOWS
 
 ### Hàng ngày (Daily)
+
 1. Update `06-progress-report.md` với tiến độ mới
 2. Add bugs vào `ISSUES_TRACKER.md` nếu có
 
 ### Hàng tuần (Weekly)
+
 1. Review và update `PROJECT_STATUS.md`
 2. Update completion percentages
 
 ### Milestone
+
 1. Comprehensive update `PROJECT_STATUS.md`
 2. Review và update `API_Documentation.md` nếu có API mới
 
@@ -230,43 +228,50 @@ Các file báo cáo nên được cập nhật:
 ## 🔍 USE CASES
 
 ### Scenario 1: Manager hỏi "Dự án đến đâu rồi?"
+
 → Show **`PROJECT_STATUS.md`** (1 file, có đầy đủ tổng quan + roadmap)
 
 ### Scenario 2: Developer cần check API
+
 → Open **`API_Documentation.md`**
 
 ### Scenario 3: Muốn xem chi tiết module nào đã xong
+
 → Check **`06-progress-report.md`** section tương ứng
 
 ### Scenario 4: Review requirements ban đầu
+
 → Read **`02-functional-requirements.md`** + **`03-non-functional-requirements.md`**
 
 ### Scenario 5: Track bug cần fix
+
 → Update **`ISSUES_TRACKER.md`**
 
 ---
 
 ## 📊 PRIORITY LEVELS
 
-| Priority | File | Update Frequency |
-|----------|------|------------------|
-| 🔴 **CRITICAL** | `PROJECT_STATUS.md` | Weekly/Milestone |
-| 🔴 **HIGH** | `06-progress-report.md` | Daily |
-| 🔴 **HIGH** | `ISSUES_TRACKER.md` | As needed |
-| 🟡 **MEDIUM** | `API_Documentation.md` | When API changes |
-| 🟢 **LOW** | `01-05-*.md` (Requirements) | Rarely (reference) |
+| Priority        | File                        | Update Frequency   |
+| --------------- | --------------------------- | ------------------ |
+| 🔴 **CRITICAL** | `PROJECT_STATUS.md`         | Weekly/Milestone   |
+| 🔴 **HIGH**     | `06-progress-report.md`     | Daily              |
+| 🔴 **HIGH**     | `ISSUES_TRACKER.md`         | As needed          |
+| 🟡 **MEDIUM**   | `API_Documentation.md`      | When API changes   |
+| 🟢 **LOW**      | `01-05-*.md` (Requirements) | Rarely (reference) |
 
 ---
 
 ## 💡 BEST PRACTICES
 
 ### ✅ DO
+
 - Luôn update `PROJECT_STATUS.md` khi có milestone quan trọng
 - Keep `06-progress-report.md` chi tiết và up-to-date
 - Document API changes ngay trong `API_Documentation.md`
 - Track bugs immediately trong `ISSUES_TRACKER.md`
 
 ### ❌ DON'T
+
 - Tạo thêm summary files mới (dùng `PROJECT_STATUS.md`)
 - Duplicate content giữa các files
 - Để files lỗi thời ở root (move vào `archive/`)
@@ -275,11 +280,11 @@ Các file báo cáo nên được cập nhật:
 
 ## 🗂️ RELATED DOCS (Outside req/)
 
-| Path | Content |
-|------|---------|
-| `/docs/features/PAGINATION_IMPLEMENTATION.md` | Pagination feature guide |
-| `/REQUIREMENTS.md` (root) | Legacy UI design specs (Oct 7) |
-| `/README.md` (root) | Project setup guide |
+| Path                                          | Content                        |
+| --------------------------------------------- | ------------------------------ |
+| `/docs/features/PAGINATION_IMPLEMENTATION.md` | Pagination feature guide       |
+| `/REQUIREMENTS.md` (root)                     | Legacy UI design specs (Oct 7) |
+| `/README.md` (root)                           | Project setup guide            |
 
 ---
 
