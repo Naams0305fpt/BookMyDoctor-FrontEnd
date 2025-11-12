@@ -635,15 +635,16 @@ GET /api/Patients/AllPatientsAndSearch?doctorId=12&status=Scheduled
 
 ---
 
-### 6.3. **PUT** `/api/Patients/UpdatePatient`
+### 6.3. **PUT** `/api/Patients/UpdateAppointment`
 
-- **Chức năng**: Cập nhật trạng thái, triệu chứng và đơn thuốc của bệnh nhân
+- **Chức năng**: Cập nhật trạng thái, triệu chứng và đơn thuốc của lịch hẹn
 - **Authorization**: `[Authorize(Roles = "R02")]` 🔒 Doctor only
 - **Query Parameters**:
 
   - `patientId` (required): integer
   - `appointDate` (required): string (YYYY-MM-DD)
   - `appointHour` (required): string (HH:mm)
+  - `appointId` (required): integer
 
 - **Request Body**:
 
@@ -660,7 +661,7 @@ GET /api/Patients/AllPatientsAndSearch?doctorId=12&status=Scheduled
 - **Request Example**:
 
 ```
-PUT /api/Patients/UpdatePatient?patientId=25&appointDate=2025-11-15&appointHour=14:00
+PUT /api/Patients/UpdateAppointment?patientId=25&appointDate=2025-11-15&appointHour=14:00&appointId=123
 Content-Type: application/json
 
 {

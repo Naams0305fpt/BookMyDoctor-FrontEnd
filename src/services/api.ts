@@ -111,7 +111,7 @@ export interface DoctorAppointment {
   AppointHour: string; // "HH:mm:ss"
 }
 
-export interface UpdatePatientRequest {
+export interface UpdateAppointmentRequest {
   Status: string;
   Symptoms: string;
   Prescription: string;
@@ -119,6 +119,7 @@ export interface UpdatePatientRequest {
 
 // --- THÊM MỚI: Interface cho API History (dựa trên ảnh) ---
 export interface MyHistoryResponse {
+  AppointId: number; // ID của appointment - dùng để cancel (BE đang bổ sung)
   NamePatient: string;
   NameDoctor: string;
   PhoneDoctor: string;
@@ -128,8 +129,6 @@ export interface MyHistoryResponse {
   Status: string; // "Scheduled", "Completed", "Cancelled"
   Symptoms: string;
   Prescription: string;
-  // QUAN TRỌNG: API cần trả về một ID duy nhất
-  BookingId?: number; 
 }
 // --- KẾT THÚC THÊM MỚI ---
 export interface Doctor {
@@ -380,6 +379,8 @@ export const api = {
       avatar: "/images/default-avatar.png",
       doctorId: doctorId, // Lấy từ API All-Doctors
       patientId: profileData.PatientId, // Có với patient (PascalCase)
+      dateOfBirth: profileData.DateOfBirth, // Thêm DateOfBirth từ API
+      gender: profileData.Gender, // Thêm Gender từ API
     };
 
     return user;
@@ -424,13 +425,13 @@ export const api = {
     return response.data as DoctorAppointment[];
   },
 
-  updatePatientAppointment: async (
+  updateAppointment: async (
     patientId: number,
     appointDate: string,
     appointHour: string,
     appointId: number,
-    data: UpdatePatientRequest
-  ): Promise<UpdatePatientRequest> => {
+    data: UpdateAppointmentRequest
+  ): Promise<UpdateAppointmentRequest> => {
     
     // API yêu cầu đầy đủ 4 params
     const params = {
@@ -447,7 +448,7 @@ export const api = {
       Prescription: data.Prescription,
     };
 
-    const response = await apiClient.put("/Patients/UpdatePatient", body, {
+    const response = await apiClient.put("/Patients/UpdateAppointment", body, {
       params: params
     });
 
@@ -581,6 +582,16 @@ export const api = {
 
   submitBooking: async (data: BookingRequest) => {
     const response = await apiClient.post('/booking/public', data);
+    return response.data;
+  },
+
+  // Cancel booking (24h policy enforced on backend)
+  // PUT /api/Patients/CancelAppointment?appointId={appointId}
+  // Response: { "message": "Hủy lịch hẹn thành công." }
+  cancelBooking: async (appointId: number): Promise<{ message: string }> => {
+    const response = await apiClient.put('/Patients/CancelAppointment', null, {
+      params: { appointId }
+    });
     return response.data;
   },
   

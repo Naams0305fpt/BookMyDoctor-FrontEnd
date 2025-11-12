@@ -93,7 +93,7 @@
 | Endpoint                             | Frontend                | Trạng thái  |
 | ------------------------------------ | ----------------------- | ----------- |
 | `GET /Patients/AllPatientsAndSearch` | `PatientManagement.tsx` | ✅ Hoàn hảo |
-| `PUT /Patients/UpdatePatient`        | `AppointmentTable.tsx`  | ✅ Hoàn hảo |
+| `PUT /Patients/UpdateAppointment`    | `AppointmentTable.tsx`  | ✅ Hoàn hảo |
 | `GET /Patients/MyHistoryAppoint`     | `BookingHistory.tsx`    | ✅ Hoàn hảo |
 | `DELETE /Patients/DeletePatient`     | ❌ Chưa dùng            | ℹ️ Tùy chọn |
 

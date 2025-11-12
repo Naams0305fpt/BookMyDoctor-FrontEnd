@@ -65,7 +65,7 @@ Tài liệu này so sánh các yêu cầu trong folder `req` với code hiện t
 | `GET /api/Doctors/GetDoctorAppointments`      | Lấy lịch hẹn của bác sĩ   | `AppointmentTable.tsx`, `api.ts`                    | ✅ Perfect |
 | `DELETE /api/Doctors/DeleteDoctor`            | Xóa bác sĩ                | `DoctorManagement.tsx`, `api.ts`                    | ✅ Perfect |
 | `GET /api/Patients/AllPatientsAndSearch`      | Lấy danh sách bệnh nhân   | `PatientManagement.tsx`, `api.ts`                   | ✅ Perfect |
-| `PUT /api/Patients/UpdatePatient`             | Cập nhật bệnh nhân        | `AppointmentTable.tsx`, `api.ts`                    | ✅ Perfect |
+| `PUT /api/Patients/UpdateAppointment`         | Cập nhật lịch hẹn         | `AppointmentTable.tsx`, `api.ts`                    | ✅ Perfect |
 | `GET /api/Patients/MyHistoryAppoint`          | Lịch sử khám              | `BookingHistory.tsx`, `api.ts`                      | ✅ Perfect |
 | `GET /api/Schedule/List_All_Schedules_Doctor` | Lấy tất cả lịch (Admin)   | `admin/ScheduleManagement.tsx`, `api.ts`            | ✅ Perfect |
 | `GET /api/Schedule/detail/{scheduleId}`       | Lấy chi tiết lịch         | `api.ts`                                            | ✅ Perfect |
@@ -188,8 +188,8 @@ const data = await api.getDoctorAppointments(
 );
 // Returns DoctorAppointment[] with AppointId field
 
-// UPDATE: PUT /api/Patients/UpdatePatient with 4 required params
-await api.updatePatientAppointment(
+// UPDATE: PUT /api/Patients/UpdateAppointment with 4 required params
+await api.updateAppointment(
   patientId,
   appointDate,
   appointHour,
@@ -232,7 +232,7 @@ await api.updateProfileMe(data); // PUT /api/Profile/update-me
 | **Patient - Lịch sử**            | Xem lịch sử đặt khám                            | `BookingHistory.tsx`                                          | `/Patients/history/{userId}`                                         | ✅ 100% Match         |
 | **Patient - Hủy lịch**           | Hủy appointment                                 | `BookingHistory.tsx`                                          | `/Booking/cancel/{id}`                                               | ⚠️ 80% (thiếu policy) |
 | **Doctor - Lịch bệnh nhân**      | Xem danh sách bệnh nhân với filters             | `AppointmentTable.tsx`                                        | `/Doctors/GetDoctorAppointments` (with query params)                 | ✅ 100% Match         |
-| **Doctor - Ghi chú khám**        | Cập nhật triệu chứng, đơn thuốc                 | `AppointmentTable.tsx`                                        | `/Patients/UpdatePatient` (PUT with 4 params)                        | ✅ 100% Match         |
+| **Doctor - Ghi chú khám**        | Cập nhật triệu chứng, đơn thuốc                 | `AppointmentTable.tsx`                                        | `/Patients/UpdateAppointment` (PUT with 4 params)                    | ✅ 100% Match         |
 | **Doctor - Quản lý lịch làm**    | Xem, tạo, sửa, xóa lịch làm việc                | `doctor/ScheduleManagement.tsx`, `ScheduleFormModal.tsx`      | `/Schedule/List_All_Schedules_Doctor`, CRUD endpoints                | ✅ 100% Match         |
 | **Admin - Tạo bác sĩ**           | Tạo tài khoản + lịch mặc định                   | `CreateDoctorModal.tsx`                                       | `/Owner/create-doctor`                                               | ✅ 100% Match         |
 | **Admin - Xóa bác sĩ**           | Xóa bác sĩ (có check constraint)                | `DoctorManagement.tsx`                                        | `/Doctors/{id}` (DELETE)                                             | ✅ 100% Match         |

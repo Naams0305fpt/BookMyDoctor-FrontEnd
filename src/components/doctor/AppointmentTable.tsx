@@ -15,7 +15,7 @@ import {
   api,
   DoctorAppointment,
   formatDateForAPI,
-  UpdatePatientRequest,
+  UpdateAppointmentRequest,
 } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
@@ -298,14 +298,14 @@ const AppointmentTable: React.FC = () => {
           : "Cancelled";
 
       // Chuẩn bị data để update
-      const updateData: UpdatePatientRequest = {
+      const updateData: UpdateAppointmentRequest = {
         Status: apiStatus,
         Symptoms: symptom,
         Prescription: prescription,
       };
 
       // Gọi API với đầy đủ 4 params
-      await api.updatePatientAppointment(
+      await api.updateAppointment(
         appointment.PatientId,
         appointment.AppointDate,
         appointment.AppointHour,

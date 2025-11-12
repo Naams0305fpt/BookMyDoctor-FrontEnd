@@ -63,7 +63,7 @@
 | ------------------------------------- | ------- | ------------------------------- | --------------------------------------- |
 | **FR-D-001**: Login/Logout            | ✅ 100% | `Login.tsx`, `AuthContext.tsx`  | Shared with patient auth                |
 | **FR-D-002**: Xem danh sách bệnh nhân | ✅ 100% | `AppointmentTable.tsx`          | GET /api/Patients/AllPatientsAndSearch  |
-| **FR-D-003**: Đánh dấu trạng thái     | ⚠️ 90%  | `AppointmentTable.tsx`          | PUT /api/Patients/UpdatePatient         |
+| **FR-D-003**: Đánh dấu trạng thái     | ⚠️ 90%  | `AppointmentTable.tsx`          | PUT /api/Patients/UpdateAppointment     |
 | **FR-D-004**: Ghi chú sau khám        | ⚠️ 70%  | `AppointmentTable.tsx`          | Notes field có, chưa có prescription UI |
 | **FR-D-005**: Thiết lập giờ làm việc  | ✅ 100% | `doctor/ScheduleManagement.tsx` | Full Schedule CRUD - NEW ✨             |
 | **FR-D-006**: Giới hạn cuộc hẹn/ngày  | ❌ 0%   | ❌ Not implemented              | Backend chưa có API                     |
