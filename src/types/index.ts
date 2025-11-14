@@ -53,3 +53,10 @@ export type {
   ScheduleDetailResponse,
   ScheduleResponseItem,
 } from './schedule.types';
+
+// ==================== CHATBOT TYPES ====================
+export type {
+  ChatMessage,
+  ChatRequest,
+  ChatResponse,
+} from './chatbot.types';

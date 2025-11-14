@@ -7,4 +7,5 @@ export { default as Pagination } from './Pagination';
 export { default as ScheduleFormModal } from './ScheduleFormModal';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as LoadingSpinner } from './LoadingSpinner';
+export { default as ChatbotButton } from './ChatbotButton';
 export * from './ErrorFallbacks';

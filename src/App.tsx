@@ -22,6 +22,7 @@ import {
   ProfileErrorFallback,
   PageErrorFallback,
   LoadingSpinner,
+  ChatbotButton,
 } from "./components/common";
 
 // Lazy load page components for better performance
@@ -85,6 +86,7 @@ const AppContent: React.FC = () => {
             </Suspense>
           </ErrorBoundary>
           <ModernFooter />
+          <ChatbotButton />
         </Router>{" "}
         {/* Modals at App level for proper positioning */}
         {showLogin && <ModernLogin onClose={closeLogin} />}
