@@ -5,6 +5,11 @@ import DoctorsCarousel from "../common/DoctorsCarousel";
 import DoctorDashboard from "../dashboard/DoctorDashboard";
 import BookingForm from "../booking/BookingForm";
 import AdminDashboard from "../dashboard/AdminDashboard";
+import { 
+  ErrorBoundary, 
+  BookingErrorFallback, 
+  DashboardErrorFallback 
+} from "../common";
 
 const Home: React.FC = () => {
   const { user } = useAuth();
@@ -15,13 +20,19 @@ const Home: React.FC = () => {
     <>
       <Hero />
       {isAdmin ? (
-        <AdminDashboard />
+        <ErrorBoundary fallback={<DashboardErrorFallback />}>
+          <AdminDashboard />
+        </ErrorBoundary>
       ) : isDoctor ? (
-        <DoctorDashboard />
+        <ErrorBoundary fallback={<DashboardErrorFallback />}>
+          <DoctorDashboard />
+        </ErrorBoundary>
       ) : (
         <>
           <DoctorsCarousel />
-          <BookingForm />
+          <ErrorBoundary fallback={<BookingErrorFallback />}>
+            <BookingForm />
+          </ErrorBoundary>
         </>
       )}
     </>

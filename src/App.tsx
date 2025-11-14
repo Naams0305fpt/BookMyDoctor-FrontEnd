@@ -22,6 +22,12 @@ import Demo from "./components/pages/Demo";
 import Profile from "./components/pages/Profile";
 import BookingHistory from "./components/pages/BookingHistory";
 import Settings from "./components/pages/Settings";
+import { 
+  ErrorBoundary, 
+  BookingErrorFallback, 
+  ProfileErrorFallback, 
+  PageErrorFallback 
+} from "./components/common";
 
 // Main App Content
 const AppContent: React.FC = () => {
@@ -32,15 +38,44 @@ const AppContent: React.FC = () => {
     <div className="App">
       <Router>
         <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/information" element={<Information />} />
-          <Route path="/demo" element={<Demo />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/booking-history" element={<BookingHistory />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
+        <ErrorBoundary fallback={<PageErrorFallback />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/information" element={<Information />} />
+            <Route path="/demo" element={<Demo />} />
+            
+            {/* Profile with dedicated error boundary */}
+            <Route 
+              path="/profile" 
+              element={
+                <ErrorBoundary fallback={<ProfileErrorFallback />}>
+                  <Profile />
+                </ErrorBoundary>
+              } 
+            />
+            
+            {/* Booking History with dedicated error boundary */}
+            <Route 
+              path="/booking-history" 
+              element={
+                <ErrorBoundary fallback={<BookingErrorFallback />}>
+                  <BookingHistory />
+                </ErrorBoundary>
+              } 
+            />
+            
+            {/* Settings with dedicated error boundary */}
+            <Route 
+              path="/settings" 
+              element={
+                <ErrorBoundary fallback={<ProfileErrorFallback />}>
+                  <Settings />
+                </ErrorBoundary>
+              } 
+            />
+          </Routes>
+        </ErrorBoundary>
         <Footer />
       </Router>
 
@@ -53,15 +88,17 @@ const AppContent: React.FC = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <NotificationProvider>
-        <LoginModalProvider>
-          <SignUpModalProvider>
-            <AppContent />
-          </SignUpModalProvider>
-        </LoginModalProvider>
-      </NotificationProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <NotificationProvider>
+          <LoginModalProvider>
+            <SignUpModalProvider>
+              <AppContent />
+            </SignUpModalProvider>
+          </LoginModalProvider>
+        </NotificationProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
