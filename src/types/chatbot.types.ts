@@ -25,5 +25,6 @@ export interface ChatRequest {
 }
 
 export interface ChatResponse {
-  message: string;
+  Reply?: string;
+  message?: string;
 }

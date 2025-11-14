@@ -377,7 +377,10 @@ const ChatbotButton: React.FC = () => {
       );
 
       const botMessage: ChatMessage = {
-        Content: response.message,
+        Content:
+          response.Reply ||
+          response.message ||
+          "Sorry, I didn't understand that.",
         IsUser: false,
         Timestamp: new Date(),
       };
