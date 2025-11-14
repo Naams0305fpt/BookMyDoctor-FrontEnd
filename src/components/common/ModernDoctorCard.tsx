@@ -33,6 +33,10 @@ const CardWrapper = styled(motion.div)`
   &:hover {
     transform: translateY(-8px);
     box-shadow: ${theme.colors.shadow.xl};
+
+    img {
+      transform: scale(1.1);
+    }
   }
 `;
 
@@ -53,10 +57,6 @@ const DoctorImage = styled.img`
   object-fit: cover;
   transition: transform ${theme.transitions.duration.slow}
     ${theme.transitions.easing.default};
-
-  ${CardWrapper}:hover & {
-    transform: scale(1.1);
-  }
 `;
 
 const BadgeContainer = styled.div`
@@ -233,21 +233,10 @@ const ModernDoctorCard: React.FC<DoctorCardProps> = ({ doctor, onClick }) => {
             whileTap={{ scale: 0.98 }}
             onClick={(e) => {
               e.stopPropagation();
-              // Handle book appointment
+              onClick?.();
             }}
           >
-            Book Now
-          </ActionButton>
-          <ActionButton
-            variant="secondary"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              // Handle view profile
-            }}
-          >
-            Profile
+            View Details
           </ActionButton>
         </CardFooter>
       </CardContent>

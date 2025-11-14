@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import ModernHero from "../common/ModernHero";
-import DoctorsCarousel from "../common/DoctorsCarousel";
+import ModernDoctorsCarousel from "../common/ModernDoctorsCarousel";
 import DoctorDashboard from "../dashboard/DoctorDashboard";
 import ModernBookingForm from "../booking/ModernBookingForm";
 import AdminDashboard from "../dashboard/AdminDashboard";
@@ -29,7 +29,7 @@ const Home: React.FC = () => {
         </ErrorBoundary>
       ) : (
         <>
-          <DoctorsCarousel />
+          <ModernDoctorsCarousel />
           <ErrorBoundary fallback={<BookingErrorFallback />}>
             <ModernBookingForm />
           </ErrorBoundary>

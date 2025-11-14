@@ -8,7 +8,7 @@ import { useLoginModal } from "../../contexts/LoginModalContext";
 import UserMenu from "./UserMenu";
 import { theme } from "../../styles/theme";
 
-const HeaderWrapper = styled(motion.header)<{ scrolled: boolean }>`
+const HeaderWrapper = styled(motion.header)<{ $scrolled: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -17,8 +17,8 @@ const HeaderWrapper = styled(motion.header)<{ scrolled: boolean }>`
   transition: all ${theme.transitions.duration.normal}
     ${theme.transitions.easing.default};
 
-  ${({ scrolled }) =>
-    scrolled
+  ${({ $scrolled }) =>
+    $scrolled
       ? `
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -69,7 +69,7 @@ const LogoSection = styled(Link)`
   }
 `;
 
-const Nav = styled.nav<{ isOpen: boolean }>`
+const Nav = styled.nav<{ $isOpen: boolean }>`
   display: flex;
   align-items: center;
   gap: ${theme.spacing[2]};
@@ -84,20 +84,20 @@ const Nav = styled.nav<{ isOpen: boolean }>`
     flex-direction: column;
     justify-content: center;
     padding: ${theme.spacing[8]};
-    transform: ${({ isOpen }) =>
-      isOpen ? "translateX(0)" : "translateX(-100%)"};
+    transform: ${({ $isOpen }) =>
+      $isOpen ? "translateX(0)" : "translateX(-100%)"};
     transition: transform ${theme.transitions.duration.normal}
       ${theme.transitions.easing.default};
   }
 `;
 
-const NavLink = styled(Link)<{ active: boolean }>`
+const NavLink = styled(Link)<{ $active: boolean }>`
   position: relative;
   padding: ${theme.spacing[2]} ${theme.spacing[4]};
   font-size: ${theme.typography.fontSize.base};
   font-weight: ${theme.typography.fontWeight.medium};
-  color: ${({ active }) =>
-    active ? theme.colors.primary.teal : theme.colors.text.primary};
+  color: ${({ $active }) =>
+    $active ? theme.colors.primary.teal : theme.colors.text.primary};
   text-decoration: none;
   border-radius: ${theme.borderRadius.lg};
   transition: all ${theme.transitions.duration.fast}
@@ -113,7 +113,7 @@ const NavLink = styled(Link)<{ active: boolean }>`
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: ${({ active }) => (active ? "80%" : "0")};
+    width: ${({ $active }) => ($active ? "80%" : "0")};
     height: 2px;
     background: ${theme.colors.primary.teal};
     transform: translateX(-50%);
@@ -209,7 +209,7 @@ const ModernHeader: React.FC = () => {
 
   return (
     <HeaderWrapper
-      scrolled={scrolled}
+      $scrolled={scrolled}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
@@ -219,17 +219,17 @@ const ModernHeader: React.FC = () => {
           <img src="/images/logo.png" alt="BookMyDoctor" />
         </LogoSection>
 
-        <Nav isOpen={mobileMenuOpen}>
-          <NavLink to="/" active={isActiveLink("/")}>
+        <Nav $isOpen={mobileMenuOpen}>
+          <NavLink to="/" $active={isActiveLink("/")}>
             Home
           </NavLink>
-          <NavLink to="/about" active={isActiveLink("/about")}>
+          <NavLink to="/about" $active={isActiveLink("/about")}>
             About
           </NavLink>
-          <NavLink to="/information" active={isActiveLink("/information")}>
+          <NavLink to="/information" $active={isActiveLink("/information")}>
             Information
           </NavLink>
-          <NavLink to="/demo" active={isActiveLink("/demo")}>
+          <NavLink to="/demo" $active={isActiveLink("/demo")}>
             Demo
           </NavLink>
         </Nav>

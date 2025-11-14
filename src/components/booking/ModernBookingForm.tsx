@@ -429,6 +429,28 @@ const ModernBookingForm: React.FC = () => {
     loadDoctors();
   }, []);
 
+  // Listen for selectDoctor event from carousel
+  useEffect(() => {
+    const handleSelectDoctor = (event: CustomEvent<{ doctorId: number }>) => {
+      const { doctorId } = event.detail;
+      setFormData((prev) => ({
+        ...prev,
+        doctorId: doctorId.toString(),
+      }));
+    };
+
+    window.addEventListener(
+      "selectDoctor",
+      handleSelectDoctor as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        "selectDoctor",
+        handleSelectDoctor as EventListener
+      );
+    };
+  }, []);
+
   // Load busy slots
   useEffect(() => {
     if (formData.doctorId && formData.date) {
@@ -605,7 +627,7 @@ const ModernBookingForm: React.FC = () => {
   };
 
   return (
-    <BookingSection id="booking-section">
+    <BookingSection id="booking-section" data-booking-form>
       <Container>
         <SectionHeader>
           <SectionTitle
