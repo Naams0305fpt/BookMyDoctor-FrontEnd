@@ -712,17 +712,7 @@ const ModernPatientProfile: React.FC = () => {
                 <Mail size={16} />
                 Email Address
               </FieldLabel>
-              {isEditing ? (
-                <Input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="your@email.com"
-                />
-              ) : (
-                <FieldValue>{formData.email}</FieldValue>
-              )}
+              <FieldValue>{formData.email}</FieldValue>
             </Field>
 
             <Field>
