@@ -11,15 +11,21 @@ import {
   Clock,
   Stethoscope,
   FileText,
-  CheckCircle,
   AlertCircle,
   Loader,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useNotification } from "../../contexts/NotificationContext";
 import { formatDateForAPI } from "../../services/http-client";
 import doctorApi from "../../services/api/doctor.api";
 import bookingApi from "../../services/api/booking.api";
-import type { Doctor, BookingRequest, ScheduleResponseItem } from "../../types";
+import scheduleApi from "../../services/api/schedule.api";
+import type {
+  Doctor,
+  BookingRequest,
+  ScheduleResponseItem,
+  Schedule,
+} from "../../types";
 import { theme } from "../../styles/theme";
 import {
   Card,
@@ -274,38 +280,6 @@ const SubmitButton = styled(Button)`
   font-size: ${theme.typography.fontSize.lg};
 `;
 
-const Notification = styled(motion.div)<{ type: "success" | "error" | "info" }>`
-  display: flex;
-  align-items: center;
-  gap: ${theme.spacing[3]};
-  padding: ${theme.spacing[4]};
-  border-radius: ${theme.borderRadius.lg};
-  margin-top: ${theme.spacing[4]};
-  background: ${({ type }) =>
-    type === "success"
-      ? `${theme.colors.success}15`
-      : type === "error"
-      ? `${theme.colors.error}15`
-      : `${theme.colors.info}15`};
-  border: 1px solid
-    ${({ type }) =>
-      type === "success"
-        ? theme.colors.success
-        : type === "error"
-        ? theme.colors.error
-        : theme.colors.info};
-  color: ${({ type }) =>
-    type === "success"
-      ? theme.colors.success
-      : type === "error"
-      ? theme.colors.error
-      : theme.colors.info};
-
-  svg {
-    flex-shrink: 0;
-  }
-`;
-
 const LoadingOverlay = styled(motion.div)`
   position: absolute;
   inset: 0;
@@ -377,36 +351,44 @@ const ModernBookingForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
   const { user } = useAuth();
+  const { showNotification } = useNotification();
 
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
-  const [notification, setNotification] = useState<string>("");
   const [allDoctors, setAllDoctors] = useState<Doctor[]>([]);
   const [isLoadingDoctors, setIsLoadingDoctors] = useState(false);
   const [fetchedBusySlots, setFetchedBusySlots] = useState<string[]>([]);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
 
-  const timeSlots = [
-    "08:00",
-    "08:30",
-    "09:00",
-    "09:30",
-    "10:00",
-    "10:30",
-    "11:00",
-    "11:30",
-    "13:30",
-    "14:00",
-    "14:30",
-    "15:00",
-    "15:30",
-    "16:00",
-    "16:30",
-    "17:00",
-  ];
+  // Generate 30-minute time slots from schedule
+  const generateTimeSlotsFromSchedule = (schedule: Schedule): string[] => {
+    const slots: string[] = [];
+    const [startHour, startMin] = schedule.StartTime.split(":").map(Number);
+    const [endHour, endMin] = schedule.EndTime.split(":").map(Number);
+
+    let currentHour = startHour;
+    let currentMin = startMin;
+
+    while (
+      currentHour < endHour ||
+      (currentHour === endHour && currentMin < endMin)
+    ) {
+      const timeStr = `${currentHour.toString().padStart(2, "0")}:${currentMin
+        .toString()
+        .padStart(2, "0")}`;
+      slots.push(timeStr);
+
+      // Add 30 minutes
+      currentMin += 30;
+      if (currentMin >= 60) {
+        currentMin = 0;
+        currentHour += 1;
+      }
+    }
+
+    return slots;
+  };
 
   const genders = ["Male", "Female", "Other"];
 
@@ -451,14 +433,38 @@ const ModernBookingForm: React.FC = () => {
     };
   }, []);
 
-  // Load busy slots
+  // Load doctor schedule and busy slots
   useEffect(() => {
     if (formData.doctorId && formData.date) {
-      const fetchSchedule = async () => {
+      const fetchScheduleAndSlots = async () => {
         setIsLoadingSlots(true);
         setFetchedBusySlots([]);
+        setAvailableTimeSlots([]);
 
         try {
+          const formattedDate = formatDateForAPI(formData.date);
+
+          // Fetch doctor's work schedule for the date
+          const schedules: Schedule[] = await scheduleApi.getAllSchedules(
+            undefined, // doctorName
+            formattedDate
+          );
+
+          // Filter for selected doctor
+          const doctorSchedule = schedules.find(
+            (s) => s.DoctorId === parseInt(formData.doctorId)
+          );
+
+          if (doctorSchedule) {
+            // Generate 30-minute time slots from schedule
+            const slots = generateTimeSlotsFromSchedule(doctorSchedule);
+            setAvailableTimeSlots(slots);
+          } else {
+            // No schedule found for this date
+            setAvailableTimeSlots([]);
+          }
+
+          // Fetch busy slots
           const busySchedule: ScheduleResponseItem[] =
             await bookingApi.getDoctorSchedule(
               parseInt(formData.doctorId),
@@ -473,18 +479,21 @@ const ModernBookingForm: React.FC = () => {
 
           if (formData.time && busyStrings.includes(formData.time)) {
             handleInputChange("time", "");
-            setNotification(
-              "Your previously selected time is no longer available."
+            showNotification(
+              "warning",
+              "Time Unavailable",
+              "Your previously selected time is no longer available.",
+              3000
             );
-            setTimeout(() => setNotification(""), 3000);
           }
         } catch (error) {
           // Failed to load slots
+          setAvailableTimeSlots([]);
         } finally {
           setIsLoadingSlots(false);
         }
       };
-      fetchSchedule();
+      fetchScheduleAndSlots();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.doctorId, formData.date]);
@@ -576,9 +585,12 @@ const ModernBookingForm: React.FC = () => {
     if (!validateForm()) return;
 
     if (!formData.date || !formData.dateOfBirth) {
-      setSubmitStatus("error");
-      setNotification("Date and Date of Birth must be selected.");
-      setTimeout(() => setNotification(""), 3000);
+      showNotification(
+        "error",
+        "Missing Information",
+        "Date and Date of Birth must be selected.",
+        3000
+      );
       return;
     }
 
@@ -604,23 +616,20 @@ const ModernBookingForm: React.FC = () => {
     };
 
     setIsSubmitting(true);
-    setSubmitStatus("idle");
-    setNotification("");
 
     try {
       await bookingApi.submitBooking(payload);
-      setSubmitStatus("success");
       setFormData(initialFormData);
-      setTimeout(() => setSubmitStatus("idle"), 4000);
+      showNotification(
+        "success",
+        "Booking Successful!",
+        "Your appointment has been confirmed. We'll see you soon!",
+        5000
+      );
     } catch (error) {
-      setSubmitStatus("error");
       const errorMessage =
         error instanceof Error ? error.message : "An unknown error occurred.";
-      setNotification(errorMessage);
-      setTimeout(() => {
-        setSubmitStatus("idle");
-        setNotification("");
-      }, 5000);
+      showNotification("error", "Booking Failed", errorMessage, 5000);
     } finally {
       setIsSubmitting(false);
     }
@@ -875,9 +884,46 @@ const ModernBookingForm: React.FC = () => {
                           Loading available time slots...
                         </p>
                       </div>
+                    ) : availableTimeSlots.length === 0 ? (
+                      <div
+                        style={{
+                          textAlign: "center",
+                          padding: theme.spacing[8],
+                        }}
+                      >
+                        <AlertCircle
+                          size={48}
+                          style={{
+                            margin: "0 auto",
+                            color: theme.colors.warning,
+                            marginBottom: theme.spacing[4],
+                          }}
+                        />
+                        <p
+                          style={{
+                            color: theme.colors.text.primary,
+                            fontSize: theme.typography.fontSize.base,
+                            fontWeight: theme.typography.fontWeight.medium,
+                            marginBottom: theme.spacing[2],
+                          }}
+                        >
+                          No Schedule Available
+                        </p>
+                        <p
+                          style={{
+                            color: theme.colors.text.secondary,
+                            fontSize: theme.typography.fontSize.sm,
+                          }}
+                        >
+                          The selected doctor has no available schedule for this
+                          date.
+                          <br />
+                          Please choose another date.
+                        </p>
+                      </div>
                     ) : (
                       <TimeSlotGrid>
-                        {timeSlots.map((slot) => {
+                        {availableTimeSlots.map((slot) => {
                           const isBusy = fetchedBusySlots.includes(slot);
                           const isSelected = formData.time === slot;
                           const isPast = isTimeSlotPast(slot);
@@ -948,39 +994,6 @@ const ModernBookingForm: React.FC = () => {
                 {isSubmitting ? "Submitting..." : "Book Appointment"}
               </SubmitButton>
             </form>
-
-            {/* Notifications */}
-            <AnimatePresence>
-              {submitStatus === "success" && (
-                <Notification
-                  type="success"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                >
-                  <CheckCircle size={24} />
-                  <div>
-                    <strong>Booking successful!</strong>
-                    <br />
-                    Your appointment has been confirmed.
-                  </div>
-                </Notification>
-              )}
-
-              {(submitStatus === "error" || notification) && (
-                <Notification
-                  type="error"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                >
-                  <AlertCircle size={24} />
-                  <div>
-                    {notification || "Something went wrong. Please try again."}
-                  </div>
-                </Notification>
-              )}
-            </AnimatePresence>
           </FormCard>
         </motion.div>
       </Container>
