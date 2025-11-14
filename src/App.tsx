@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -15,19 +15,22 @@ import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import Login from "./components/auth/Login";
 import SignUp from "./components/auth/SignUp";
-import Home from "./components/pages/Home";
-import About from "./components/pages/About";
-import Information from "./components/pages/Information";
-import Demo from "./components/pages/Demo";
-import Profile from "./components/pages/Profile";
-import BookingHistory from "./components/pages/BookingHistory";
-import Settings from "./components/pages/Settings";
 import { 
   ErrorBoundary, 
   BookingErrorFallback, 
   ProfileErrorFallback, 
-  PageErrorFallback 
+  PageErrorFallback,
+  LoadingSpinner
 } from "./components/common";
+
+// Lazy load page components for better performance
+const Home = lazy(() => import("./components/pages/Home"));
+const About = lazy(() => import("./components/pages/About"));
+const Information = lazy(() => import("./components/pages/Information"));
+const Demo = lazy(() => import("./components/pages/Demo"));
+const Profile = lazy(() => import("./components/pages/Profile"));
+const BookingHistory = lazy(() => import("./components/pages/BookingHistory"));
+const Settings = lazy(() => import("./components/pages/Settings"));
 
 // Main App Content
 const AppContent: React.FC = () => {
@@ -39,42 +42,44 @@ const AppContent: React.FC = () => {
       <Router>
         <Header />
         <ErrorBoundary fallback={<PageErrorFallback />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/information" element={<Information />} />
-            <Route path="/demo" element={<Demo />} />
-            
-            {/* Profile with dedicated error boundary */}
-            <Route 
-              path="/profile" 
-              element={
-                <ErrorBoundary fallback={<ProfileErrorFallback />}>
-                  <Profile />
-                </ErrorBoundary>
-              } 
-            />
-            
-            {/* Booking History with dedicated error boundary */}
-            <Route 
-              path="/booking-history" 
-              element={
-                <ErrorBoundary fallback={<BookingErrorFallback />}>
-                  <BookingHistory />
-                </ErrorBoundary>
-              } 
-            />
-            
-            {/* Settings with dedicated error boundary */}
-            <Route 
-              path="/settings" 
-              element={
-                <ErrorBoundary fallback={<ProfileErrorFallback />}>
-                  <Settings />
-                </ErrorBoundary>
-              } 
-            />
-          </Routes>
+          <Suspense fallback={<LoadingSpinner message="Loading page..." />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/information" element={<Information />} />
+              <Route path="/demo" element={<Demo />} />
+              
+              {/* Profile with dedicated error boundary */}
+              <Route 
+                path="/profile" 
+                element={
+                  <ErrorBoundary fallback={<ProfileErrorFallback />}>
+                    <Profile />
+                  </ErrorBoundary>
+                } 
+              />
+              
+              {/* Booking History with dedicated error boundary */}
+              <Route 
+                path="/booking-history" 
+                element={
+                  <ErrorBoundary fallback={<BookingErrorFallback />}>
+                    <BookingHistory />
+                  </ErrorBoundary>
+                } 
+              />
+              
+              {/* Settings with dedicated error boundary */}
+              <Route 
+                path="/settings" 
+                element={
+                  <ErrorBoundary fallback={<ProfileErrorFallback />}>
+                    <Settings />
+                  </ErrorBoundary>
+                } 
+              />
+            </Routes>
+          </Suspense>
         </ErrorBoundary>
         <Footer />
       </Router>

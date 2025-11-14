@@ -4,4 +4,5 @@ export { default as Notification } from './Notification';
 export { default as Pagination } from './Pagination';
 export { default as ScheduleFormModal } from './ScheduleFormModal';
 export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as LoadingSpinner } from './LoadingSpinner';
 export * from './ErrorFallbacks';
