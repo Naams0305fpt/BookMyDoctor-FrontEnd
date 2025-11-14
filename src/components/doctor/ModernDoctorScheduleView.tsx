@@ -142,15 +142,15 @@ const Table = styled.table`
   border-collapse: collapse;
 
   thead {
-    background: ${theme.colors.gray[50]};
-    border-bottom: 2px solid ${theme.colors.gray[200]};
+    background: ${theme.colors.primary.teal};
+    border-bottom: 2px solid ${theme.colors.primary.dark};
 
     th {
       padding: ${theme.spacing[4]} ${theme.spacing[3]};
       text-align: left;
       font-size: ${theme.typography.fontSize.sm};
       font-weight: ${theme.typography.fontWeight.semibold};
-      color: ${theme.colors.text.secondary};
+      color: ${theme.colors.text.inverse};
       text-transform: uppercase;
       letter-spacing: 0.5px;
       white-space: nowrap;

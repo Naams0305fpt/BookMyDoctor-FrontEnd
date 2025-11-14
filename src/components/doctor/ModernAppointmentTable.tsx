@@ -216,8 +216,8 @@ const Table = styled.table`
   min-width: 1200px;
 
   thead {
-    background: ${theme.colors.gray[50]};
-    border-bottom: 2px solid ${theme.colors.gray[200]};
+    background: ${theme.colors.primary.teal};
+    border-bottom: 2px solid ${theme.colors.primary.dark};
     position: sticky;
     top: 0;
     z-index: 3;
@@ -227,7 +227,7 @@ const Table = styled.table`
       text-align: left;
       font-size: ${theme.typography.fontSize.sm};
       font-weight: ${theme.typography.fontWeight.semibold};
-      color: ${theme.colors.text.secondary};
+      color: ${theme.colors.text.inverse};
       text-transform: uppercase;
       letter-spacing: 0.5px;
       white-space: nowrap;
@@ -236,7 +236,7 @@ const Table = styled.table`
         position: sticky;
         left: 0;
         z-index: 2;
-        background: ${theme.colors.gray[50]};
+        background: ${theme.colors.primary.teal};
         min-width: 60px;
       }
 
@@ -244,7 +244,7 @@ const Table = styled.table`
         position: sticky;
         left: 60px;
         z-index: 2;
-        background: ${theme.colors.gray[50]};
+        background: ${theme.colors.primary.teal};
         box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
         min-width: 180px;
       }

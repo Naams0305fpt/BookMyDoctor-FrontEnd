@@ -9,7 +9,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Ban,
-  FileDown,
   Search,
 } from "lucide-react";
 import DatePicker from "react-datepicker";
@@ -21,7 +20,6 @@ import type { MyHistoryResponse } from "../../types";
 import { useNotification } from "../../contexts/NotificationContext";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
-import { exportBookingHistoryToExcel } from "../../utils/excelExport";
 import { theme } from "../../styles/theme";
 import { Card } from "../../styles/components";
 
@@ -275,15 +273,15 @@ const Table = styled.table`
   border-collapse: collapse;
 
   thead {
-    background: ${theme.colors.gray[50]};
-    border-bottom: 2px solid ${theme.colors.gray[200]};
+    background: ${theme.colors.primary.teal};
+    border-bottom: 2px solid ${theme.colors.primary.dark};
 
     th {
       padding: ${theme.spacing[4]} ${theme.spacing[3]};
       text-align: left;
       font-size: ${theme.typography.fontSize.sm};
       font-weight: ${theme.typography.fontWeight.semibold};
-      color: ${theme.colors.text.secondary};
+      color: ${theme.colors.text.inverse};
       text-transform: uppercase;
       letter-spacing: 0.5px;
       white-space: nowrap;
@@ -367,40 +365,6 @@ const ActionButton = styled(motion.button)<{ variant?: string }>`
   svg {
     width: 16px;
     height: 16px;
-  }
-`;
-
-const ExportButton = styled(motion.button)`
-  display: inline-flex;
-  align-items: center;
-  gap: ${theme.spacing[2]};
-  padding: ${theme.spacing[3]} ${theme.spacing[6]};
-  border: 2px solid ${theme.colors.primary.teal};
-  background: white;
-  color: ${theme.colors.primary.teal};
-  border-radius: ${theme.borderRadius.lg};
-  font-size: ${theme.typography.fontSize.base};
-  font-weight: ${theme.typography.fontWeight.semibold};
-  cursor: pointer;
-  transition: all ${theme.transitions.duration.fast}
-    ${theme.transitions.easing.default};
-
-  &:hover:not(:disabled) {
-    background: ${theme.colors.primary.teal};
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: ${theme.colors.shadow.md};
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
 `;
 
 const TableFooter = styled.div`
@@ -476,7 +440,7 @@ const ModernBookingHistory: React.FC = () => {
     const now = new Date();
     const diffMs = appointmentDateTime.getTime() - now.getTime();
     const diffHours = diffMs / (1000 * 60 * 60);
-    return diffHours >= 24;
+    return diffHours >= 6;
   };
 
   const mapApiStatus = (apiStatus: string): Booking["status"] => {
@@ -839,32 +803,6 @@ const ModernBookingHistory: React.FC = () => {
         </TableContainer>
 
         <TableFooter>
-          <ExportButton
-            onClick={() => {
-              const exportData: MyHistoryResponse[] = filteredBookings.map(
-                (b) => ({
-                  AppointId: b.id,
-                  NamePatient: b.patientName,
-                  NameDoctor: b.doctorName,
-                  PhoneDoctor: b.doctorPhone,
-                  Department: b.department,
-                  AppointDate: b.appointmentDate.toISOString().split("T")[0],
-                  AppointHour: b.appointmentTime,
-                  Status: b.status.charAt(0).toUpperCase() + b.status.slice(1),
-                  Symptoms: b.symptom,
-                  Prescription: b.prescription || "",
-                })
-              );
-              exportBookingHistoryToExcel(exportData, "lich_su_dat_kham");
-            }}
-            disabled={filteredBookings.length === 0}
-            whileHover={{ scale: filteredBookings.length > 0 ? 1.02 : 1 }}
-            whileTap={{ scale: filteredBookings.length > 0 ? 0.98 : 1 }}
-          >
-            <FileDown />
-            Export Excel
-          </ExportButton>
-
           <Pagination
             currentPage={pagination.currentPage}
             totalPages={pagination.totalPages}
