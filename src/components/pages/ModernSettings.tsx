@@ -28,10 +28,9 @@ import authApi from "../../services/api/auth.api";
 import { theme } from "../../styles/theme";
 
 const PageContainer = styled.div`
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   padding-top: calc(80px + ${theme.spacing[8]});
   padding-bottom: ${theme.spacing[12]};
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
 `;
 
 const Container = styled.div`
@@ -306,7 +305,9 @@ const SettingInfo = styled.div`
   }
 `;
 
-const Button = styled(motion.button)<{ $variant?: "primary" | "secondary" | "danger" }>`
+const Button = styled(motion.button)<{
+  $variant?: "primary" | "secondary" | "danger";
+}>`
   display: inline-flex;
   align-items: center;
   gap: ${theme.spacing[2]};
@@ -621,10 +622,16 @@ const ModernSettings: React.FC = () => {
         navigate("/");
       }, 1500);
     } catch (err) {
-      const error = err as Error & { response?: { data?: { field?: string; message?: string } | string } };
+      const error = err as Error & {
+        response?: { data?: { field?: string; message?: string } | string };
+      };
       if (error.response?.data) {
         const errorData = error.response.data;
-        if (typeof errorData === "object" && errorData.field && errorData.message) {
+        if (
+          typeof errorData === "object" &&
+          errorData.field &&
+          errorData.message
+        ) {
           setError(errorData.message);
         } else if (typeof errorData === "string") {
           setError(errorData);
@@ -814,7 +821,10 @@ const ModernSettings: React.FC = () => {
               </SettingItem>
             </SettingsGroup>
 
-            <SectionTitle className="danger" style={{ marginTop: theme.spacing[8] }}>
+            <SectionTitle
+              className="danger"
+              style={{ marginTop: theme.spacing[8] }}
+            >
               <AlertTriangle />
               Danger Zone
             </SectionTitle>
