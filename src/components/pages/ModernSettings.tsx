@@ -890,18 +890,7 @@ const ModernSettings: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={darkMode}
-                    onChange={(e) => {
-                      setDarkMode(e.target.checked);
-                      showNotification(
-                        "success",
-                        e.target.checked
-                          ? "🌙 Dark Mode Enabled"
-                          : "☀️ Light Mode Enabled",
-                        e.target.checked
-                          ? "Dark theme activated. Easy on the eyes!"
-                          : "Light theme activated. Bright and clear!"
-                      );
-                    }}
+                    onChange={(e) => setDarkMode(e.target.checked)}
                   />
                   <span className="slider"></span>
                 </ToggleSwitch>
@@ -920,16 +909,7 @@ const ModernSettings: React.FC = () => {
                 </SettingInfo>
                 <SelectInput
                   value={language}
-                  onChange={(e) => {
-                    setLanguage(e.target.value);
-                    const langName =
-                      e.target.value === "en" ? "English" : "Tiếng Việt";
-                    showNotification(
-                      "success",
-                      "🌐 Language Updated",
-                      `Display language changed to ${langName}. Please refresh the page to see changes.`
-                    );
-                  }}
+                  onChange={(e) => setLanguage(e.target.value)}
                 >
                   <option value="en">English</option>
                   <option value="vi">Tiếng Việt</option>
@@ -943,16 +923,7 @@ const ModernSettings: React.FC = () => {
                 </SettingInfo>
                 <SelectInput
                   value={timezone}
-                  onChange={(e) => {
-                    setTimezone(e.target.value);
-                    const tzName =
-                      e.target.options[e.target.selectedIndex].text;
-                    showNotification(
-                      "success",
-                      "🕐 Timezone Updated",
-                      `Your timezone is now set to ${tzName}. All appointment times will reflect this timezone.`
-                    );
-                  }}
+                  onChange={(e) => setTimezone(e.target.value)}
                 >
                   <option value="Asia/Ho_Chi_Minh">(GMT+7) Ho Chi Minh</option>
                   <option value="Asia/Bangkok">(GMT+7) Bangkok</option>
@@ -981,18 +952,7 @@ const ModernSettings: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={emailNotifications}
-                    onChange={(e) => {
-                      setEmailNotifications(e.target.checked);
-                      showNotification(
-                        "success",
-                        e.target.checked
-                          ? "✅ Email Notifications Enabled"
-                          : "❌ Email Notifications Disabled",
-                        e.target.checked
-                          ? "You will receive appointment updates and reminders via email"
-                          : "You will no longer receive email notifications"
-                      );
-                    }}
+                    onChange={(e) => setEmailNotifications(e.target.checked)}
                   />
                   <span className="slider"></span>
                 </ToggleSwitch>
@@ -1007,20 +967,7 @@ const ModernSettings: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={smsNotifications}
-                    onChange={(e) => {
-                      setSmsNotifications(e.target.checked);
-                      showNotification(
-                        "success",
-                        e.target.checked
-                          ? "📱 SMS Notifications Enabled"
-                          : "📵 SMS Notifications Disabled",
-                        e.target.checked
-                          ? `Important updates will be sent to ${
-                              user?.phone || "your phone"
-                            }`
-                          : "You will no longer receive SMS alerts"
-                      );
-                    }}
+                    onChange={(e) => setSmsNotifications(e.target.checked)}
                   />
                   <span className="slider"></span>
                 </ToggleSwitch>
@@ -1035,18 +982,7 @@ const ModernSettings: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={appointmentReminders}
-                    onChange={(e) => {
-                      setAppointmentReminders(e.target.checked);
-                      showNotification(
-                        "success",
-                        e.target.checked
-                          ? "🔔 Appointment Reminders Enabled"
-                          : "🔕 Appointment Reminders Disabled",
-                        e.target.checked
-                          ? "You will be reminded 24 hours before your appointments"
-                          : "You will not receive appointment reminders"
-                      );
-                    }}
+                    onChange={(e) => setAppointmentReminders(e.target.checked)}
                   />
                   <span className="slider"></span>
                 </ToggleSwitch>
