@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
-import { MapPin, Phone, Mail, Facebook, Youtube } from 'lucide-react';
-import { FaTiktok } from 'react-icons/fa';
+import { MapPin, Phone, Mail, Facebook, Youtube, Music } from 'lucide-react';
 import { theme } from '../../styles/theme';
 
 const FooterWrapper = styled.footer`
@@ -346,13 +345,15 @@ const ModernFooter: React.FC = () => {
               href="#"
               whileHover={{ scale: 1.1, y: -4 }}
               whileTap={{ scale: 0.95 }}
+              aria-label="TikTok"
             >
-              <FaTiktok />
+              <Music />
             </SocialLink>
             <SocialLink
               href="#"
               whileHover={{ scale: 1.1, y: -4 }}
               whileTap={{ scale: 0.95 }}
+              aria-label="Facebook"
             >
               <Facebook />
             </SocialLink>
@@ -360,6 +361,7 @@ const ModernFooter: React.FC = () => {
               href="#"
               whileHover={{ scale: 1.1, y: -4 }}
               whileTap={{ scale: 0.95 }}
+              aria-label="YouTube"
             >
               <Youtube />
             </SocialLink>

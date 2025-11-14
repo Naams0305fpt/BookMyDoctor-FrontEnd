@@ -3,7 +3,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import ModernHero from "../common/ModernHero";
 import DoctorsCarousel from "../common/DoctorsCarousel";
 import DoctorDashboard from "../dashboard/DoctorDashboard";
-import BookingForm from "../booking/BookingForm";
+import ModernBookingForm from "../booking/ModernBookingForm";
 import AdminDashboard from "../dashboard/AdminDashboard";
 import {
   ErrorBoundary,
@@ -31,7 +31,7 @@ const Home: React.FC = () => {
         <>
           <DoctorsCarousel />
           <ErrorBoundary fallback={<BookingErrorFallback />}>
-            <BookingForm />
+            <ModernBookingForm />
           </ErrorBoundary>
         </>
       )}
