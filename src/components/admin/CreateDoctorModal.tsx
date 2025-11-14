@@ -7,8 +7,6 @@ import {
   faPhone,
   faTimes,
   faUserMd,
-  faEye,
-  faEyeSlash,
   faVenusMars,
   faCalendarAlt,
   faIdCard,

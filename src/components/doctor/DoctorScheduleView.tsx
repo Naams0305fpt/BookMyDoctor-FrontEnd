@@ -24,7 +24,6 @@ const DoctorScheduleView: React.FC = () => {
   // State for schedules (Doctor's work schedule, not patient appointments)
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const [searchQuery, setSearchQuery] = useState("");
 
   // State for loading and errors
   const [isLoading, setIsLoading] = useState(false);

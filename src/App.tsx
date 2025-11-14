@@ -1,17 +1,8 @@
-import React, { useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-  useLocation,
-} from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import {
-  NotificationProvider,
-  useNotification,
-} from "./contexts/NotificationContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import {
   LoginModalProvider,
   useLoginModal,

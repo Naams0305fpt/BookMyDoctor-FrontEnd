@@ -7,7 +7,6 @@ import {
   faHourglassHalf,
   faChevronLeft,
   faChevronRight,
-  faTimes,
   faBan,
   faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
