@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import styled from '@emotion/styled';
-import { theme } from '../../styles/theme';
+import React from "react";
+import { motion } from "framer-motion";
+import styled from "@emotion/styled";
+import { theme } from "../../styles/theme";
 
 interface LoadingSpinnerProps {
   message?: string;
@@ -9,14 +9,16 @@ interface LoadingSpinnerProps {
 }
 
 const SpinnerWrapper = styled.div<{ fullScreen?: boolean }>`
-  ${({ fullScreen }) => fullScreen && `
+  ${({ fullScreen }) =>
+    fullScreen &&
+    `
     position: fixed;
     inset: 0;
     z-index: ${theme.zIndex.modal};
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8px);
   `}
-  
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,7 +71,7 @@ const Dot = styled(motion.span)`
 `;
 
 const ModernLoadingSpinner: React.FC<LoadingSpinnerProps> = ({
-  message = 'Loading...',
+  message = "Loading...",
   fullScreen = true,
 }) => {
   return (
@@ -84,7 +86,7 @@ const ModernLoadingSpinner: React.FC<LoadingSpinnerProps> = ({
             transition={{
               duration: 1.5,
               repeat: Infinity,
-              ease: 'linear',
+              ease: "linear",
               delay: index * 0.15,
             }}
           />
@@ -93,9 +95,9 @@ const ModernLoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         {/* Central Dot */}
         <SpinnerDot
           style={{
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
           }}
           animate={{
             scale: [1, 1.2, 1],
@@ -104,7 +106,7 @@ const ModernLoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           transition={{
             duration: 1.5,
             repeat: Infinity,
-            ease: 'easeInOut',
+            ease: "easeInOut",
           }}
         />
       </SpinnerContainer>

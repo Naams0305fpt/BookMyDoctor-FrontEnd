@@ -82,10 +82,11 @@ const AppContent: React.FC = () => {
                   }
                 />
               </Routes>
-          </Suspense>
-        </ErrorBoundary>
-        <ModernFooter />
-      </Router>        {/* Modals at App level for proper positioning */}
+            </Suspense>
+          </ErrorBoundary>
+          <ModernFooter />
+        </Router>{" "}
+        {/* Modals at App level for proper positioning */}
         {showLogin && <Login onClose={closeLogin} />}
         {showSignUp && <SignUp onClose={closeSignUp} />}
       </div>

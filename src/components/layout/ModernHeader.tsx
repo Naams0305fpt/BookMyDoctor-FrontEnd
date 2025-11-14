@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import styled from '@emotion/styled';
-import { Menu, X, User } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useLoginModal } from '../../contexts/LoginModalContext';
-import UserMenu from './UserMenu';
-import { theme } from '../../styles/theme';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import styled from "@emotion/styled";
+import { Menu, X, User } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useLoginModal } from "../../contexts/LoginModalContext";
+import UserMenu from "./UserMenu";
+import { theme } from "../../styles/theme";
 
 const HeaderWrapper = styled(motion.header)<{ scrolled: boolean }>`
   position: fixed;
