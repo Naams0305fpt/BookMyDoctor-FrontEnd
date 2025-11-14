@@ -5,10 +5,10 @@ import DoctorsCarousel from "../common/DoctorsCarousel";
 import DoctorDashboard from "../dashboard/DoctorDashboard";
 import BookingForm from "../booking/BookingForm";
 import AdminDashboard from "../dashboard/AdminDashboard";
-import { 
-  ErrorBoundary, 
-  BookingErrorFallback, 
-  DashboardErrorFallback 
+import {
+  ErrorBoundary,
+  BookingErrorFallback,
+  DashboardErrorFallback,
 } from "../common";
 
 const Home: React.FC = () => {

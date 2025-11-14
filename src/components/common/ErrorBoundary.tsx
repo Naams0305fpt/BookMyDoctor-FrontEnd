@@ -1,5 +1,5 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import './ErrorBoundary.css';
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import "./ErrorBoundary.css";
 
 interface Props {
   children: ReactNode;
@@ -78,8 +78,8 @@ class ErrorBoundary extends Component<Props, State> {
             <p className="error-message">
               We're sorry for the inconvenience. An unexpected error occurred.
             </p>
-            
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+
+            {process.env.NODE_ENV === "development" && this.state.error && (
               <details className="error-details">
                 <summary>Error Details (Development Only)</summary>
                 <pre className="error-stack">
@@ -90,23 +90,25 @@ class ErrorBoundary extends Component<Props, State> {
             )}
 
             <div className="error-actions">
-              <button 
-                className="btn-primary" 
+              <button
+                className="btn-primary"
                 onClick={() => window.location.reload()}
               >
                 🔄 Reload Page
               </button>
-              <button 
-                className="btn-secondary" 
-                onClick={() => window.location.href = '/'}
+              <button
+                className="btn-secondary"
+                onClick={() => (window.location.href = "/")}
               >
                 🏠 Go Home
               </button>
             </div>
 
             <p className="error-help">
-              If this problem persists, please contact support at{' '}
-              <a href="mailto:support@bookmydoctor.com">support@bookmydoctor.com</a>
+              If this problem persists, please contact support at{" "}
+              <a href="mailto:support@bookmydoctor.com">
+                support@bookmydoctor.com
+              </a>
             </p>
           </div>
         </div>

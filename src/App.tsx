@@ -15,12 +15,12 @@ import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import Login from "./components/auth/Login";
 import SignUp from "./components/auth/SignUp";
-import { 
-  ErrorBoundary, 
-  BookingErrorFallback, 
-  ProfileErrorFallback, 
+import {
+  ErrorBoundary,
+  BookingErrorFallback,
+  ProfileErrorFallback,
   PageErrorFallback,
-  LoadingSpinner
+  LoadingSpinner,
 } from "./components/common";
 
 // Lazy load page components for better performance
@@ -48,35 +48,35 @@ const AppContent: React.FC = () => {
               <Route path="/about" element={<About />} />
               <Route path="/information" element={<Information />} />
               <Route path="/demo" element={<Demo />} />
-              
+
               {/* Profile with dedicated error boundary */}
-              <Route 
-                path="/profile" 
+              <Route
+                path="/profile"
                 element={
                   <ErrorBoundary fallback={<ProfileErrorFallback />}>
                     <Profile />
                   </ErrorBoundary>
-                } 
+                }
               />
-              
+
               {/* Booking History with dedicated error boundary */}
-              <Route 
-                path="/booking-history" 
+              <Route
+                path="/booking-history"
                 element={
                   <ErrorBoundary fallback={<BookingErrorFallback />}>
                     <BookingHistory />
                   </ErrorBoundary>
-                } 
+                }
               />
-              
+
               {/* Settings with dedicated error boundary */}
-              <Route 
-                path="/settings" 
+              <Route
+                path="/settings"
                 element={
                   <ErrorBoundary fallback={<ProfileErrorFallback />}>
                     <Settings />
                   </ErrorBoundary>
-                } 
+                }
               />
             </Routes>
           </Suspense>
