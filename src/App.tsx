@@ -28,7 +28,6 @@ import {
 const Home = lazy(() => import("./components/pages/Home"));
 const About = lazy(() => import("./components/pages/About"));
 const Information = lazy(() => import("./components/pages/Information"));
-const Demo = lazy(() => import("./components/pages/Demo"));
 const Profile = lazy(() => import("./components/pages/Profile"));
 const BookingHistory = lazy(() => import("./components/pages/BookingHistory"));
 const Settings = lazy(() => import("./components/pages/Settings"));
@@ -50,7 +49,6 @@ const AppContent: React.FC = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/information" element={<Information />} />
-                <Route path="/demo" element={<Demo />} />
 
                 {/* Profile with dedicated error boundary */}
                 <Route
