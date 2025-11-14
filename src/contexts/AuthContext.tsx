@@ -33,6 +33,7 @@ interface AuthContextType {
     data: RegisterRequest
   ) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
+  updateUser: (updates: Partial<User>) => void;
   isLoading: boolean;
 }
 
@@ -101,6 +102,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const updateUser = (updates: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...updates };
+      setUser(updatedUser);
+      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+    }
+  };
+
   const register = async (
     data: RegisterRequest
   ): Promise<{ success: boolean; message?: string }> => {
@@ -135,6 +144,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
+    updateUser,
     isLoading,
   };
 
