@@ -3,18 +3,13 @@ import { motion } from "framer-motion";
 import styled from "@emotion/styled";
 import {
   Search,
-  ChevronLeft,
-  ChevronRight,
   FileDown,
   User,
   CheckCircle,
   Clock,
   XCircle,
 } from "lucide-react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import patientApi from "../../services/api/patient.api";
-import { formatDateForAPI } from "../../services/http-client";
 import type { Patient } from "../../types";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
@@ -90,54 +85,6 @@ const Select = styled.select`
     outline: none;
     border-color: ${theme.colors.primary.teal};
     box-shadow: 0 0 0 3px ${theme.colors.primary.teal}15;
-  }
-`;
-
-const DateNavigation = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${theme.spacing[2]};
-`;
-
-const DateButton = styled.button`
-  width: 40px;
-  height: 40px;
-  border-radius: ${theme.borderRadius.lg};
-  border: 2px solid ${theme.colors.gray[300]};
-  background: white;
-  color: ${theme.colors.text.primary};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all ${theme.transitions.duration.fast}
-    ${theme.transitions.easing.default};
-
-  &:hover {
-    border-color: ${theme.colors.primary.teal};
-    background: ${theme.colors.primary.teal}10;
-    color: ${theme.colors.primary.teal};
-  }
-`;
-
-const DatePickerWrapper = styled.div`
-  .react-datepicker-wrapper {
-    width: 200px;
-  }
-
-  input {
-    width: 100%;
-    padding: ${theme.spacing[3]} ${theme.spacing[4]};
-    border: 2px solid ${theme.colors.gray[300]};
-    border-radius: ${theme.borderRadius.lg};
-    font-size: ${theme.typography.fontSize.base};
-    cursor: pointer;
-
-    &:focus {
-      outline: none;
-      border-color: ${theme.colors.primary.teal};
-      box-shadow: 0 0 0 3px ${theme.colors.primary.teal}15;
-    }
   }
 `;
 
@@ -348,26 +295,35 @@ const ErrorState = styled.div`
 `;
 
 const ModernPatientManagement: React.FC = () => {
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [allPatients, setAllPatients] = useState<Patient[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedStatus, setSelectedStatus] = useState("");
 
-  const pagination = usePagination(patients, 10);
+  // Client-side filtering
+  const filteredPatients = allPatients.filter((patient) => {
+    // Filter by search query (name or phone)
+    const matchesSearch =
+      !searchQuery ||
+      patient.FullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      patient.PhoneNumber.toLowerCase().includes(searchQuery.toLowerCase());
 
-  const fetchPatients = async (
-    name: string,
-    date: Date | null,
-    status: string
-  ) => {
+    // Filter by status
+    const matchesStatus = !selectedStatus || patient.Status === selectedStatus;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const pagination = usePagination(filteredPatients, 10);
+
+  const fetchPatients = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const formattedDate = date ? formatDateForAPI(date) : "";
-      const data = await patientApi.getAllPatients(name, formattedDate, status);
-      setPatients(data);
+      // Fetch all patients without filters
+      const data = await patientApi.getAllPatients("", "", "");
+      setAllPatients(data);
     } catch (err) {
       const error = err as Error;
       setError(error.message || "Failed to fetch patients.");
@@ -377,26 +333,8 @@ const ModernPatientManagement: React.FC = () => {
   };
 
   useEffect(() => {
-    const timerId = setTimeout(() => {
-      fetchPatients(searchQuery, selectedDate, selectedStatus);
-    }, 500);
-
-    return () => clearTimeout(timerId);
-  }, [searchQuery, selectedDate, selectedStatus]);
-
-  const goToPreviousDay = () => {
-    const date = selectedDate || new Date();
-    const previousDay = new Date(date);
-    previousDay.setDate(previousDay.getDate() - 1);
-    setSelectedDate(previousDay);
-  };
-
-  const goToNextDay = () => {
-    const date = selectedDate || new Date();
-    const nextDay = new Date(date);
-    nextDay.setDate(nextDay.getDate() + 1);
-    setSelectedDate(nextDay);
-  };
+    fetchPatients();
+  }, []);
 
   const getStatusIcon = (status: Patient["Status"]) => {
     switch (status) {
@@ -411,7 +349,7 @@ const ModernPatientManagement: React.FC = () => {
     }
   };
 
-  if (isLoading && patients.length === 0) {
+  if (isLoading && allPatients.length === 0) {
     return (
       <Container>
         <LoadingState>Loading patients...</LoadingState>
@@ -419,7 +357,7 @@ const ModernPatientManagement: React.FC = () => {
     );
   }
 
-  if (error && patients.length === 0) {
+  if (error && allPatients.length === 0) {
     return (
       <Container>
         <ErrorState>Error: {error}</ErrorState>
@@ -446,28 +384,10 @@ const ModernPatientManagement: React.FC = () => {
             onChange={(e) => setSelectedStatus(e.target.value)}
           >
             <option value="">All Statuses</option>
-            <option value="Pending">Pending</option>
+            <option value="Scheduled">Scheduled</option>
             <option value="Completed">Completed</option>
             <option value="Cancelled">Cancelled</option>
           </Select>
-
-          <DateNavigation>
-            <DateButton onClick={goToPreviousDay}>
-              <ChevronLeft size={20} />
-            </DateButton>
-            <DatePickerWrapper>
-              <DatePicker
-                selected={selectedDate}
-                onChange={(date) => setSelectedDate(date)}
-                dateFormat="dd/MM/yyyy"
-                placeholderText="All Dates"
-                isClearable
-              />
-            </DatePickerWrapper>
-            <DateButton onClick={goToNextDay}>
-              <ChevronRight size={20} />
-            </DateButton>
-          </DateNavigation>
         </FiltersGrid>
       </FiltersCard>
 
@@ -502,7 +422,9 @@ const ModernPatientManagement: React.FC = () => {
                 </tr>
               ) : (
                 pagination.currentItems.map((patient, index) => (
-                  <tr key={patient.Username}>
+                  <tr
+                    key={patient.id || `patient-${patient.Username}-${index}`}
+                  >
                     <td>{pagination.startIndex + index}</td>
                     <td>{patient.FullName}</td>
                     <td>{patient.Username}</td>
@@ -533,11 +455,11 @@ const ModernPatientManagement: React.FC = () => {
         <TableFooter>
           <ExportButton
             onClick={() =>
-              exportPatientsToExcel(patients, "danh_sach_benh_nhan")
+              exportPatientsToExcel(filteredPatients, "danh_sach_benh_nhan")
             }
-            disabled={patients.length === 0}
-            whileHover={{ scale: patients.length > 0 ? 1.02 : 1 }}
-            whileTap={{ scale: patients.length > 0 ? 0.98 : 1 }}
+            disabled={filteredPatients.length === 0}
+            whileHover={{ scale: filteredPatients.length > 0 ? 1.02 : 1 }}
+            whileTap={{ scale: filteredPatients.length > 0 ? 0.98 : 1 }}
           >
             <FileDown />
             Export Excel
