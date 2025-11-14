@@ -1,14 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
-import {
-  Users,
-  Heart,
-  Shield,
-  Award,
-  Stethoscope,
-  Target,
-} from "lucide-react";
+import { Users, Heart, Shield, Award, Stethoscope, Target } from "lucide-react";
 
 const theme = {
   colors: {
@@ -344,7 +337,8 @@ const ModernAbout: React.FC = () => {
   const values = [
     {
       title: "Compassion",
-      description: "We approach every interaction with empathy and understanding.",
+      description:
+        "We approach every interaction with empathy and understanding.",
     },
     {
       title: "Excellence",
@@ -467,10 +461,10 @@ const ModernAbout: React.FC = () => {
           </MissionTitle>
           <MissionText>
             To revolutionize healthcare accessibility by providing a seamless
-            platform that connects patients with qualified medical professionals.
-            We strive to make quality healthcare as accessible as a click,
-            ensuring every individual receives the care they deserve with the
-            warmth and attention of a mother's care.
+            platform that connects patients with qualified medical
+            professionals. We strive to make quality healthcare as accessible as
+            a click, ensuring every individual receives the care they deserve
+            with the warmth and attention of a mother's care.
           </MissionText>
           <ValuesGrid>
             {values.map((value, index) => (
