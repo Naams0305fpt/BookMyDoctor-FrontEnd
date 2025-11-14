@@ -202,7 +202,7 @@ const ImageContainer = styled.div`
 const FloatingImage = styled(motion.div)<{ position: "left" | "right" }>`
   position: absolute;
   ${({ position }) => (position === "left" ? "left: 0;" : "right: 0;")}
-  top: 50%;
+  top: 5%;
   transform: translateY(-50%);
   width: 48%;
   height: 80%;
