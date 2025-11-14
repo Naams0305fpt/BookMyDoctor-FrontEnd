@@ -13,7 +13,7 @@ import {
   useSignUpModal,
 } from "./contexts/SignUpModalContext";
 import ModernHeader from "./components/layout/ModernHeader";
-import Footer from "./components/layout/Footer";
+import ModernFooter from "./components/layout/ModernFooter";
 import Login from "./components/auth/Login";
 import SignUp from "./components/auth/SignUp";
 import {
@@ -82,12 +82,10 @@ const AppContent: React.FC = () => {
                   }
                 />
               </Routes>
-            </Suspense>
-          </ErrorBoundary>
-          <Footer />
-        </Router>
-
-        {/* Modals at App level for proper positioning */}
+          </Suspense>
+        </ErrorBoundary>
+        <ModernFooter />
+      </Router>        {/* Modals at App level for proper positioning */}
         {showLogin && <Login onClose={closeLogin} />}
         {showSignUp && <SignUp onClose={closeSignUp} />}
       </div>
