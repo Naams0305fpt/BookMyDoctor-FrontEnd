@@ -994,7 +994,7 @@ const ModernAppointmentTable: React.FC = () => {
             <Pagination
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}
-D              totalItems={pagination.totalItems}
+              totalItems={pagination.totalItems}
               onPreviousPage={pagination.goToPreviousPage}
               onNextPage={pagination.goToNextPage}
               hasNextPage={pagination.hasNextPage}
