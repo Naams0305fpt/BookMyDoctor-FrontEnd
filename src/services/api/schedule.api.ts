@@ -28,7 +28,7 @@ export const getAllSchedules = async (
   doctorName?: string,
   date?: string
 ): Promise<Schedule[]> => {
-  const params: any = {};
+  const params: Record<string, string> = {};
   if (doctorName) params.doctorName = doctorName;
   if (date) params.date = date;
 

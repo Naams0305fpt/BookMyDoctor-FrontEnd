@@ -13,6 +13,8 @@ import type {
   CreateDoctorRequest,
   DoctorAppointment,
   UpdateAppointmentRequest,
+  CreateDoctorResponse,
+  DoctorAppointmentsParams,
 } from '../../types';
 
 /**
@@ -50,7 +52,7 @@ export const getDoctorAppointments = async (
   patientName?: string,
   patientPhone?: string
 ): Promise<DoctorAppointment[]> => {
-  const params: any = {};
+  const params: Record<string, string | number> = {};
   if (doctorId) params.doctorId = doctorId;
   if (patientName) params.patientName = patientName;
   if (patientPhone) params.patientPhone = patientPhone;

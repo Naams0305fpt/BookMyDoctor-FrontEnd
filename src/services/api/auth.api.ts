@@ -18,6 +18,7 @@ import type {
   VerifyOtpRequest,
   ChangePasswordOtpRequest,
   ChangePasswordRequest,
+  Doctor,
 } from '../../types';
 
 // ==================== REGISTRATION ====================
@@ -126,7 +127,7 @@ export const checkAuthStatus = async (): Promise<User> => {
       const doctors = doctorsResponse.data;
       // Find doctor with matching UserId
       const currentDoctor = doctors.find(
-        (d: any) => d.UserId === profileData.Id
+        (d: Doctor) => d.UserId === profileData.Id
       );
       if (currentDoctor) {
         doctorId = currentDoctor.DoctorId;

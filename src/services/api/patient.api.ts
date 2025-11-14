@@ -8,7 +8,12 @@
  */
 
 import { apiClient } from '../http-client';
-import type { Patient } from '../../types';
+import type {
+  Patient,
+  GetPatientsParams,
+  ProfileMeResponse,
+  UpdateProfileResponse,
+} from '../../types';
 
 /**
  * Get all patients with optional filters
@@ -46,7 +51,7 @@ export const getAllPatients = async (
  * 
  * @returns User profile data
  */
-export const getProfileMe = async (): Promise<any> => {
+export const getProfileMe = async (): Promise<ProfileMeResponse> => {
   const response = await apiClient.get('/Profile/profile-me');
   return response.data;
 };
@@ -69,7 +74,7 @@ export const updateProfileMe = async (data: {
   address?: string;
   department?: string;
   experienceYears?: number;
-}): Promise<any> => {
+}): Promise<UpdateProfileResponse> => {
   const response = await apiClient.put('/Profile/Update_Profile_Me', data);
   return response.data;
 };

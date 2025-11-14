@@ -26,6 +26,12 @@ import doctorApi from './api/doctor.api';
 import patientApi from './api/patient.api';
 import scheduleApi from './api/schedule.api';
 
+// Import types
+import type {
+  Doctor,
+  DeleteDoctorResponse,
+} from '../types';
+
 // ==================== RE-EXPORTS ====================
 
 // Re-export HTTP client utilities for backward compatibility
@@ -95,7 +101,7 @@ export const api = {
       try {
         const doctorsResponse = await apiClient.get('/Doctors/All-Doctors');
         const doctors = doctorsResponse.data;
-        const currentDoctor = doctors.find((doc: any) => doc.UserId === profileData.UserId);
+        const currentDoctor = doctors.find((doc: Doctor) => doc.UserId === profileData.UserId);
         if (currentDoctor) {
           doctorId = currentDoctor.DoctorId;
         } else {
@@ -138,7 +144,7 @@ export const api = {
   updateAppointment: doctorApi.updateAppointment,
   
   // deleteDoctor remains here (not in doctorApi yet)
-  deleteDoctor: async (id: number): Promise<any> => {
+  deleteDoctor: async (id: number): Promise<DeleteDoctorResponse> => {
     const response = await apiClient.delete("/Doctors/DeleteDoctor", {
       params: { id: id },
     });
