@@ -2,7 +2,7 @@ import React from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import AdminProfile from "../profiles/AdminProfile";
 import DoctorProfile from "../profiles/DoctorProfile";
-import PatientProfile from "../profiles/PatientProfile";
+import ModernPatientProfile from "../profiles/ModernPatientProfile";
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
@@ -25,9 +25,9 @@ const Profile: React.FC = () => {
       case "doctor":
         return <DoctorProfile />;
       case "patient":
-        return <PatientProfile />;
+        return <ModernPatientProfile />;
       default:
-        return <PatientProfile />;
+        return <ModernPatientProfile />;
     }
   };
 

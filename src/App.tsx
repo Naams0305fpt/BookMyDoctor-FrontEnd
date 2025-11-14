@@ -14,8 +14,8 @@ import {
 } from "./contexts/SignUpModalContext";
 import ModernHeader from "./components/layout/ModernHeader";
 import ModernFooter from "./components/layout/ModernFooter";
-import Login from "./components/auth/Login";
-import SignUp from "./components/auth/SignUp";
+import ModernLogin from "./components/auth/ModernLogin";
+import ModernSignUp from "./components/auth/ModernSignUp";
 import {
   ErrorBoundary,
   BookingErrorFallback,
@@ -87,8 +87,8 @@ const AppContent: React.FC = () => {
           <ModernFooter />
         </Router>{" "}
         {/* Modals at App level for proper positioning */}
-        {showLogin && <Login onClose={closeLogin} />}
-        {showSignUp && <SignUp onClose={closeSignUp} />}
+        {showLogin && <ModernLogin onClose={closeLogin} />}
+        {showSignUp && <ModernSignUp onClose={closeSignUp} />}
       </div>
     </>
   );

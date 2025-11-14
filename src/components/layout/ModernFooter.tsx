@@ -1,15 +1,15 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import styled from '@emotion/styled';
-import { MapPin, Phone, Mail, Facebook, Youtube, Music } from 'lucide-react';
-import { theme } from '../../styles/theme';
+import React from "react";
+import { motion } from "framer-motion";
+import styled from "@emotion/styled";
+import { MapPin, Phone, Mail, Facebook, Youtube, Music } from "lucide-react";
+import { theme } from "../../styles/theme";
 
 const FooterWrapper = styled.footer`
   position: relative;
   background: ${theme.colors.accent.navy};
   color: white;
   padding-top: ${theme.spacing[16]};
-  margin-top: ${theme.spacing[20]};
+  // margin-top: ${theme.spacing[12]};
   overflow: hidden;
 `;
 
@@ -20,16 +20,16 @@ const WaveTop = styled.div`
   width: 100%;
   overflow: hidden;
   line-height: 0;
-  
+
   svg {
     position: relative;
     display: block;
     width: calc(100% + 1.3px);
     height: 80px;
   }
-  
+
   path {
-    fill: ${theme.colors.background.gradient.primary.split(',')[0].split('(')[1]};
+    fill: white;
   }
 `;
 
@@ -37,7 +37,8 @@ const FooterContainer = styled.div`
   max-width: ${theme.layout.maxWidth};
   margin: 0 auto;
   padding: 0 ${theme.spacing[6]};
-  
+  padding-top: ${theme.spacing[12]};
+
   @media (max-width: ${theme.breakpoints.md}) {
     padding: 0 ${theme.spacing[4]};
   }
@@ -48,7 +49,7 @@ const FooterGrid = styled.div`
   grid-template-columns: 1fr auto 1fr;
   gap: ${theme.spacing[12]};
   margin-bottom: ${theme.spacing[12]};
-  
+
   @media (max-width: ${theme.breakpoints.lg}) {
     grid-template-columns: 1fr;
     text-align: center;
@@ -60,6 +61,22 @@ const FooterColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing[6]};
+
+  &:last-of-type {
+    align-items: flex-end;
+
+    & > div > div:first-of-type {
+      justify-content: flex-end;
+    }
+
+    @media (max-width: ${theme.breakpoints.lg}) {
+      align-items: center;
+
+      & > div > div:first-of-type {
+        justify-content: center;
+      }
+    }
+  }
 `;
 
 const FooterSection = styled.div`
@@ -74,16 +91,16 @@ const SectionHeader = styled.div`
   gap: ${theme.spacing[2]};
   color: ${theme.colors.primary.teal};
   margin-bottom: ${theme.spacing[2]};
-  
+
   @media (max-width: ${theme.breakpoints.lg}) {
     justify-content: center;
   }
-  
+
   svg {
     width: 20px;
     height: 20px;
   }
-  
+
   h4 {
     font-size: ${theme.typography.fontSize.lg};
     font-weight: ${theme.typography.fontWeight.semibold};
@@ -98,19 +115,20 @@ const ContactItem = styled(motion.div)`
   gap: ${theme.spacing[2]};
   color: rgba(255, 255, 255, 0.8);
   font-size: ${theme.typography.fontSize.base};
-  transition: color ${theme.transitions.duration.fast} ${theme.transitions.easing.default};
-  
+  transition: color ${theme.transitions.duration.fast}
+    ${theme.transitions.easing.default};
+
   @media (max-width: ${theme.breakpoints.lg}) {
     justify-content: center;
   }
-  
+
   svg {
     width: 16px;
     height: 16px;
     color: ${theme.colors.primary.light};
     flex-shrink: 0;
   }
-  
+
   &:hover {
     color: ${theme.colors.primary.teal};
   }
@@ -127,7 +145,7 @@ const Logo = styled.img`
   height: 120px;
   width: auto;
   filter: brightness(0) invert(1);
-  
+
   @media (max-width: ${theme.breakpoints.md}) {
     height: 100px;
   }
@@ -135,7 +153,7 @@ const Logo = styled.img`
 
 const Tagline = styled.p`
   font-family: ${theme.typography.fontFamily.script};
-  font-size: ${theme.typography.fontSize['2xl']};
+  font-size: ${theme.typography.fontSize["2xl"]};
   color: ${theme.colors.primary.lighter};
   margin: 0;
   text-align: center;
@@ -145,7 +163,8 @@ const FooterLinks = styled.nav`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing[3]};
-  
+  align-items: flex-end;
+
   @media (max-width: ${theme.breakpoints.lg}) {
     align-items: center;
   }
@@ -155,17 +174,18 @@ const FooterLink = styled(motion.a)`
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   font-size: ${theme.typography.fontSize.base};
-  transition: all ${theme.transitions.duration.fast} ${theme.transitions.easing.default};
+  transition: all ${theme.transitions.duration.fast}
+    ${theme.transitions.easing.default};
   position: relative;
   display: inline-block;
-  
+
   &:hover {
     color: ${theme.colors.primary.teal};
     padding-left: ${theme.spacing[2]};
   }
-  
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     top: 50%;
@@ -173,9 +193,10 @@ const FooterLink = styled(motion.a)`
     width: 0;
     height: 2px;
     background: ${theme.colors.primary.teal};
-    transition: width ${theme.transitions.duration.fast} ${theme.transitions.easing.default};
+    transition: width ${theme.transitions.duration.fast}
+      ${theme.transitions.easing.default};
   }
-  
+
   &:hover::before {
     width: 12px;
   }
@@ -187,7 +208,7 @@ const FooterBottom = styled.div`
   align-items: center;
   padding: ${theme.spacing[6]} 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  
+
   @media (max-width: ${theme.breakpoints.md}) {
     flex-direction: column;
     gap: ${theme.spacing[4]};
@@ -210,13 +231,14 @@ const SocialLink = styled(motion.a)`
   border-radius: ${theme.borderRadius.full};
   color: white;
   text-decoration: none;
-  transition: all ${theme.transitions.duration.fast} ${theme.transitions.easing.default};
-  
+  transition: all ${theme.transitions.duration.fast}
+    ${theme.transitions.easing.default};
+
   &:hover {
     background: ${theme.colors.primary.teal};
     transform: translateY(-4px);
   }
-  
+
   svg {
     width: 20px;
     height: 20px;
@@ -250,11 +272,11 @@ const ModernFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
-    { name: 'Privacy Policy', href: '#privacy-policy' },
-    { name: 'Terms of Service', href: '#terms' },
-    { name: 'FAQ', href: '#faq' },
-    { name: 'Help Center', href: '#help' },
-    { name: 'Free Consultation', href: '#consultation' },
+    { name: "Privacy Policy", href: "#privacy-policy" },
+    { name: "Terms of Service", href: "#terms" },
+    { name: "FAQ", href: "#faq" },
+    { name: "Help Center", href: "#help" },
+    { name: "Free Consultation", href: "#consultation" },
   ];
 
   return (
@@ -280,10 +302,7 @@ const ModernFooter: React.FC = () => {
                 <MapPin />
                 <h4>Our Location</h4>
               </SectionHeader>
-              <ContactItem
-                whileHover={{ x: 5 }}
-                transition={{ duration: 0.2 }}
-              >
+              <ContactItem whileHover={{ x: 5 }} transition={{ duration: 0.2 }}>
                 <span>FPT University Quy Nhon AI Campus</span>
               </ContactItem>
             </FooterSection>
@@ -293,17 +312,11 @@ const ModernFooter: React.FC = () => {
                 <Phone />
                 <h4>Contact Us</h4>
               </SectionHeader>
-              <ContactItem
-                whileHover={{ x: 5 }}
-                transition={{ duration: 0.2 }}
-              >
+              <ContactItem whileHover={{ x: 5 }} transition={{ duration: 0.2 }}>
                 <Phone size={16} />
                 <span>Hotline: 1900 9000</span>
               </ContactItem>
-              <ContactItem
-                whileHover={{ x: 5 }}
-                transition={{ duration: 0.2 }}
-              >
+              <ContactItem whileHover={{ x: 5 }} transition={{ duration: 0.2 }}>
                 <Mail size={16} />
                 <span>info@bookmydoctor.com</span>
               </ContactItem>
