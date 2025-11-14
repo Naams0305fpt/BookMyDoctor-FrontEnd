@@ -16,31 +16,18 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
 import patientApi from "../../services/api/patient.api";
+import type { ProfileMeResponse } from "../../types";
 import "../pages/Profile.css";
 
-interface ProfileData {
-  UserId: number;
-  Username: string;
-  RoleId: string;
-  DoctorId?: number;
-  Name: string;
-  Gender: string;
-  DateOfBirth: string;
-  Phone: string;
-  Email: string;
-  Address: string | null;
-  Department?: string;
-  ExperienceYears?: number;
-  Identification?: string;
-}
-
 const DoctorProfile: React.FC = () => {
-  const { user } = useAuth();
+  const { updateUser } = useAuth();
   const { showNotification } = useNotification();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [profileData, setProfileData] = useState<ProfileMeResponse | null>(
+    null
+  );
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -51,10 +38,6 @@ const DoctorProfile: React.FC = () => {
     department: "",
     experienceYears: 0,
   });
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
 
   const fetchProfile = async () => {
     try {
@@ -86,6 +69,11 @@ const DoctorProfile: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -110,6 +98,15 @@ const DoctorProfile: React.FC = () => {
         address: formData.address,
         department: formData.department,
         experienceYears: formData.experienceYears,
+      });
+
+      // Update AuthContext user state
+      updateUser({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        gender: formData.gender,
+        dateOfBirth: formData.dateOfBirth,
       });
 
       showNotification(

@@ -16,27 +16,18 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
 import patientApi from "../../services/api/patient.api";
+import type { ProfileMeResponse } from "../../types";
 import "../pages/Profile.css";
 
-interface ProfileData {
-  UserId: number;
-  Username: string;
-  RoleId: string;
-  Name: string;
-  Gender: string;
-  DateOfBirth: string;
-  Phone: string;
-  Email: string;
-  Address: string | null;
-}
-
 const AdminProfile: React.FC = () => {
-  const { user } = useAuth();
+  const { updateUser } = useAuth();
   const { showNotification } = useNotification();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [profileData, setProfileData] = useState<ProfileMeResponse | null>(
+    null
+  );
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -45,10 +36,6 @@ const AdminProfile: React.FC = () => {
     dateOfBirth: "",
     address: "",
   });
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
 
   const fetchProfile = async () => {
     try {
@@ -77,6 +64,11 @@ const AdminProfile: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -99,6 +91,15 @@ const AdminProfile: React.FC = () => {
         gender: formData.gender,
         dateOfBirth: formData.dateOfBirth,
         address: formData.address,
+      });
+
+      // Update AuthContext user state
+      updateUser({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        gender: formData.gender,
+        dateOfBirth: formData.dateOfBirth,
       });
 
       showNotification(
