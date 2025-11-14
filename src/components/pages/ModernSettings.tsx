@@ -20,6 +20,8 @@ import {
   Settings as SettingsIcon,
   Globe,
   CheckCircle,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
@@ -586,6 +588,7 @@ const ModernSettings: React.FC = () => {
   const [appointmentReminders, setAppointmentReminders] = useState(true);
   const [language, setLanguage] = useState("en");
   const [timezone, setTimezone] = useState("Asia/Ho_Chi_Minh");
+  const [darkMode, setDarkMode] = useState(false);
 
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -872,6 +875,38 @@ const ModernSettings: React.FC = () => {
               <SettingsIcon />
               Preferences
             </SectionTitle>
+
+            <SectionSubtitle>
+              {darkMode ? <Moon /> : <Sun />}
+              Appearance
+            </SectionSubtitle>
+            <SettingsGroup>
+              <SettingItem>
+                <SettingInfo>
+                  <h3>Dark Mode</h3>
+                  <p>Switch between light and dark theme</p>
+                </SettingInfo>
+                <ToggleSwitch>
+                  <input
+                    type="checkbox"
+                    checked={darkMode}
+                    onChange={(e) => {
+                      setDarkMode(e.target.checked);
+                      showNotification(
+                        "success",
+                        e.target.checked
+                          ? "🌙 Dark Mode Enabled"
+                          : "☀️ Light Mode Enabled",
+                        e.target.checked
+                          ? "Dark theme activated. Easy on the eyes!"
+                          : "Light theme activated. Bright and clear!"
+                      );
+                    }}
+                  />
+                  <span className="slider"></span>
+                </ToggleSwitch>
+              </SettingItem>
+            </SettingsGroup>
 
             <SectionSubtitle>
               <Globe />
