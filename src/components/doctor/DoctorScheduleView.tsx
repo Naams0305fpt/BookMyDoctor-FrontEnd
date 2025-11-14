@@ -51,7 +51,6 @@ const DoctorScheduleView: React.FC = () => {
         try {
           const currentUserId = Number(user.id);
           if (Number.isNaN(currentUserId)) {
-            console.error("User ID không hợp lệ:", user.id);
             setCurrentDoctorId(null);
             return;
           }
@@ -64,11 +63,9 @@ const DoctorScheduleView: React.FC = () => {
           if (matchingDoctor) {
             setCurrentDoctorId(matchingDoctor.DoctorId);
           } else {
-            console.error("User đã đăng nhập không có trong danh sách bác sĩ.");
             setCurrentDoctorId(null);
           }
         } catch (error) {
-          console.error("Lỗi khi lấy danh sách bác sĩ:", error);
           setCurrentDoctorId(null);
         }
       };
@@ -172,7 +169,6 @@ const DoctorScheduleView: React.FC = () => {
       showNotification("success", "Success", "Schedule deleted successfully");
       await fetchSchedules();
     } catch (err: any) {
-      console.error("Delete error:", err);
       showNotification(
         "error",
         "Delete Failed",

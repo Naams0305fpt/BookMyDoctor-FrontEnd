@@ -52,7 +52,6 @@ const AdminProfile: React.FC = () => {
         address: data.Address || "",
       });
     } catch (error: any) {
-      console.error("Error fetching profile:", error);
       showNotification(
         "error",
         "Error",
@@ -112,7 +111,6 @@ const AdminProfile: React.FC = () => {
       setIsEditing(false);
       await fetchProfile();
     } catch (error: any) {
-      console.error("Error updating profile:", error);
       showNotification(
         "error",
         "Update Failed",

@@ -104,11 +104,9 @@ export const api = {
         const currentDoctor = doctors.find((doc: Doctor) => doc.UserId === profileData.UserId);
         if (currentDoctor) {
           doctorId = currentDoctor.DoctorId;
-        } else {
-          console.warn("⚠️ Doctor not found in All-Doctors list for UserId:", profileData.UserId);
         }
       } catch (err) {
-        console.error("❌ Failed to fetch doctors list:", err);
+        // Silently handle doctor list fetch error
       }
     }
 

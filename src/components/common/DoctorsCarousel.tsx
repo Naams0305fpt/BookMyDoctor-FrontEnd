@@ -34,7 +34,6 @@ const DoctorsCarousel: React.FC = () => {
         const doctorsData = await doctorApi.getAllDoctors();
         setFetchedDoctors(doctorsData);
       } catch (err) {
-        console.error("Failed to load doctors:", err);
         setError("Could not load doctors. Please try again later.");
       } finally {
         setIsLoading(false);

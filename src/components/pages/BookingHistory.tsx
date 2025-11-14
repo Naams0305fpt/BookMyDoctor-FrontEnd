@@ -115,7 +115,6 @@ const BookingHistory: React.FC = () => {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to load booking history";
       setError(errorMessage);
-      console.error("Error loading booking history:", err);
     } finally {
       setIsLoading(false);
     }
@@ -173,7 +172,6 @@ const BookingHistory: React.FC = () => {
           : "Failed to cancel appointment. Please try again.";
 
       showNotification("error", "Cancellation Failed", errorMessage, 5000);
-      console.error("Error cancelling booking:", err);
     }
   };
 

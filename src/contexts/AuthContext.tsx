@@ -86,7 +86,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(false);
     } catch (err) {
       // Bất kỳ lỗi nào (login sai, checkAuth lỗi) đều sẽ nhảy vào đây
-      console.error("Login failed:", err);
       setIsLoading(false);
       throw err;
     }
@@ -98,7 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await api.logout();
     } catch (error) {
-      console.error("Error during API logout:", error);
+      // Silently handle logout API error
     }
   };
 
@@ -132,7 +131,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         message: result.message || "Registration successful. Please log in.",
       };
     } catch (err: any) {
-      console.error("Register failed:", err);
       setIsLoading(false);
       return { success: false, message: err.message || "Registration failed" };
     }

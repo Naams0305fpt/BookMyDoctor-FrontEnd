@@ -73,7 +73,6 @@ const AdminScheduleView = () => {
       // Refresh table
       await fetchSchedules();
     } catch (err: any) {
-      console.error("Delete error:", err);
       showNotification(
         "error",
         "Delete Failed",

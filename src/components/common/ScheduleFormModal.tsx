@@ -82,7 +82,6 @@ const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
         const doctors = await doctorApi.getAllDoctors();
         setAllDoctors(doctors);
       } catch (error) {
-        console.error("Failed to load doctors:", error);
         setNotification("Failed to load doctors list");
         setSubmitStatus("error");
       } finally {
@@ -183,7 +182,6 @@ const ScheduleFormModal: React.FC<ScheduleFormModalProps> = ({
         onClose();
       }, 1500);
     } catch (error: any) {
-      console.error("Submit error:", error);
       setNotification(error.message || "Failed to save schedule");
       setSubmitStatus("error");
     } finally {

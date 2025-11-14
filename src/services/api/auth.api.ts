@@ -133,7 +133,7 @@ export const checkAuthStatus = async (): Promise<User> => {
         doctorId = currentDoctor.DoctorId;
       }
     } catch (error) {
-      console.error('Error fetching doctor info:', error);
+      // Silently handle doctor info fetch error
     }
   }
 

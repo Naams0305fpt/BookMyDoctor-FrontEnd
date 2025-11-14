@@ -157,8 +157,6 @@ const CreateDoctorModal: React.FC<CreateDoctorModalProps> = ({
         onClose();
       }, 2000);
     } catch (err: any) {
-      console.error("Create doctor failed:", err);
-
       let detailedMessage = "Failed to create doctor account.";
 
       // Kiểm tra lỗi validation từ .NET

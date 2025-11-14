@@ -75,7 +75,6 @@ const DoctorManagement = () => {
         prevDoctors.filter((doctor) => doctor.DoctorId !== doctorId)
       );
     } catch (err: any) {
-      console.error("Failed to delete doctor:", err);
       alert(`Error: ${err.message}`); // Hiển thị lỗi
     }
   };

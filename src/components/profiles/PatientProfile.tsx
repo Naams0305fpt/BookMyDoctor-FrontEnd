@@ -53,7 +53,6 @@ const PatientProfile: React.FC = () => {
         address: data.Address || "",
       });
     } catch (error: any) {
-      console.error("Error fetching profile:", error);
       showNotification(
         "error",
         "Error",
@@ -114,7 +113,6 @@ const PatientProfile: React.FC = () => {
       // Refresh profile data
       await fetchProfile();
     } catch (error: any) {
-      console.error("Error updating profile:", error);
       showNotification(
         "error",
         "Update Failed",

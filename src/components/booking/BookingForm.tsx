@@ -106,7 +106,6 @@ const BookingForm: React.FC = () => {
         const doctorsData = await doctorApi.getAllDoctors();
         setAllDoctors(doctorsData);
       } catch (error) {
-        console.error("Failed to load doctors", error);
         setErrors((prev) => ({
           ...prev,
           doctor: "Failed to load doctors list.",
@@ -152,7 +151,6 @@ const BookingForm: React.FC = () => {
             setTimeout(() => setNotification(""), 3000);
           }
         } catch (error) {
-          console.error("Failed to fetch schedule:", error);
           setSlotsError("Could not load available times. Please try again.");
         } finally {
           setIsLoadingSlots(false);
@@ -281,7 +279,6 @@ const BookingForm: React.FC = () => {
 
       setTimeout(() => setSubmitStatus("idle"), 4000);
     } catch (error) {
-      console.error("Booking submission error:", error);
       setSubmitStatus("error");
       // Hiển thị lỗi từ server
       const errorMessage =
@@ -335,7 +332,6 @@ const BookingForm: React.FC = () => {
       // Nếu 9:01 > 9:00, thì slot "09:00" đã qua
       return now.getTime() > slotTime.getTime();
     } catch (e) {
-      console.error("Error parsing time slot:", e);
       return false;
     }
   };

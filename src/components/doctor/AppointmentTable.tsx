@@ -284,7 +284,6 @@ const AppointmentTable: React.FC = () => {
       // Tìm appointment để lấy đầy đủ thông tin
       const appointment = appointments.find((apt) => apt.AppointId === id);
       if (!appointment) {
-        console.error(`Appointment with ID ${id} not found`);
         return;
       }
 
@@ -334,8 +333,6 @@ const AppointmentTable: React.FC = () => {
         3000
       );
     } catch (error: any) {
-      console.error(`❌ Failed to update appointment:`, error.message);
-
       // Xử lý lỗi "Không có thông tin nào để cập nhật"
       const errorMessage = error.response?.data?.message || error.message || "";
 
@@ -376,7 +373,6 @@ const AppointmentTable: React.FC = () => {
       // Tạm thời cập nhật local state
       setAppointments((prev) => prev.filter((apt) => apt.AppointId !== id));
     } catch (error: any) {
-      console.error(`❌ Failed to delete appointment:`, error.message);
       setError(error.message || "Failed to delete appointment");
     }
   };

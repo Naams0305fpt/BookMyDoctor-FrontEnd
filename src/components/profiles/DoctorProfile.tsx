@@ -57,7 +57,6 @@ const DoctorProfile: React.FC = () => {
         experienceYears: data.ExperienceYears || 0,
       });
     } catch (error: any) {
-      console.error("Error fetching profile:", error);
       showNotification(
         "error",
         "Error",
@@ -120,7 +119,6 @@ const DoctorProfile: React.FC = () => {
       // Refresh profile data
       await fetchProfile();
     } catch (error: any) {
-      console.error("Error updating profile:", error);
       showNotification(
         "error",
         "Update Failed",
