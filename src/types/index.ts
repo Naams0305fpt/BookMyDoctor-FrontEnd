@@ -8,6 +8,9 @@
  *   import { LoginRequest, Doctor, Schedule } from '@/types';
  */
 
+// ==================== API RESPONSE TYPES ====================
+export * from './api-responses';
+
 // ==================== AUTH TYPES ====================
 export type {
   RegisterRequest,
