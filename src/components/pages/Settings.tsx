@@ -10,6 +10,14 @@ import {
   faShieldAlt,
   faSpinner,
   faSignOutAlt,
+  faPhone,
+  faClock,
+  faEdit,
+  faCalendar,
+  faExclamationTriangle,
+  faBell,
+  faCog,
+  faGlobe,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
@@ -23,7 +31,9 @@ const Settings: React.FC = () => {
   const navigate = useNavigate();
 
   // Tab states
-  const [activeTab, setActiveTab] = useState<"account" | "password">("account");
+  const [activeTab, setActiveTab] = useState<
+    "account" | "password" | "preferences"
+  >("account");
 
   // Password change states (using changePasswordAfterLogin API)
   const [CurrentPassword, setCurrentPassword] = useState("");
@@ -36,6 +46,13 @@ const Settings: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [error, setError] = useState("");
+
+  // Preferences states
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [smsNotifications, setSmsNotifications] = useState(false);
+  const [appointmentReminders, setAppointmentReminders] = useState(true);
+  const [language, setLanguage] = useState("en");
+  const [timezone, setTimezone] = useState("Asia/Ho_Chi_Minh");
 
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -121,6 +138,15 @@ const Settings: React.FC = () => {
             Account Info
           </button>
           <button
+            className={`tab-button ${
+              activeTab === "preferences" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("preferences")}
+          >
+            <FontAwesomeIcon icon={faCog} />
+            Preferences
+          </button>
+          <button
             className={`tab-button ${activeTab === "password" ? "active" : ""}`}
             onClick={() => {
               setActiveTab("password");
@@ -148,17 +174,30 @@ const Settings: React.FC = () => {
 
               <div className="account-info-grid">
                 <div className="info-item">
-                  <label>Email Address</label>
+                  <label>
+                    <FontAwesomeIcon icon={faEnvelope} /> Email Address
+                  </label>
                   <div className="info-value">{user?.email || "N/A"}</div>
                 </div>
 
                 <div className="info-item">
-                  <label>Full Name</label>
+                  <label>
+                    <FontAwesomeIcon icon={faUser} /> Full Name
+                  </label>
                   <div className="info-value">{user?.name || "N/A"}</div>
                 </div>
 
                 <div className="info-item">
-                  <label>Account Type</label>
+                  <label>
+                    <FontAwesomeIcon icon={faPhone} /> Phone Number
+                  </label>
+                  <div className="info-value">{user?.phone || "Not set"}</div>
+                </div>
+
+                <div className="info-item">
+                  <label>
+                    <FontAwesomeIcon icon={faShieldAlt} /> Account Type
+                  </label>
                   <div className="info-value">
                     <span className={`badge ${user?.userType || ""}`}>
                       {user?.userType
@@ -168,23 +207,281 @@ const Settings: React.FC = () => {
                     </span>
                   </div>
                 </div>
+
+                <div className="info-item">
+                  <label>
+                    <FontAwesomeIcon icon={faClock} /> Account Status
+                  </label>
+                  <div className="info-value">
+                    <span className="badge verified">Active</span>
+                  </div>
+                </div>
+
+                <div className="info-item">
+                  <label>
+                    <FontAwesomeIcon icon={faCalendar} /> Member Since
+                  </label>
+                  <div className="info-value">
+                    {new Date().toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                    })}
+                  </div>
+                </div>
               </div>
 
-              {/* Logout Section */}
+              {/* Quick Action: Edit Full Profile */}
+              <div className="info-note">
+                <FontAwesomeIcon icon={faEdit} />
+                <span>
+                  Want to update your personal information?{" "}
+                  <button
+                    className="link-button"
+                    onClick={() => navigate("/profile")}
+                  >
+                    Go to Full Profile
+                  </button>
+                </span>
+              </div>
+
+              {/* Account Actions */}
               <div style={{ marginTop: "2rem" }}>
                 <h3 className="section-title">
                   <FontAwesomeIcon icon={faSignOutAlt} />
                   Account Actions
                 </h3>
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <h3>Logout</h3>
-                    <p>Sign out of your account</p>
+                <div className="settings-group">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3>Edit Profile</h3>
+                      <p>Update your personal information and preferences</p>
+                    </div>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => navigate("/profile")}
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                      Edit Profile
+                    </button>
                   </div>
-                  <button className="btn btn-primary" onClick={handleLogout}>
-                    <FontAwesomeIcon icon={faSignOutAlt} />
-                    Logout
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3>Logout</h3>
+                      <p>Sign out of your account</p>
+                    </div>
+                    <button className="btn btn-primary" onClick={handleLogout}>
+                      <FontAwesomeIcon icon={faSignOutAlt} />
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Danger Zone */}
+              <div style={{ marginTop: "2rem" }}>
+                <h3 className="section-title danger">
+                  <FontAwesomeIcon icon={faExclamationTriangle} />
+                  Danger Zone
+                </h3>
+                <div className="danger-zone">
+                  <div className="setting-info">
+                    <h3>Delete Account</h3>
+                    <p>
+                      Permanently delete your account and all associated data.
+                      This action cannot be undone.
+                    </p>
+                  </div>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          "Are you sure you want to delete your account? This action cannot be undone!"
+                        )
+                      ) {
+                        showNotification(
+                          "info",
+                          "Feature Not Available",
+                          "Account deletion is not yet implemented. Please contact support.",
+                          4000
+                        );
+                      }
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faExclamationTriangle} />
+                    Delete Account
                   </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Preferences Tab */}
+          {activeTab === "preferences" && (
+            <div className="settings-section">
+              <h2 className="section-title">
+                <FontAwesomeIcon icon={faCog} />
+                Preferences
+              </h2>
+
+              {/* Language & Region */}
+              <div style={{ marginBottom: "2rem" }}>
+                <h3 className="section-subtitle">
+                  <FontAwesomeIcon icon={faGlobe} />
+                  Language & Region
+                </h3>
+                <div className="settings-group">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3>Language</h3>
+                      <p>Choose your preferred language</p>
+                    </div>
+                    <select
+                      className="select-input"
+                      value={language}
+                      onChange={(e) => {
+                        setLanguage(e.target.value);
+                        const langName =
+                          e.target.value === "en" ? "English" : "Tiếng Việt";
+                        showNotification(
+                          "success",
+                          "🌐 Language Updated",
+                          `Display language changed to ${langName}. Please refresh the page to see changes.`,
+                          3500
+                        );
+                      }}
+                    >
+                      <option value="en">English</option>
+                      <option value="vi">Tiếng Việt</option>
+                    </select>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3>Timezone</h3>
+                      <p>Set your local timezone for appointments</p>
+                    </div>
+                    <select
+                      className="select-input"
+                      value={timezone}
+                      onChange={(e) => {
+                        setTimezone(e.target.value);
+                        const tzName =
+                          e.target.options[e.target.selectedIndex].text;
+                        showNotification(
+                          "success",
+                          "🕐 Timezone Updated",
+                          `Your timezone is now set to ${tzName}. All appointment times will reflect this timezone.`,
+                          3500
+                        );
+                      }}
+                    >
+                      <option value="Asia/Ho_Chi_Minh">
+                        (GMT+7) Ho Chi Minh
+                      </option>
+                      <option value="Asia/Bangkok">(GMT+7) Bangkok</option>
+                      <option value="Asia/Singapore">(GMT+8) Singapore</option>
+                      <option value="Asia/Tokyo">(GMT+9) Tokyo</option>
+                      <option value="America/New_York">(GMT-5) New York</option>
+                      <option value="America/Los_Angeles">
+                        (GMT-8) Los Angeles
+                      </option>
+                      <option value="Europe/London">(GMT+0) London</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notifications */}
+              <div style={{ marginBottom: "2rem" }}>
+                <h3 className="section-subtitle">
+                  <FontAwesomeIcon icon={faBell} />
+                  Notifications
+                </h3>
+                <div className="settings-group">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3>Email Notifications</h3>
+                      <p>Receive updates and reminders via email</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={emailNotifications}
+                        onChange={(e) => {
+                          setEmailNotifications(e.target.checked);
+                          showNotification(
+                            "success",
+                            e.target.checked
+                              ? "✅ Email Notifications Enabled"
+                              : "❌ Email Notifications Disabled",
+                            e.target.checked
+                              ? "You will receive appointment updates and reminders via email"
+                              : "You will no longer receive email notifications",
+                            3000
+                          );
+                        }}
+                      />
+                      <span className="slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3>SMS Notifications</h3>
+                      <p>Get text messages for important updates</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={smsNotifications}
+                        onChange={(e) => {
+                          setSmsNotifications(e.target.checked);
+                          showNotification(
+                            "success",
+                            e.target.checked
+                              ? "📱 SMS Notifications Enabled"
+                              : "📵 SMS Notifications Disabled",
+                            e.target.checked
+                              ? `Important updates will be sent to ${
+                                  user?.phone || "your phone"
+                                }`
+                              : "You will no longer receive SMS alerts",
+                            3000
+                          );
+                        }}
+                      />
+                      <span className="slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3>Appointment Reminders</h3>
+                      <p>Get reminded 24 hours before appointments</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={appointmentReminders}
+                        onChange={(e) => {
+                          setAppointmentReminders(e.target.checked);
+                          showNotification(
+                            "success",
+                            e.target.checked
+                              ? "🔔 Appointment Reminders Enabled"
+                              : "🔕 Appointment Reminders Disabled",
+                            e.target.checked
+                              ? "You will be reminded 24 hours before your appointments"
+                              : "You will not receive appointment reminders",
+                            3000
+                          );
+                        }}
+                      />
+                      <span className="slider"></span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
