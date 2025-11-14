@@ -29,7 +29,9 @@ const Home = lazy(() => import("./components/pages/Home"));
 const About = lazy(() => import("./components/pages/ModernAbout"));
 const Information = lazy(() => import("./components/pages/ModernInformation"));
 const Profile = lazy(() => import("./components/pages/Profile"));
-const BookingHistory = lazy(() => import("./components/pages/ModernBookingHistory"));
+const BookingHistory = lazy(
+  () => import("./components/pages/ModernBookingHistory")
+);
 const Settings = lazy(() => import("./components/pages/ModernSettings"));
 
 // Main App Content
