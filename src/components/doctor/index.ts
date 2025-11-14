@@ -1,4 +1,2 @@
-export { default as DoctorScheduleView } from './DoctorScheduleView';
-export { default as AppointmentTable } from './AppointmentTable';
-export { default as ModernDoctorScheduleView } from './ModernDoctorScheduleView';
-export { default as ModernAppointmentTable } from './ModernAppointmentTable';
+export { default as DoctorScheduleView } from './ModernDoctorScheduleView';
+export { default as AppointmentTable } from './ModernAppointmentTable';

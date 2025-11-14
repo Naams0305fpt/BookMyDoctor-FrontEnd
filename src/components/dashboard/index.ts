@@ -1,2 +1,2 @@
-export { default as AdminDashboard } from './AdminDashboard';
-export { default as DoctorDashboard } from './DoctorDashboard';
+export { default as AdminDashboard } from './ModernAdminDashboard';
+export { default as DoctorDashboard } from './ModernDoctorDashboard';
