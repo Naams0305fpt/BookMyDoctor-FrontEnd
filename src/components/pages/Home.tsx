@@ -2,9 +2,9 @@ import React from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import ModernHero from "../common/ModernHero";
 import ModernDoctorsCarousel from "../common/ModernDoctorsCarousel";
-import DoctorDashboard from "../dashboard/DoctorDashboard";
+import ModernDoctorDashboard from "../dashboard/ModernDoctorDashboard";
 import ModernBookingForm from "../booking/ModernBookingForm";
-import AdminDashboard from "../dashboard/AdminDashboard";
+import ModernAdminDashboard from "../dashboard/ModernAdminDashboard";
 import {
   ErrorBoundary,
   BookingErrorFallback,
@@ -21,11 +21,11 @@ const Home: React.FC = () => {
       <ModernHero />
       {isAdmin ? (
         <ErrorBoundary fallback={<DashboardErrorFallback />}>
-          <AdminDashboard />
+          <ModernAdminDashboard />
         </ErrorBoundary>
       ) : isDoctor ? (
         <ErrorBoundary fallback={<DashboardErrorFallback />}>
-          <DoctorDashboard />
+          <ModernDoctorDashboard />
         </ErrorBoundary>
       ) : (
         <>

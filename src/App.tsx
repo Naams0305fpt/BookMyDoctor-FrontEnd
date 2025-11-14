@@ -26,11 +26,11 @@ import {
 
 // Lazy load page components for better performance
 const Home = lazy(() => import("./components/pages/Home"));
-const About = lazy(() => import("./components/pages/About"));
-const Information = lazy(() => import("./components/pages/Information"));
+const About = lazy(() => import("./components/pages/ModernAbout"));
+const Information = lazy(() => import("./components/pages/ModernInformation"));
 const Profile = lazy(() => import("./components/pages/Profile"));
-const BookingHistory = lazy(() => import("./components/pages/BookingHistory"));
-const Settings = lazy(() => import("./components/pages/Settings"));
+const BookingHistory = lazy(() => import("./components/pages/ModernBookingHistory"));
+const Settings = lazy(() => import("./components/pages/ModernSettings"));
 
 // Main App Content
 const AppContent: React.FC = () => {

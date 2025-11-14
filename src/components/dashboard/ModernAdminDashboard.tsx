@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import styled from "@emotion/styled";
 import { Users, UserCog, Calendar } from "lucide-react";
-import PatientManagement from "../admin/PatientManagement";
-import DoctorManagement from "../admin/DoctorManagement";
-import AdminScheduleView from "../admin/AdminScheduleView";
+import ModernPatientManagement from "../admin/ModernPatientManagement";
+import ModernDoctorManagement from "../admin/ModernDoctorManagement";
+import ModernAdminScheduleView from "../admin/ModernAdminScheduleView";
 import { theme } from "../../styles/theme";
 import patientApi from "../../services/api/patient.api";
 import doctorApi from "../../services/api/doctor.api";
@@ -295,9 +295,9 @@ const ModernAdminDashboard: React.FC = () => {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.2 }}
         >
-          {activeTab === "patients" && <PatientManagement />}
-          {activeTab === "doctors" && <DoctorManagement />}
-          {activeTab === "schedules" && <AdminScheduleView />}
+          {activeTab === "patients" && <ModernPatientManagement />}
+          {activeTab === "doctors" && <ModernDoctorManagement />}
+          {activeTab === "schedules" && <ModernAdminScheduleView />}
         </TabContent>
       </TabsContainer>
     </PageContainer>
