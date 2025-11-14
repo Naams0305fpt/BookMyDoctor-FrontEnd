@@ -229,9 +229,6 @@ const ModernHeader: React.FC = () => {
           <NavLink to="/information" $active={isActiveLink("/information")}>
             Information
           </NavLink>
-          <NavLink to="/demo" $active={isActiveLink("/demo")}>
-            Demo
-          </NavLink>
         </Nav>
 
         <RightSection>
