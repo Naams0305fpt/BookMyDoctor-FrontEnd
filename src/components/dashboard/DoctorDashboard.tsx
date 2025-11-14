@@ -1,55 +1,8 @@
-import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faUsers, faPlus } from "@fortawesome/free-solid-svg-icons";
-import DoctorScheduleView from "../doctor/DoctorScheduleView";
-import AppointmentTable from "../doctor/AppointmentTable";
-import "../doctor/DoctorSchedule.css";
+import React from "react";
+import ModernDoctorDashboard from "./ModernDoctorDashboard";
 
 const DoctorDashboard: React.FC = () => {
-  const [view, setView] = useState<"schedule" | "appointment">("schedule");
-
-  return (
-    <section className="appointment-management">
-      <div className="container">
-        {/* View Toggle Buttons */}
-        <div className="view-toggle">
-          <button
-            className={`view-toggle-button ${
-              view === "schedule" ? "active" : ""
-            }`}
-            onClick={() => setView("schedule")}
-          >
-            <FontAwesomeIcon icon={faCalendar} />
-            Schedule Management
-          </button>
-          <button
-            className={`view-toggle-button ${
-              view === "appointment" ? "active" : ""
-            }`}
-            onClick={() => setView("appointment")}
-          >
-            <FontAwesomeIcon icon={faUsers} />
-            Appointment Management
-          </button>
-        </div>
-
-        {/* Section Header */}
-        <div className="section-header">
-          <div className="section-title">
-            <FontAwesomeIcon icon={faPlus} className="title-icon" />
-            <h2>
-              {view === "schedule"
-                ? "My Work Schedule"
-                : "Appointment Management"}
-            </h2>
-          </div>
-        </div>
-
-        {/* Content */}
-        {view === "schedule" ? <DoctorScheduleView /> : <AppointmentTable />}
-      </div>
-    </section>
-  );
+  return <ModernDoctorDashboard />;
 };
 
 export default DoctorDashboard;

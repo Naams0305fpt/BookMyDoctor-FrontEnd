@@ -524,7 +524,7 @@ const ModernCreateDoctorModal: React.FC<ModernCreateDoctorModalProps> = ({
         };
         message?: string;
       }
-      
+
       const error = err as ValidationError;
       let detailedMessage = "Failed to create doctor account.";
 
