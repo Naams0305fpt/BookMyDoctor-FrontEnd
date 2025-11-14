@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import Hero from "../common/Hero";
+import ModernHero from "../common/ModernHero";
 import DoctorsCarousel from "../common/DoctorsCarousel";
 import DoctorDashboard from "../dashboard/DoctorDashboard";
 import BookingForm from "../booking/BookingForm";
@@ -18,7 +18,7 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Hero />
+      <ModernHero />
       {isAdmin ? (
         <ErrorBoundary fallback={<DashboardErrorFallback />}>
           <AdminDashboard />
