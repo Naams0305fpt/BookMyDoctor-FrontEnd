@@ -24,10 +24,11 @@ const PageContainer = styled.div`
 
 const PageHeader = styled.div`
   margin-bottom: ${theme.spacing[8]};
+  text-align: center;
 `;
 
 const PageTitle = styled.h1`
-  font-size: ${theme.typography.fontSize["4xl"]};
+  font-size: ${theme.typography.fontSize["5xl"]};
   font-weight: ${theme.typography.fontWeight.bold};
   color: ${theme.colors.accent.navy};
   margin-bottom: ${theme.spacing[2]};
