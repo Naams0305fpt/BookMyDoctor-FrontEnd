@@ -23,10 +23,11 @@ const PageContainer = styled.div`
 
 const PageHeader = styled.div`
   margin-bottom: ${theme.spacing[8]};
+  text-align: center;
 `;
 
 const Title = styled.h1`
-  font-size: ${theme.typography.fontSize["3xl"]};
+  font-size: ${theme.typography.fontSize["5xl"]};
   font-weight: ${theme.typography.fontWeight.bold};
   color: ${theme.colors.text.primary};
   margin: 0 0 ${theme.spacing[2]} 0;

@@ -414,6 +414,7 @@ const ModernHero: React.FC = () => {
               </PrimaryButton>
 
               <SecondaryButton
+                onClick={() => (window.location.href = "/information")}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >

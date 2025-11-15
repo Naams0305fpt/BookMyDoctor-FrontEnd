@@ -18,7 +18,6 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <ModernHero />
       {isAdmin ? (
         <ErrorBoundary fallback={<DashboardErrorFallback />}>
           <ModernAdminDashboard />
@@ -29,6 +28,7 @@ const Home: React.FC = () => {
         </ErrorBoundary>
       ) : (
         <>
+          <ModernHero />
           <ModernDoctorsCarousel />
           <ErrorBoundary fallback={<BookingErrorFallback />}>
             <ModernBookingForm />
