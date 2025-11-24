@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -10,27 +10,68 @@ import {
   faEnvelope,
   faCalendarAlt,
   faShieldAlt,
+  faVenusMars,
+  faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
+import patientApi from "../../services/api/patient.api";
+import type { ProfileMeResponse } from "../../types";
 import "../pages/Profile.css";
 
 const AdminProfile: React.FC = () => {
-  const { user } = useAuth();
+  const { updateUser } = useAuth();
   const { showNotification } = useNotification();
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [profileData, setProfileData] = useState<ProfileMeResponse | null>(
+    null
+  );
   const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-    department: "System Administration",
-    role: "Admin",
-    joinDate: "2023-01-15",
-    permissions: "Full Access",
+    name: "",
+    email: "",
+    phone: "",
+    gender: "",
+    dateOfBirth: "",
+    address: "",
   });
 
+  const fetchProfile = async () => {
+    try {
+      setIsLoading(true);
+      const data = await patientApi.getProfileMe();
+      setProfileData(data);
+
+      setFormData({
+        name: data.Name || "",
+        email: data.Email || "",
+        phone: data.Phone || "",
+        gender: data.Gender || "",
+        dateOfBirth: data.DateOfBirth || "",
+        address: data.Address || "",
+      });
+    } catch (error: any) {
+      showNotification(
+        "error",
+        "Error",
+        error.message || "Failed to load profile data",
+        3000
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -39,31 +80,87 @@ const AdminProfile: React.FC = () => {
     }));
   };
 
-  const handleSave = () => {
-    // Here you would typically call an API to update the profile
-    console.log("Saving admin profile:", formData);
-    setIsEditing(false);
-    showNotification(
-      "success",
-      "Profile Updated",
-      "Your profile has been successfully updated.",
-      3000
-    );
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      await patientApi.updateProfileMe({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        gender: formData.gender,
+        dateOfBirth: formData.dateOfBirth,
+        address: formData.address,
+      });
+
+      // Update AuthContext user state
+      updateUser({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        gender: formData.gender,
+        dateOfBirth: formData.dateOfBirth,
+      });
+
+      showNotification(
+        "success",
+        "Profile Updated",
+        "Your profile has been successfully updated.",
+        3000
+      );
+
+      setIsEditing(false);
+      await fetchProfile();
+    } catch (error: any) {
+      showNotification(
+        "error",
+        "Update Failed",
+        error.message || "Failed to update profile. Please try again.",
+        3000
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
-    // Reset form data to original values
-    setFormData({
-      name: user?.name || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
-      department: "System Administration",
-      role: "Super Admin",
-      joinDate: "2023-01-15",
-      permissions: "Full Access",
-    });
+    if (profileData) {
+      setFormData({
+        name: profileData.Name || "",
+        email: profileData.Email || "",
+        phone: profileData.Phone || "",
+        gender: profileData.Gender || "",
+        dateOfBirth: profileData.DateOfBirth || "",
+        address: profileData.Address || "",
+      });
+    }
     setIsEditing(false);
   };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("vi-VN");
+  };
+
+  if (isLoading) {
+    return (
+      <div className="profile-container">
+        <div style={{ textAlign: "center", padding: "50px" }}>
+          Loading profile...
+        </div>
+      </div>
+    );
+  }
+
+  if (!profileData) {
+    return (
+      <div className="profile-container">
+        <div style={{ textAlign: "center", padding: "50px" }}>
+          Failed to load profile data
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-container">
@@ -72,7 +169,7 @@ const AdminProfile: React.FC = () => {
           <FontAwesomeIcon icon={faUserShield} />
         </div>
         <div className="profile-info">
-          <h1>{user?.name}</h1>
+          <h1>{profileData.Name}</h1>
           <p className="profile-type admin">System Administrator</p>
           <span className="profile-status">
             <FontAwesomeIcon icon={faShieldAlt} />
@@ -81,17 +178,29 @@ const AdminProfile: React.FC = () => {
         </div>
         <div className="profile-actions">
           {!isEditing ? (
-            <button className="edit-btn" onClick={() => setIsEditing(true)}>
+            <button
+              className="edit-btn"
+              onClick={() => setIsEditing(true)}
+              disabled={isSaving}
+            >
               <FontAwesomeIcon icon={faEdit} />
               Edit Profile
             </button>
           ) : (
             <div className="edit-actions">
-              <button className="save-btn" onClick={handleSave}>
+              <button
+                className="save-btn"
+                onClick={handleSave}
+                disabled={isSaving}
+              >
                 <FontAwesomeIcon icon={faSave} />
-                Save
+                {isSaving ? "Saving..." : "Save"}
               </button>
-              <button className="cancel-btn" onClick={handleCancel}>
+              <button
+                className="cancel-btn"
+                onClick={handleCancel}
+                disabled={isSaving}
+              >
                 <FontAwesomeIcon icon={faTimes} />
                 Cancel
               </button>
@@ -107,6 +216,14 @@ const AdminProfile: React.FC = () => {
             <div className="profile-field">
               <label>
                 <FontAwesomeIcon icon={faUser} />
+                Username
+              </label>
+              <span>{profileData.Username}</span>
+            </div>
+
+            <div className="profile-field">
+              <label>
+                <FontAwesomeIcon icon={faUser} />
                 Full Name
               </label>
               {isEditing ? (
@@ -118,6 +235,44 @@ const AdminProfile: React.FC = () => {
                 />
               ) : (
                 <span>{formData.name}</span>
+              )}
+            </div>
+
+            <div className="profile-field">
+              <label>
+                <FontAwesomeIcon icon={faVenusMars} />
+                Gender
+              </label>
+              {isEditing ? (
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              ) : (
+                <span>{formData.gender || "Not specified"}</span>
+              )}
+            </div>
+
+            <div className="profile-field">
+              <label>
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                Date of Birth
+              </label>
+              {isEditing ? (
+                <input
+                  type="date"
+                  name="dateOfBirth"
+                  value={formData.dateOfBirth}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <span>{formatDate(formData.dateOfBirth)}</span>
               )}
             </div>
 
@@ -155,78 +310,25 @@ const AdminProfile: React.FC = () => {
               )}
             </div>
 
-            <div className="profile-field">
+            <div className="profile-field full-width">
               <label>
-                <FontAwesomeIcon icon={faCalendarAlt} />
-                Join Date
+                <FontAwesomeIcon icon={faMapMarkerAlt} />
+                Address
               </label>
-              <span>{formData.joinDate}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="profile-section">
-          <h3>Administrative Information</h3>
-          <div className="profile-grid">
-            <div className="profile-field">
-              <label>Department</label>
               {isEditing ? (
                 <input
                   type="text"
-                  name="department"
-                  value={formData.department}
+                  name="address"
+                  value={formData.address}
                   onChange={handleInputChange}
+                  placeholder="Enter your address"
                 />
               ) : (
-                <span>{formData.department}</span>
+                <span>{formData.address || "Not provided"}</span>
               )}
-            </div>
-
-            <div className="profile-field">
-              <label>Role</label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleInputChange}
-                />
-              ) : (
-                <span>{formData.role}</span>
-              )}
-            </div>
-
-            <div className="profile-field">
-              <label>Permissions Level</label>
-              <span>{formData.permissions}</span>
             </div>
           </div>
         </div>
-
-        <div className="profile-section">
-          <h3>System Statistics</h3>
-          <div className="stats-grid">
-            <div className="stat-card">
-              <h4>Total Users</h4>
-              <span className="stat-number">1,234</span>
-            </div>
-            <div className="stat-card">
-              <h4>Active Doctors</h4>
-              <span className="stat-number">89</span>
-            </div>
-            <div className="stat-card">
-              <h4>Pending Verifications</h4>
-              <span className="stat-number">12</span>
-            </div>
-            <div className="stat-card">
-              <h4>System Uptime</h4>
-              <span className="stat-number">99.9%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="delete-btn">
-        <button className="btn">Delete Account</button>
       </div>
     </div>
   );

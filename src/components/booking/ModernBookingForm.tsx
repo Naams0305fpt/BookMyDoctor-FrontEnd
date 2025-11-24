@@ -1,0 +1,1004 @@
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import styled from "@emotion/styled";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import {
+  User,
+  Phone,
+  Mail,
+  Calendar,
+  Clock,
+  Stethoscope,
+  FileText,
+  AlertCircle,
+  Loader,
+} from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNotification } from "../../contexts/NotificationContext";
+import { formatDateForAPI } from "../../services/http-client";
+import doctorApi from "../../services/api/doctor.api";
+import bookingApi from "../../services/api/booking.api";
+import scheduleApi from "../../services/api/schedule.api";
+import type {
+  Doctor,
+  BookingRequest,
+  ScheduleResponseItem,
+  Schedule,
+} from "../../types";
+import { theme } from "../../styles/theme";
+import {
+  Card,
+  Button,
+  Input,
+  InputWrapper,
+  InputLabel,
+  InputError,
+} from "../../styles/components";
+
+// Styled Components
+const BookingSection = styled.section`
+  padding: ${theme.spacing[16]} 0;
+  background: linear-gradient(
+    135deg,
+    rgba(200, 243, 225, 0.3) 0%,
+    rgba(168, 225, 234, 0.2) 50%,
+    rgba(144, 184, 247, 0.3) 100%
+  );
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2313B6C6' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  @media (max-width: ${theme.breakpoints.md}) {
+    padding: ${theme.spacing[12]} 0;
+  }
+`;
+
+const Container = styled.div`
+  max-width: ${theme.layout.maxWidth};
+  margin: 0 auto;
+  padding: 0 ${theme.spacing[6]};
+
+  @media (max-width: ${theme.breakpoints.md}) {
+    padding: 0 ${theme.spacing[4]};
+  }
+`;
+
+const SectionHeader = styled.div`
+  text-align: center;
+  margin-bottom: ${theme.spacing[12]};
+`;
+
+const SectionTitle = styled(motion.h2)`
+  font-size: ${theme.typography.fontSize["4xl"]};
+  font-weight: ${theme.typography.fontWeight.extrabold};
+  color: ${theme.colors.accent.navy};
+  margin-bottom: ${theme.spacing[4]};
+
+  @media (max-width: ${theme.breakpoints.md}) {
+    font-size: ${theme.typography.fontSize["3xl"]};
+  }
+`;
+
+const SectionSubtitle = styled(motion.p)`
+  font-size: ${theme.typography.fontSize.xl};
+  color: ${theme.colors.text.secondary};
+  max-width: 600px;
+  margin: 0 auto;
+`;
+
+const FormCard = styled(Card)`
+  max-width: 900px;
+  margin: 0 auto;
+  padding: ${theme.spacing[8]};
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(200, 243, 225, 0.15) 100%
+  );
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(19, 182, 198, 0.1);
+
+  @media (max-width: ${theme.breakpoints.md}) {
+    padding: ${theme.spacing[6]};
+  }
+`;
+
+const FormGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: ${theme.spacing[6]};
+
+  @media (max-width: ${theme.breakpoints.md}) {
+    grid-template-columns: 1fr;
+    gap: ${theme.spacing[4]};
+  }
+`;
+
+const FullWidthField = styled.div`
+  grid-column: 1 / -1;
+`;
+
+const InputWithIcon = styled.div`
+  position: relative;
+
+  svg {
+    position: absolute;
+    left: ${theme.spacing[4]};
+    top: 50%;
+    transform: translateY(-50%);
+    color: ${theme.colors.primary.teal};
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  input,
+  select,
+  textarea {
+    padding-left: ${theme.spacing[12]};
+  }
+
+  /* Fix for textarea icon position */
+  textarea + svg,
+  svg:has(+ textarea) {
+    top: ${theme.spacing[4]};
+    transform: none;
+  }
+`;
+
+const Select = styled.select<{ error?: boolean }>`
+  width: 100%;
+  padding: ${theme.spacing[3]} ${theme.spacing[4]};
+  border: 2px solid
+    ${({ error }) => (error ? theme.colors.error : theme.colors.gray[300])};
+  border-radius: ${theme.borderRadius.lg};
+  font-family: ${theme.typography.fontFamily.sans};
+  font-size: ${theme.typography.fontSize.base};
+  background: ${theme.colors.background.primary};
+  color: ${theme.colors.text.primary};
+  transition: all ${theme.transitions.duration.fast}
+    ${theme.transitions.easing.default};
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: ${({ error }) =>
+      error ? theme.colors.error : theme.colors.primary.teal};
+    box-shadow: 0 0 0 3px
+      ${({ error }) =>
+        error ? `${theme.colors.error}20` : `${theme.colors.primary.teal}20`};
+  }
+
+  &:disabled {
+    background: ${theme.colors.gray[100]};
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+`;
+
+const TextArea = styled.textarea<{ error?: boolean }>`
+  width: 100%;
+  padding: ${theme.spacing[3]} ${theme.spacing[4]};
+  border: 2px solid
+    ${({ error }) => (error ? theme.colors.error : theme.colors.gray[300])};
+  border-radius: ${theme.borderRadius.lg};
+  font-family: ${theme.typography.fontFamily.sans};
+  font-size: ${theme.typography.fontSize.base};
+  background: ${theme.colors.background.primary};
+  color: ${theme.colors.text.primary};
+  transition: all ${theme.transitions.duration.fast}
+    ${theme.transitions.easing.default};
+  resize: vertical;
+  min-height: 120px;
+
+  &:focus {
+    outline: none;
+    border-color: ${({ error }) =>
+      error ? theme.colors.error : theme.colors.primary.teal};
+    box-shadow: 0 0 0 3px
+      ${({ error }) =>
+        error ? `${theme.colors.error}20` : `${theme.colors.primary.teal}20`};
+  }
+`;
+
+const TimeSlotGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: ${theme.spacing[2]};
+  margin-top: ${theme.spacing[2]};
+`;
+
+const TimeSlot = styled(motion.button)<{
+  selected: boolean;
+  disabled: boolean;
+  isPast?: boolean;
+}>`
+  padding: ${theme.spacing[3]};
+  border: 2px solid
+    ${({ selected, disabled, isPast }) =>
+      disabled || isPast
+        ? theme.colors.gray[300]
+        : selected
+        ? theme.colors.primary.teal
+        : theme.colors.gray[300]};
+  border-radius: ${theme.borderRadius.lg};
+  background: ${({ selected, disabled, isPast }) =>
+    disabled || isPast
+      ? theme.colors.gray[100]
+      : selected
+      ? theme.colors.primary.teal
+      : "rgba(255, 255, 255, 0.8)"};
+  color: ${({ selected, disabled, isPast }) =>
+    disabled || isPast
+      ? theme.colors.gray[400]
+      : selected
+      ? "white"
+      : theme.colors.text.primary};
+  font-size: ${theme.typography.fontSize.sm};
+  font-weight: ${theme.typography.fontWeight.medium};
+  cursor: ${({ disabled, isPast }) =>
+    disabled || isPast ? "not-allowed" : "pointer"};
+  transition: all ${theme.transitions.duration.fast}
+    ${theme.transitions.easing.default};
+  position: relative;
+  text-decoration: ${({ isPast }) => (isPast ? "line-through" : "none")};
+
+  &:hover:not(:disabled) {
+    border-color: ${({ isPast }) =>
+      isPast ? theme.colors.gray[300] : theme.colors.primary.teal};
+    background: ${({ selected, isPast }) =>
+      isPast
+        ? theme.colors.gray[100]
+        : selected
+        ? theme.colors.primary.dark
+        : theme.colors.primary.lightest};
+  }
+
+  ${({ isPast }) =>
+    isPast &&
+    `
+    opacity: 0.5;
+  `}
+`;
+
+const SubmitButton = styled(Button)`
+  width: 100%;
+  margin-top: ${theme.spacing[6]};
+  padding: ${theme.spacing[4]};
+  font-size: ${theme.typography.fontSize.lg};
+`;
+
+const LoadingOverlay = styled(motion.div)`
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${theme.borderRadius.card};
+  z-index: 10;
+`;
+
+const DatePickerWrapper = styled.div`
+  .react-datepicker-wrapper {
+    width: 100%;
+  }
+
+  .react-datepicker__input-container input {
+    width: 100%;
+    padding: ${theme.spacing[3]} ${theme.spacing[4]};
+    padding-left: ${theme.spacing[12]};
+    border: 2px solid ${theme.colors.gray[300]};
+    border-radius: ${theme.borderRadius.lg};
+    font-family: ${theme.typography.fontFamily.sans};
+    font-size: ${theme.typography.fontSize.base};
+    background: ${theme.colors.background.primary};
+    color: ${theme.colors.text.primary};
+    transition: all ${theme.transitions.duration.fast}
+      ${theme.transitions.easing.default};
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: ${theme.colors.primary.teal};
+      box-shadow: 0 0 0 3px ${theme.colors.primary.teal}20;
+    }
+  }
+`;
+
+// Interfaces
+interface FormData {
+  doctorId: string;
+  fullName: string;
+  phone: string;
+  email: string;
+  date: Date | null;
+  time: string;
+  dateOfBirth: Date | null;
+  gender: string;
+  symptom: string;
+}
+
+interface FormErrors {
+  [key: string]: string;
+}
+
+const initialFormData: FormData = {
+  doctorId: "",
+  fullName: "",
+  phone: "",
+  email: "",
+  date: new Date(),
+  time: "",
+  dateOfBirth: null,
+  gender: "",
+  symptom: "",
+};
+
+const ModernBookingForm: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const { user } = useAuth();
+  const { showNotification } = useNotification();
+
+  // States
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [allDoctors, setAllDoctors] = useState<Doctor[]>([]);
+  const [isLoadingDoctors, setIsLoadingDoctors] = useState(false);
+  const [fetchedBusySlots, setFetchedBusySlots] = useState<string[]>([]);
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+
+  // Generate 30-minute time slots from schedule
+  const generateTimeSlotsFromSchedule = (schedule: Schedule): string[] => {
+    const slots: string[] = [];
+    const [startHour, startMin] = schedule.StartTime.split(":").map(Number);
+    const [endHour, endMin] = schedule.EndTime.split(":").map(Number);
+
+    let currentHour = startHour;
+    let currentMin = startMin;
+
+    while (
+      currentHour < endHour ||
+      (currentHour === endHour && currentMin < endMin)
+    ) {
+      const timeStr = `${currentHour.toString().padStart(2, "0")}:${currentMin
+        .toString()
+        .padStart(2, "0")}`;
+      slots.push(timeStr);
+
+      // Add 30 minutes
+      currentMin += 30;
+      if (currentMin >= 60) {
+        currentMin = 0;
+        currentHour += 1;
+      }
+    }
+
+    return slots;
+  };
+
+  const genders = ["Male", "Female", "Other"];
+
+  // Load doctors
+  useEffect(() => {
+    const loadDoctors = async () => {
+      setIsLoadingDoctors(true);
+      try {
+        const doctorsData = await doctorApi.getAllDoctors();
+        setAllDoctors(doctorsData);
+      } catch (error) {
+        setErrors((prev) => ({
+          ...prev,
+          doctor: "Failed to load doctors list.",
+        }));
+      } finally {
+        setIsLoadingDoctors(false);
+      }
+    };
+    loadDoctors();
+  }, []);
+
+  // Listen for selectDoctor event from carousel
+  useEffect(() => {
+    const handleSelectDoctor = (event: CustomEvent<{ doctorId: number }>) => {
+      const { doctorId } = event.detail;
+      setFormData((prev) => ({
+        ...prev,
+        doctorId: doctorId.toString(),
+      }));
+    };
+
+    window.addEventListener(
+      "selectDoctor",
+      handleSelectDoctor as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        "selectDoctor",
+        handleSelectDoctor as EventListener
+      );
+    };
+  }, []);
+
+  // Load doctor schedule and busy slots
+  useEffect(() => {
+    if (formData.doctorId && formData.date) {
+      const fetchScheduleAndSlots = async () => {
+        setIsLoadingSlots(true);
+        setFetchedBusySlots([]);
+        setAvailableTimeSlots([]);
+
+        try {
+          const formattedDate = formatDateForAPI(formData.date);
+
+          // Fetch doctor's work schedule for the date
+          const schedules: Schedule[] = await scheduleApi.getAllSchedules(
+            undefined, // doctorName
+            formattedDate
+          );
+
+          // Filter for selected doctor
+          const doctorSchedule = schedules.find(
+            (s) => s.DoctorId === parseInt(formData.doctorId)
+          );
+
+          if (doctorSchedule) {
+            // Generate 30-minute time slots from schedule
+            const slots = generateTimeSlotsFromSchedule(doctorSchedule);
+            setAvailableTimeSlots(slots);
+          } else {
+            // No schedule found for this date
+            setAvailableTimeSlots([]);
+          }
+
+          // Fetch busy slots
+          const busySchedule: ScheduleResponseItem[] =
+            await bookingApi.getDoctorSchedule(
+              parseInt(formData.doctorId),
+              formData.date!
+            );
+
+          const busyStrings = busySchedule
+            .filter((item) => item.Status === "Scheduled")
+            .map((item) => item.AppointHour.substring(0, 5));
+
+          setFetchedBusySlots(busyStrings);
+
+          if (formData.time && busyStrings.includes(formData.time)) {
+            handleInputChange("time", "");
+            showNotification(
+              "warning",
+              "Time Unavailable",
+              "Your previously selected time is no longer available.",
+              3000
+            );
+          }
+        } catch (error) {
+          // Failed to load slots
+          setAvailableTimeSlots([]);
+        } finally {
+          setIsLoadingSlots(false);
+        }
+      };
+      fetchScheduleAndSlots();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.doctorId, formData.date]);
+
+  // Auto-fill user data
+  useEffect(() => {
+    if (user) {
+      setFormData((prevData) => ({
+        ...prevData,
+        fullName: prevData.fullName || user.name || "",
+        phone: prevData.phone || user.phone || "",
+        email: prevData.email || user.email || "",
+        gender: prevData.gender || user.gender || "",
+        dateOfBirth:
+          prevData.dateOfBirth ||
+          (user.dateOfBirth ? new Date(user.dateOfBirth) : null),
+      }));
+    }
+  }, [user]);
+
+  const handleInputChange = (
+    field: keyof FormData,
+    value: string | Date | null
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
+  // Helper function to check if time slot is in the past
+  const isTimeSlotPast = (timeSlot: string): boolean => {
+    if (!formData.date) return false;
+
+    const selectedDate = new Date(formData.date);
+    const today = new Date();
+
+    // Reset hours for date comparison
+    selectedDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    // If selected date is in the future, no slots are past
+    if (selectedDate > today) return false;
+
+    // If selected date is today, check the time
+    if (selectedDate.getTime() === today.getTime()) {
+      const now = new Date();
+      const [hours, minutes] = timeSlot.split(":").map(Number);
+      const slotTime = new Date();
+      slotTime.setHours(hours, minutes, 0, 0);
+
+      return slotTime <= now;
+    }
+
+    return false;
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+    if (!/^\d{9,11}$/.test(formData.phone.replace(/\s/g, "")))
+      newErrors.phone = "Phone number must be 9-11 digits";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (
+      formData.email.trim() &&
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)
+    )
+      newErrors.email = "Invalid email address";
+    if (!formData.date) newErrors.date = "Date is required";
+    if (
+      formData.date &&
+      formData.date < new Date(new Date().setHours(0, 0, 0, 0))
+    )
+      newErrors.date = "Date cannot be in the past";
+    if (!formData.dateOfBirth)
+      newErrors.dateOfBirth = "Date of birth is required";
+    if (!formData.time) newErrors.time = "Time is required";
+    if (!formData.gender) newErrors.gender = "Gender is required";
+    if (!formData.doctorId) newErrors.doctor = "Please choose a doctor";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    if (!formData.date || !formData.dateOfBirth) {
+      showNotification(
+        "error",
+        "Missing Information",
+        "Date and Date of Birth must be selected.",
+        3000
+      );
+      return;
+    }
+
+    const selectedDoctor = allDoctors.find(
+      (doctor) => doctor.DoctorId === parseInt(formData.doctorId)
+    );
+
+    if (!selectedDoctor) {
+      setErrors((prev) => ({ ...prev, doctor: "Selected doctor not found." }));
+      return;
+    }
+
+    const payload: BookingRequest = {
+      DoctorId: parseInt(formData.doctorId),
+      FullName: formData.fullName,
+      Phone: formData.phone,
+      Email: formData.email,
+      Date: formatDateForAPI(formData.date),
+      AppointHour: formData.time,
+      Gender: formData.gender,
+      DateOfBirth: formatDateForAPI(formData.dateOfBirth),
+      Symptom: formData.symptom,
+    };
+
+    setIsSubmitting(true);
+
+    try {
+      await bookingApi.submitBooking(payload);
+      setFormData(initialFormData);
+      showNotification(
+        "success",
+        "Booking Successful!",
+        "Your appointment has been confirmed. We'll see you soon!",
+        5000
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred.";
+      showNotification("error", "Booking Failed", errorMessage, 5000);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <BookingSection id="booking-section" data-booking-form>
+      <Container>
+        <SectionHeader>
+          <SectionTitle
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            Book Your Appointment
+          </SectionTitle>
+          <SectionSubtitle
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            Schedule a visit with our experienced healthcare professionals
+          </SectionSubtitle>
+        </SectionHeader>
+
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <FormCard style={{ position: "relative" }}>
+            <AnimatePresence>
+              {isSubmitting && (
+                <LoadingOverlay
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <Loader
+                    className="animate-spin"
+                    size={48}
+                    color={theme.colors.primary.teal}
+                  />
+                </LoadingOverlay>
+              )}
+            </AnimatePresence>
+
+            <form onSubmit={handleSubmit}>
+              <FormGrid>
+                {/* Doctor Selection */}
+                <FullWidthField>
+                  <InputWrapper>
+                    <InputLabel>Select Doctor *</InputLabel>
+                    <InputWithIcon>
+                      <Stethoscope />
+                      <Select
+                        value={formData.doctorId}
+                        onChange={(e) =>
+                          handleInputChange("doctorId", e.target.value)
+                        }
+                        error={!!errors.doctor}
+                        disabled={isLoadingDoctors}
+                      >
+                        <option value="">
+                          {isLoadingDoctors
+                            ? "Loading doctors..."
+                            : "Choose a doctor"}
+                        </option>
+                        {allDoctors.map((doctor) => (
+                          <option key={doctor.DoctorId} value={doctor.DoctorId}>
+                            Dr. {doctor.Name} - {doctor.Department}
+                          </option>
+                        ))}
+                      </Select>
+                    </InputWithIcon>
+                    {errors.doctor && <InputError>{errors.doctor}</InputError>}
+                  </InputWrapper>
+                </FullWidthField>
+
+                {/* Full Name */}
+                <InputWrapper>
+                  <InputLabel>Full Name *</InputLabel>
+                  <InputWithIcon>
+                    <User />
+                    <Input
+                      type="text"
+                      value={formData.fullName}
+                      onChange={(e) =>
+                        handleInputChange("fullName", e.target.value)
+                      }
+                      error={!!errors.fullName}
+                      placeholder="Enter your full name"
+                    />
+                  </InputWithIcon>
+                  {errors.fullName && (
+                    <InputError>{errors.fullName}</InputError>
+                  )}
+                </InputWrapper>
+
+                {/* Phone */}
+                <InputWrapper>
+                  <InputLabel>Phone Number *</InputLabel>
+                  <InputWithIcon>
+                    <Phone />
+                    <Input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        handleInputChange("phone", e.target.value)
+                      }
+                      error={!!errors.phone}
+                      placeholder="0123456789"
+                    />
+                  </InputWithIcon>
+                  {errors.phone && <InputError>{errors.phone}</InputError>}
+                </InputWrapper>
+
+                {/* Email */}
+                <InputWrapper>
+                  <InputLabel>Email Address *</InputLabel>
+                  <InputWithIcon>
+                    <Mail />
+                    <Input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
+                      error={!!errors.email}
+                      placeholder="your@email.com"
+                    />
+                  </InputWithIcon>
+                  {errors.email && <InputError>{errors.email}</InputError>}
+                </InputWrapper>
+
+                {/* Date of Birth */}
+                <InputWrapper>
+                  <InputLabel>Date of Birth *</InputLabel>
+                  <DatePickerWrapper>
+                    <InputWithIcon>
+                      <Calendar />
+                      <DatePicker
+                        selected={formData.dateOfBirth}
+                        onChange={(date) =>
+                          handleInputChange("dateOfBirth", date)
+                        }
+                        dateFormat="dd/MM/yyyy"
+                        maxDate={new Date()}
+                        showYearDropdown
+                        scrollableYearDropdown
+                        yearDropdownItemNumber={100}
+                        placeholderText="Select date of birth"
+                      />
+                    </InputWithIcon>
+                  </DatePickerWrapper>
+                  {errors.dateOfBirth && (
+                    <InputError>{errors.dateOfBirth}</InputError>
+                  )}
+                </InputWrapper>
+
+                {/* Gender */}
+                <InputWrapper>
+                  <InputLabel>Gender *</InputLabel>
+                  <InputWithIcon>
+                    <User />
+                    <Select
+                      value={formData.gender}
+                      onChange={(e) =>
+                        handleInputChange("gender", e.target.value)
+                      }
+                      error={!!errors.gender}
+                    >
+                      <option value="">Select gender</option>
+                      {genders.map((g) => (
+                        <option key={g} value={g}>
+                          {g}
+                        </option>
+                      ))}
+                    </Select>
+                  </InputWithIcon>
+                  {errors.gender && <InputError>{errors.gender}</InputError>}
+                </InputWrapper>
+
+                {/* Appointment Date */}
+                <InputWrapper>
+                  <InputLabel>Appointment Date *</InputLabel>
+                  <DatePickerWrapper>
+                    <InputWithIcon>
+                      <Calendar />
+                      <DatePicker
+                        selected={formData.date}
+                        onChange={(date) => handleInputChange("date", date)}
+                        dateFormat="dd/MM/yyyy"
+                        minDate={new Date()}
+                        placeholderText="Select appointment date"
+                      />
+                    </InputWithIcon>
+                  </DatePickerWrapper>
+                  {errors.date && <InputError>{errors.date}</InputError>}
+                </InputWrapper>
+
+                {/* Time Slots */}
+                <FullWidthField>
+                  <InputWrapper>
+                    <InputLabel>Select Time *</InputLabel>
+                    {!formData.doctorId || !formData.date ? (
+                      <div
+                        style={{
+                          textAlign: "center",
+                          padding: theme.spacing[6],
+                          background: "rgba(19, 182, 198, 0.05)",
+                          borderRadius: theme.borderRadius.lg,
+                          color: theme.colors.text.secondary,
+                          border: `2px dashed ${theme.colors.primary.light}`,
+                        }}
+                      >
+                        <Clock
+                          size={32}
+                          style={{ margin: "0 auto 8px", opacity: 0.5 }}
+                        />
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: theme.typography.fontSize.sm,
+                          }}
+                        >
+                          Please select a doctor and appointment date first
+                        </p>
+                      </div>
+                    ) : isLoadingSlots ? (
+                      <div
+                        style={{
+                          textAlign: "center",
+                          padding: theme.spacing[4],
+                        }}
+                      >
+                        <Loader
+                          className="animate-spin"
+                          size={24}
+                          style={{ margin: "0 auto" }}
+                        />
+                        <p
+                          style={{
+                            marginTop: theme.spacing[2],
+                            color: theme.colors.text.secondary,
+                            fontSize: theme.typography.fontSize.sm,
+                          }}
+                        >
+                          Loading available time slots...
+                        </p>
+                      </div>
+                    ) : availableTimeSlots.length === 0 ? (
+                      <div
+                        style={{
+                          textAlign: "center",
+                          padding: theme.spacing[8],
+                        }}
+                      >
+                        <AlertCircle
+                          size={48}
+                          style={{
+                            margin: "0 auto",
+                            color: theme.colors.warning,
+                            marginBottom: theme.spacing[4],
+                          }}
+                        />
+                        <p
+                          style={{
+                            color: theme.colors.text.primary,
+                            fontSize: theme.typography.fontSize.base,
+                            fontWeight: theme.typography.fontWeight.medium,
+                            marginBottom: theme.spacing[2],
+                          }}
+                        >
+                          No Schedule Available
+                        </p>
+                        <p
+                          style={{
+                            color: theme.colors.text.secondary,
+                            fontSize: theme.typography.fontSize.sm,
+                          }}
+                        >
+                          The selected doctor has no available schedule for this
+                          date.
+                          <br />
+                          Please choose another date.
+                        </p>
+                      </div>
+                    ) : (
+                      <TimeSlotGrid>
+                        {availableTimeSlots.map((slot) => {
+                          const isBusy = fetchedBusySlots.includes(slot);
+                          const isSelected = formData.time === slot;
+                          const isPast = isTimeSlotPast(slot);
+                          const isDisabled = isBusy || isPast;
+
+                          return (
+                            <TimeSlot
+                              key={slot}
+                              type="button"
+                              selected={isSelected}
+                              disabled={isDisabled}
+                              isPast={isPast}
+                              onClick={() =>
+                                !isDisabled && handleInputChange("time", slot)
+                              }
+                              whileHover={!isDisabled ? { scale: 1.05 } : {}}
+                              whileTap={!isDisabled ? { scale: 0.95 } : {}}
+                              title={
+                                isPast
+                                  ? "This time has passed"
+                                  : isBusy
+                                  ? "Already booked"
+                                  : "Available"
+                              }
+                            >
+                              <Clock
+                                size={14}
+                                style={{
+                                  display: "inline",
+                                  marginRight: "4px",
+                                }}
+                              />
+                              {slot}
+                            </TimeSlot>
+                          );
+                        })}
+                      </TimeSlotGrid>
+                    )}
+                    {errors.time && <InputError>{errors.time}</InputError>}
+                  </InputWrapper>
+                </FullWidthField>
+
+                {/* Symptoms */}
+                <FullWidthField>
+                  <InputWrapper>
+                    <InputLabel>Symptoms (Optional)</InputLabel>
+                    <InputWithIcon>
+                      <FileText />
+                      <TextArea
+                        value={formData.symptom}
+                        onChange={(e) =>
+                          handleInputChange("symptom", e.target.value)
+                        }
+                        placeholder="Describe your symptoms..."
+                        error={!!errors.symptom}
+                      />
+                    </InputWithIcon>
+                  </InputWrapper>
+                </FullWidthField>
+              </FormGrid>
+
+              <SubmitButton
+                type="submit"
+                variant="gradient"
+                size="lg"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Book Appointment"}
+              </SubmitButton>
+            </form>
+          </FormCard>
+        </motion.div>
+      </Container>
+    </BookingSection>
+  );
+};
+
+export default ModernBookingForm;

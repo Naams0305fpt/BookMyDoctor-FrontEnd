@@ -1,3 +1,11 @@
-export { default as Hero } from './Hero';
-export { default as DoctorsCarousel } from './DoctorsCarousel';
+export { default as Hero } from './ModernHero';
+export { default as DoctorsCarousel } from './ModernDoctorsCarousel';
+export { default as ModernDoctorCard } from './ModernDoctorCard';
+export { default as ModernDoctorsCarousel } from './ModernDoctorsCarousel';
 export { default as Notification } from './Notification';
+export { default as Pagination } from './Pagination';
+export { default as ScheduleFormModal } from './ScheduleFormModal';
+export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as LoadingSpinner } from './LoadingSpinner';
+export { default as ChatbotButton } from './ChatbotButton';
+export * from './ErrorFallbacks';

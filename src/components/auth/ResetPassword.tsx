@@ -10,8 +10,7 @@ import {
   faShieldAlt, // Icons mới
 } from "@fortawesome/free-solid-svg-icons";
 import { useNotification } from "../../contexts/NotificationContext";
-// Đảm bảo bạn import đúng đường dẫn api
-import { api } from "../../services/api";
+import authApi from "../../services/api/auth.api";
 import "./Login.css"; // Dùng chung style
 import "./ResetPassword.css"; // Dùng chung style
 
@@ -59,7 +58,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
     setError("");
     try {
       // Gọi API request-otp
-      await api.sendVerificationCode({
+      await authApi.sendVerificationCode({
         Destination: email,
         Purpose: "ResetPassword",
         Channel: "email",
@@ -87,7 +86,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
     setVerifyingCode(true); // Bắt đầu loading nút "Continue"
     try {
       // Gọi API /verify-otp
-      const result = await api.verifyOtp({
+      const result = await authApi.verifyOtp({
         Destination: email,
         Purpose: "ResetPassword",
         OtpCode: otpCode,
@@ -137,7 +136,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose, onBack }) => {
     setIsLoading(true); // Bắt đầu loading nút "Reset Password"
     try {
       // Gọi API /change-password-otp
-      await api.changePasswordWithOtp({
+      await authApi.changePasswordWithOtp({
         NewPassword: newPassword,
         ConfirmNewPassword: confirmPassword,
       });

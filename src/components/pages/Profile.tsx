@@ -1,8 +1,8 @@
 import React from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import AdminProfile from "../profiles/AdminProfile";
-import DoctorProfile from "../profiles/DoctorProfile";
-import PatientProfile from "../profiles/PatientProfile";
+import ModernAdminProfile from "../profiles/ModernAdminProfile";
+import ModernDoctorProfile from "../profiles/ModernDoctorProfile";
+import ModernPatientProfile from "../profiles/ModernPatientProfile";
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
@@ -21,13 +21,13 @@ const Profile: React.FC = () => {
   const renderProfileByUserType = () => {
     switch (user.userType) {
       case "admin":
-        return <AdminProfile />;
+        return <ModernAdminProfile />;
       case "doctor":
-        return <DoctorProfile />;
+        return <ModernDoctorProfile />;
       case "patient":
-        return <PatientProfile />;
+        return <ModernPatientProfile />;
       default:
-        return <PatientProfile />;
+        return <ModernPatientProfile />;
     }
   };
 

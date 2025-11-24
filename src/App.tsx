@@ -1,17 +1,9 @@
-import React, { useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-  useLocation,
-} from "react-router-dom";
+import React, { lazy, Suspense } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import {
-  NotificationProvider,
-  useNotification,
-} from "./contexts/NotificationContext";
+import GlobalStyles from "./styles/GlobalStyles";
+import { AuthProvider } from "./contexts/AuthContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import {
   LoginModalProvider,
   useLoginModal,
@@ -20,16 +12,28 @@ import {
   SignUpModalProvider,
   useSignUpModal,
 } from "./contexts/SignUpModalContext";
-import Header from "./components/layout/Header";
-import Footer from "./components/layout/Footer";
-import Login from "./components/auth/Login";
-import SignUp from "./components/auth/SignUp";
-import Home from "./components/pages/Home";
-import About from "./components/pages/About";
-import Information from "./components/pages/Information";
-import Demo from "./components/pages/Demo";
-import Profile from "./components/pages/Profile";
-import BookingHistory from "./components/pages/BookingHistory";
+import ModernHeader from "./components/layout/ModernHeader";
+import ModernFooter from "./components/layout/ModernFooter";
+import ModernLogin from "./components/auth/ModernLogin";
+import ModernSignUp from "./components/auth/ModernSignUp";
+import {
+  ErrorBoundary,
+  BookingErrorFallback,
+  ProfileErrorFallback,
+  PageErrorFallback,
+  LoadingSpinner,
+  ChatbotButton,
+} from "./components/common";
+
+// Lazy load page components for better performance
+const Home = lazy(() => import("./components/pages/Home"));
+const About = lazy(() => import("./components/pages/ModernAbout"));
+const Information = lazy(() => import("./components/pages/ModernInformation"));
+const Profile = lazy(() => import("./components/pages/Profile"));
+const BookingHistory = lazy(
+  () => import("./components/pages/ModernBookingHistory")
+);
+const Settings = lazy(() => import("./components/pages/ModernSettings"));
 
 // Main App Content
 const AppContent: React.FC = () => {
@@ -37,38 +41,74 @@ const AppContent: React.FC = () => {
   const { showSignUp, closeSignUp } = useSignUpModal();
 
   return (
-    <div className="App">
-      <Router>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/information" element={<Information />} />
-          <Route path="/demo" element={<Demo />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/booking-history" element={<BookingHistory />} />
-        </Routes>
-        <Footer />
-      </Router>
+    <>
+      <GlobalStyles />
+      <div className="App">
+        <Router>
+          <ModernHeader />
+          <ErrorBoundary fallback={<PageErrorFallback />}>
+            <Suspense fallback={<LoadingSpinner message="Loading page..." />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/information" element={<Information />} />
 
-      {/* Modals at App level for proper positioning */}
-      {showLogin && <Login onClose={closeLogin} />}
-      {showSignUp && <SignUp onClose={closeSignUp} />}
-    </div>
+                {/* Profile with dedicated error boundary */}
+                <Route
+                  path="/profile"
+                  element={
+                    <ErrorBoundary fallback={<ProfileErrorFallback />}>
+                      <Profile />
+                    </ErrorBoundary>
+                  }
+                />
+
+                {/* Booking History with dedicated error boundary */}
+                <Route
+                  path="/booking-history"
+                  element={
+                    <ErrorBoundary fallback={<BookingErrorFallback />}>
+                      <BookingHistory />
+                    </ErrorBoundary>
+                  }
+                />
+
+                {/* Settings with dedicated error boundary */}
+                <Route
+                  path="/settings"
+                  element={
+                    <ErrorBoundary fallback={<ProfileErrorFallback />}>
+                      <Settings />
+                    </ErrorBoundary>
+                  }
+                />
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
+          <ModernFooter />
+          <ChatbotButton />
+        </Router>{" "}
+        {/* Modals at App level for proper positioning */}
+        {showLogin && <ModernLogin onClose={closeLogin} />}
+        {showSignUp && <ModernSignUp onClose={closeSignUp} />}
+      </div>
+    </>
   );
 };
 
 function App() {
   return (
-    <AuthProvider>
-      <NotificationProvider>
-        <LoginModalProvider>
-          <SignUpModalProvider>
-            <AppContent />
-          </SignUpModalProvider>
-        </LoginModalProvider>
-      </NotificationProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <NotificationProvider>
+          <LoginModalProvider>
+            <SignUpModalProvider>
+              <AppContent />
+            </SignUpModalProvider>
+          </LoginModalProvider>
+        </NotificationProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

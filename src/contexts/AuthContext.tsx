@@ -5,7 +5,8 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { api, RegisterRequest } from "../services/api";
+import { api } from "../services/api";
+import type { RegisterRequest } from "../types";
 
 export type UserType = "admin" | "doctor" | "patient";
 
@@ -18,6 +19,10 @@ export interface User {
   avatar?: string;
   specialization?: string;
   isVerified?: boolean;
+  doctorId?: number; // Thêm doctorId cho doctor
+  patientId?: number; // Thêm patientId cho patient
+  dateOfBirth?: string; // Thêm dateOfBirth (format: "YYYY-MM-DD" hoặc ISO string)
+  gender?: string; // Thêm gender ("Male", "Female", "Other")
 }
 
 interface AuthContextType {
@@ -28,6 +33,7 @@ interface AuthContextType {
     data: RegisterRequest
   ) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
+  updateUser: (updates: Partial<User>) => void;
   isLoading: boolean;
 }
 
@@ -80,7 +86,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(false);
     } catch (err) {
       // Bất kỳ lỗi nào (login sai, checkAuth lỗi) đều sẽ nhảy vào đây
-      console.error("Login failed:", err);
       setIsLoading(false);
       throw err;
     }
@@ -92,7 +97,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await api.logout();
     } catch (error) {
-      console.error("Error during API logout:", error);
+      // Silently handle logout API error
+    }
+  };
+
+  const updateUser = (updates: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...updates };
+      setUser(updatedUser);
+      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
     }
   };
 
@@ -118,7 +131,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         message: result.message || "Registration successful. Please log in.",
       };
     } catch (err: any) {
-      console.error("Register failed:", err);
       setIsLoading(false);
       return { success: false, message: err.message || "Registration failed" };
     }
@@ -130,6 +142,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
+    updateUser,
     isLoading,
   };
 

@@ -1,10 +1,15 @@
 import React from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import Hero from "../common/Hero";
-import DoctorsCarousel from "../common/DoctorsCarousel";
-import DoctorDashboard from "../dashboard/DoctorDashboard";
-import BookingForm from "../booking/BookingForm";
-import AdminDashboard from "../dashboard/AdminDashboard";
+import ModernHero from "../common/ModernHero";
+import ModernDoctorsCarousel from "../common/ModernDoctorsCarousel";
+import ModernDoctorDashboard from "../dashboard/ModernDoctorDashboard";
+import ModernBookingForm from "../booking/ModernBookingForm";
+import ModernAdminDashboard from "../dashboard/ModernAdminDashboard";
+import {
+  ErrorBoundary,
+  BookingErrorFallback,
+  DashboardErrorFallback,
+} from "../common";
 
 const Home: React.FC = () => {
   const { user } = useAuth();
@@ -13,15 +18,21 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Hero />
       {isAdmin ? (
-        <AdminDashboard />
+        <ErrorBoundary fallback={<DashboardErrorFallback />}>
+          <ModernAdminDashboard />
+        </ErrorBoundary>
       ) : isDoctor ? (
-        <DoctorDashboard />
+        <ErrorBoundary fallback={<DashboardErrorFallback />}>
+          <ModernDoctorDashboard />
+        </ErrorBoundary>
       ) : (
         <>
-          <DoctorsCarousel />
-          <BookingForm />
+          <ModernHero />
+          <ModernDoctorsCarousel />
+          <ErrorBoundary fallback={<BookingErrorFallback />}>
+            <ModernBookingForm />
+          </ErrorBoundary>
         </>
       )}
     </>
